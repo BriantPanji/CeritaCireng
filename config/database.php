@@ -62,6 +62,38 @@ return [
             ]) : [],
         ],
 
+        'mysql_owner' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_OWNER'),
+            'database' => env('DB_DATABASE_OWNER'),
+            'username' => env('DB_USERNAME_OWNER'),
+            'password' => env('DB_PASSWORD_OWNER'),
+        ],
+
+        'mysql_inventaris' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_INVENTARIS'),
+            'database' => env('DB_DATABASE_INVENTARIS'),
+            'username' => env('DB_USERNAME_INVENTARIS'),
+            'password' => env('DB_PASSWORD_INVENTARIS'),
+        ],
+
+        'mysql_kurir' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_KURIR'),
+            'database' => env('DB_DATABASE_KURIR'),
+            'username' => env('DB_USERNAME_KURIR'),
+            'password' => env('DB_PASSWORD_KURIR'),
+        ],
+
+        'mysql_staff' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_STAFF'),
+            'database' => env('DB_DATABASE_STAFF'),
+            'username' => env('DB_USERNAME_STAFF'),
+            'password' => env('DB_PASSWORD_STAFF'),
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),
