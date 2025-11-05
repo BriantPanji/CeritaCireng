@@ -62,6 +62,14 @@ return [
             ]) : [],
         ],
 
+        'mysql_dev' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_DEV'),
+            'database' => env('DB_DATABASE_DEV'),
+            'username' => env('DB_USERNAME_DEV'),
+            'password' => '',
+        ],
+        
         'mysql_owner' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST_OWNER'),
