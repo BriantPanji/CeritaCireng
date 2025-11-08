@@ -102,4 +102,20 @@ class User extends Authenticatable
     {
         return $this->hasOne(DeliveryMistake::class);
     }
+
+    public function hasDeliveryMistakeConfirmation()
+    {
+        return $this->belongsToMany(DeliveryMistake::class, 'delivery_mistake_confirmation', 'id_inventaris', 'id_delivery_mistake');
+    }
+
+    public function hasReturnAsCourier(){
+        return $this->hasMany(ReturnModel::class, 'id_deliverer');
+    }
+    public function hasReturnAsStaff(){
+        return $this->hasMany(ReturnModel::class, 'id_staff');
+    }
+
+    public function hasReturnConfirm(){
+        return $this->belongsToMany(ReturnModel::class, 'return_confirmation', 'id_inventaris', 'id_return');
+    }
 }

@@ -30,4 +30,8 @@ class Delivery extends Model
     {
         return $this->hasOne(DeliveryMistake::class);
     }
+
+    public function hasDeliveryItem(){
+        return $this->belongsToMany(Item::class, 'delivery_items', 'id_delivery', 'id_item');
+    }
 }
