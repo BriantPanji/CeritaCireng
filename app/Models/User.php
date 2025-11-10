@@ -58,7 +58,64 @@ class User extends Authenticatable
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    // Relationship
+    public function hasRoles()
+    {
+        return $this->hasMany(Role::class);
+    }
+
+    public function hasOutlet()
+    {
+        return $this->belongsToMany(Outlet::class, 'staff_outlets', 'id_user', 'id_outlet');
+    }
+
+    public function hasAttend()
+    {
+        return $this->belongsToMany(Attendance::class, 'user_attendances', 'id_user', 'id_attendance');
+    }
+
+    public function hasExpense()
+    {
+        return $this->hasMany(OtherExpense::class);
+    }
+
+    public function deliveryCourier()
+    {
+        return $this->hasMany(Delivery::class, 'id_kurir');
+    }
+
+    public function deliveryInventory()
+    {
+        return $this->hasMany(Delivery::class, 'id_inventaris');
+    }
+
+    public function hasDeliveryConfirmation()
+    {
+        return $this->belongsToMany(Delivery::class, 'delivery_confirmations', 'id_staff', 'id_delivery');
+    }
+
+    public function hasDeliveryMistake()
+    {
+        return $this->hasOne(DeliveryMistake::class);
+    }
+
+    public function hasDeliveryMistakeConfirmation()
+    {
+        return $this->belongsToMany(DeliveryMistake::class, 'delivery_mistake_confirmation', 'id_inventaris', 'id_delivery_mistake');
+    }
+
+    public function hasReturnAsCourier(){
+        return $this->hasMany(ReturnModel::class, 'id_deliverer');
+    }
+    public function hasReturnAsStaff(){
+        return $this->hasMany(ReturnModel::class, 'id_staff');
+    }
+
+    public function hasReturnConfirm(){
+        return $this->belongsToMany(ReturnModel::class, 'return_confirmation', 'id_inventaris', 'id_return');
     }
 }
