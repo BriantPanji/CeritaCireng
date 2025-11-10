@@ -64,6 +64,9 @@
     --color-neutral-400: #565452;
     --color-neutral-500: #353332;
     --color-neutral-600: #171615;
+
+    /* Custom Shadow */
+    --shadow-reguler: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 @layer theme {
