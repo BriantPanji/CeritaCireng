@@ -15,4 +15,13 @@ class DeliveryMistake extends Model
     {
         return $this->belongsTo(DeliveryMistake::class);
     }
+
+    public function deliveryMistakeConfirmBy()
+    {
+        return $this->belongsToMany(User::class, 'delivery_mistake_confirmation', 'id_delivery_mistake', 'id_inventaris');
+    }
+
+    public function deliveryMistakeItem(){
+        return $this->belongsToMany(Item::class, 'delivery_mistakes_items', 'id_delivery_mistake','id_item');
+    }
 }
