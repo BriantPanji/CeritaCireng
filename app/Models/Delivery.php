@@ -11,25 +11,24 @@ class Delivery extends Model
         return $this->belongsTo(Outlet::class);
     }
 
-    public function inventoryBy()
+    public function inventaris()
     {
         return $this->belongsTo(User::class, 'id_inventaris');
     }
 
-    public function courierBy()
+    public function kurir()
     {
         return $this->belongsTo(User::class, 'id_kurir');
     }
 
-    public function confirmBy()
-    {
-        return $this->belongsToMany(User::class, 'delivery_confirmations', 'id_delivery', 'id_staff');
+    public function hasDeliveryConfirmation() {
+        return $this->hasOne(DeliveryConfirmation::class, 'id_delivery');
     }
 
     public function hasMistake()
     {
         return $this->hasOne(DeliveryMistake::class);
-    }
+    } 
 
     public function hasDeliveryItem(){
         return $this->belongsToMany(Item::class, 'delivery_items', 'id_delivery', 'id_item');

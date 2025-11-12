@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('return_confirmations', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('id_return')->references('id')->on('returns')->onDelete('cascade');
             $table->foreignId('id_inventaris')->references('id')->on('users');
             $table->string('notes', 1024)->nullable();

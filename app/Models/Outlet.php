@@ -6,13 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Outlet extends Model
 {
-    public function hasUser()
+    protected $fillable = [
+        'location',
+        'name',
+        'status',
+    ];
+
+    protected $table = 'outlets';
+
+    public function hasStaff()
     {
-        return $this->belongsToMany(User::class, 'staff_outlets', 'id_outlet', 'id_user');
+        return $this->hasMany(User::class, 'id_outlet', 'id');
     }
 
-    public function hasDelivery()
-    {
-        return $this->hasMany(Delivery::class);
+    public function hasItemSetting() {
+        return $this->belongsToMany(Item::class, 'outlet_item_settings', 'id_outlet', 'id_item');
     }
 }
