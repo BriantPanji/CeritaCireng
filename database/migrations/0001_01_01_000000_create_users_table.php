@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('username', 75)->unique();
             $table->string('phone', 15);
             $table->foreignId('role_id')->references('id')->on('roles');
+            $table->foreignId('outlet_id')->references('id')->on('outlets');
             $table->enum('status', ['AKTIF', 'NONAKTIF'])->default('AKTIF');
             $table->string('password');
             $table->rememberToken();

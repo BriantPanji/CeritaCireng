@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('delivery_mistake_confirmations', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('id_delivery_mistake')->references('id')->on('delivery_mistakes')->onDelete('cascade');
             $table->foreignId('id_inventaris')->references('id')->on('users');
             $table->dateTime('confirmed_at');

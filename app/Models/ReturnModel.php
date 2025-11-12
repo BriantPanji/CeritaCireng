@@ -8,15 +8,15 @@ class ReturnModel extends Model
 {
     protected $table = 'returns';
 
-    public function courierBy(){
+    public function deliverer(){
         return $this->belongsTo(User::class, 'id_deliverer');
     }
-    public function staffBy(){
+    public function staff(){
         return $this->belongsTo(User::class, 'id_staff');
     }
 
-    public function returnConfirmBy(){
-        return $this->belongsToMany(User::class, 'return_confirmation', 'id_return', 'id_inventaris');
+    public function returnConfirmations(){
+        return $this->hasMany(ReturnConfirmation::class, 'id_return');
     }
 
     public function returnItem(){
