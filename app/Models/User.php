@@ -98,12 +98,12 @@ class User extends Authenticatable
 
     public function hasOtherExpense()
     {
-        return $this->hasMany(OtherExpense::class);
+        return $this->hasMany(OtherExpense::class, 'id_staff');
     }
 
     public function deliveriesAsKurir()
     {
-        return $this->hasMany(Delivery::class, 'id_courier');
+        return $this->hasMany(Delivery::class, 'id_kurir');
     }
 
     public function deliveriesAsInventaris() {
@@ -112,17 +112,17 @@ class User extends Authenticatable
 
     public function hasDeliveryConfirmation()
     {
-        return $this->hasMany(DeliveryConfirmation::class);
+        return $this->hasMany(DeliveryConfirmation::class, 'id_staff');
     }
 
     public function hasDeliveryMistake()
     {
-        return $this->hasMany(DeliveryMistake::class);
+        return $this->hasMany(DeliveryMistake::class, 'id_staff');
     }
 
     public function hasDeliveryMistakeConfirmation()
     {
-        return $this->hasMany(DeliveryMistakeConfirmation::class);
+        return $this->hasMany(DeliveryMistakeConfirmation::class, 'id_staff');
     }
 
 
@@ -135,6 +135,6 @@ class User extends Authenticatable
 
     public function hasReturnConfirmation()
     {
-        return $this->hasMany(ReturnConfirmation::class);
+        return $this->hasMany(ReturnConfirmation::class, 'id_staff');
     }
 }
