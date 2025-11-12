@@ -103,7 +103,7 @@ class User extends Authenticatable
 
     public function deliveriesAsKurir()
     {
-        return $this->hasMany(Delivery::class, 'id_courier');
+        return $this->hasMany(Delivery::class, 'id_kurir');
     }
 
     public function deliveriesAsInventaris() {
