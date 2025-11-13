@@ -3,13 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\Delivery;
-use App\Models\Item;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DeliveryConfirmation>
  */
-class DeliveryItemFactory extends Factory
+class DeliveryConfirmationFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -20,8 +20,9 @@ class DeliveryItemFactory extends Factory
     {
         return [
             'id_delivery' => Delivery::inRandomOrder()->first()->id,
-            'id_item' => Item::inRandomOrder()->first()->id,
-            'quantity' => fake()->numberBetween(1, 50),
+            'id_staff' => User::inRandomOrder()->first()->id,
+            'notes' => fake()->optional(0.3)->sentence(),
+            'received_at' => fake()->dateTimeBetween('-1 week', 'now'),
         ];
     }
 }
