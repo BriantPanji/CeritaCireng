@@ -13,6 +13,7 @@ Route::get('/dashboard', function () {
 
 Route::get('/inventory-add-item', function () {
     return view('inventory-add-item');
+});
 Route::get('/inventory', function () {
     return view('inventory');
 });
