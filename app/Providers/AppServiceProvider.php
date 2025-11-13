@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
         View::share('sidebarMenus', [
             [
                 'name' => 'Dashboard',
-                'icon' => 'grip',
+                'icon' => 'list-dashes',
                 'route' => '/dashboard',
             ],
             [
@@ -38,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
             ],
             [
                 'name' => 'Penerimaan Barang',
-                'icon' => 'box-archive',
+                'icon' => 'archive-box',
                 'route' => '/penerimaan-barang',
             ],
             [
@@ -48,22 +48,22 @@ class AppServiceProvider extends ServiceProvider
             ],
             [
                 'name' => 'Manajemen User',
-                'icon' => 'users-gear',
+                'icon' => 'user-gear',
                 'route' => '/manajemen-user',
             ],
             [
                 'name' => 'Absensi',
-                'icon' => 'calendar-users',
+                'icon' => 'identification-badge',
                 'route' => '/absensi',
             ],
             [
                 'name' => 'Log Aktivitas',
-                'icon' => 'chart-line',
+                'icon' => 'note-pencil',
                 'route' => '/log-aktivitas',
             ],
             [
                 'name' => 'Keluar',
-                'icon' => 'arrow-right-from-bracket',
+                'icon' => 'sign-out',
                 'route' => '/logout',
             ],
         ]);
