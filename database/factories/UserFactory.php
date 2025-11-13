@@ -26,7 +26,7 @@ class UserFactory extends Factory
         return [
             'display_name' => fake()->name(),
             'username' => fake()->unique()->userName(),
-            'phone' => fake()->phoneNumber(),
+            'phone' => fake()->numerify('08##########'),
             'role_id' => \App\Models\Role::factory(),
             'outlet_id' => \App\Models\Outlet::factory(),
             'status' => 'AKTIF',
