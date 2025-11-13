@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('returns', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_staff')->references('id')->on('users');
-            $table->foreignId('id_deliverer')->references('id')->on('users');            
+            $table->foreignId('id_deliverer')->nullable()->references('id')->on('users');            
             $table->string('notes', 1024)->nullable();
             $table->dateTime('returned_at');
         });

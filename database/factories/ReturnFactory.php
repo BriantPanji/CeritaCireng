@@ -27,7 +27,7 @@ class ReturnFactory extends Factory
     {
         return [
             'id_staff' => User::factory(),
-            'id_deliverer' => fake()->optional(0.45)->passthrough(User::factory()),
+            'id_deliverer' => fake()->optional(0.1)->passthrough(User::factory()),
             'notes' => fake()->optional(0.3)->sentence(),
             'returned_at' => fake()->dateTimeBetween('-1 week', 'now'),
         ];
