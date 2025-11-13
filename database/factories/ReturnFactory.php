@@ -3,13 +3,21 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Models\ReturnModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ReturnModel>
  */
 class ReturnFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = ReturnModel::class;
+
     /**
      * Define the model's default state.
      *
