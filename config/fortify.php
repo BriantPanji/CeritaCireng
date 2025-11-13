@@ -45,9 +45,13 @@ return [
     |
     */
 
-    'username' => 'email',
+    // Use the 'username' column for authentication in this app.
+    'username' => 'username',
 
-    'email' => 'email',
+    // Fortify still refers to the contact/email field as 'email' in some
+    // features; set this to 'username' to align with the application's
+    // user table which uses a username column instead of email.
+    'email' => 'username',
 
     /*
     |--------------------------------------------------------------------------
@@ -144,16 +148,13 @@ return [
     */
 
     'features' => [
+        // All features disabled for internal use - accounts managed by admin only
         // Features::registration(),
         // Features::resetPasswords(),
         // Features::emailVerification(),
         // Features::updateProfileInformation(),
         // Features::updatePasswords(),
-        Features::twoFactorAuthentication([
-            'confirm' => true,
-            'confirmPassword' => true,
-            // 'window' => 0,
-        ]),
+        // Features::twoFactorAuthentication(),
     ],
 
 ];

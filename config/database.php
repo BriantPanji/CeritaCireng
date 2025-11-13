@@ -68,6 +68,7 @@ return [
             'database' => env('DB_DATABASE_DEV'),
             'username' => env('DB_USERNAME_DEV'),
             'password' => '',
+            'port' => env('DB_PORT_DEV'),
         ],
         
         'mysql_owner' => [
@@ -76,6 +77,16 @@ return [
             'database' => env('DB_DATABASE_OWNER'),
             'username' => env('DB_USERNAME_OWNER'),
             'password' => env('DB_PASSWORD_OWNER'),
+            'port' => env('DB_PORT_OWNER'),
+        ],
+
+        'mysql_admin' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_ADMIN'),
+            'database' => env('DB_DATABASE_ADMIN'),
+            'username' => env('DB_USERNAME_ADMIN'),
+            'password' => env('DB_PASSWORD_ADMIN'),
+            'port' => env('DB_PORT_ADMIN'),
         ],
 
         'mysql_inventaris' => [
@@ -84,6 +95,7 @@ return [
             'database' => env('DB_DATABASE_INVENTARIS'),
             'username' => env('DB_USERNAME_INVENTARIS'),
             'password' => env('DB_PASSWORD_INVENTARIS'),
+            'port' => env('DB_PORT_INVENTARIS'),
         ],
 
         'mysql_kurir' => [
@@ -92,6 +104,7 @@ return [
             'database' => env('DB_DATABASE_KURIR'),
             'username' => env('DB_USERNAME_KURIR'),
             'password' => env('DB_PASSWORD_KURIR'),
+            'port' => env('DB_PORT_KURIR'),
         ],
 
         'mysql_staff' => [
@@ -100,6 +113,16 @@ return [
             'database' => env('DB_DATABASE_STAFF'),
             'username' => env('DB_USERNAME_STAFF'),
             'password' => env('DB_PASSWORD_STAFF'),
+            'port' => env('DB_PORT_STAFF'),
+        ],
+
+        'mysql_guest' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_GUEST'),
+            'database' => env('DB_DATABASE_GUEST'),
+            'username' => env('DB_USERNAME_GUEST'),
+            'password' => env('DB_PASSWORD_GUEST'),
+            'port' => env('DB_PORT_GUEST'),
         ],
 
         'mariadb' => [

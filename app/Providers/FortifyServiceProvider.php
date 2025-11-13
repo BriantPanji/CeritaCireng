@@ -23,11 +23,15 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Fortify::twoFactorChallengeView(fn () => view('livewire.auth.two-factor-challenge'));
-        Fortify::confirmPasswordView(fn () => view('livewire.auth.confirm-password'));
+        // Use the Livewire login view so Fortify can resolve the LoginViewResponse contract.
+        Fortify::loginView(fn() => view('livewire.auth.login'));
 
-        RateLimiter::for('two-factor', function (Request $request) {
-            return Limit::perMinute(5)->by($request->session()->get('login.id'));
+        // Rate limiter for login attempts. Uses the configured Fortify username
+        // (eg. 'username') combined with the request IP to prevent brute-force attacks.
+        RateLimiter::for('login', function (Request $request) {
+            $key = (string) $request->input(Fortify::username()) ?: $request->ip();
+
+            return Limit::perMinute(5)->by($key . '|' . $request->ip());
         });
     }
 }
