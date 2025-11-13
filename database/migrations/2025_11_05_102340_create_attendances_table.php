@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_user')->references('id')->on('users');
             $table->date('attendance_date');
+            $table->time('attendance_time');
+            $table->enum('status', ['HADIR', 'IZIN', 'SAKIT', 'ABSEN']);
         });
     }
 

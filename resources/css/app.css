@@ -26,6 +26,9 @@
     --text-1: 0.8125rem;
     --text-2: 0.625rem;
 
+    /* Background */
+    --bg-white2: #F8F7F6;
+
     /* ---------- PRIMARY (Kuning ke Coklat) ---------- */
     --color-primary-50:  #FFE7CF;
     --color-primary: #FFB504; /* Primary */
@@ -64,6 +67,7 @@
     --color-neutral-400: #565452;
     --color-neutral-500: #353332;
     --color-neutral-600: #171615;
+    --color-neutral-25: #F8F7F6;
 
     /* Custom Shadow */
     --shadow-reguler: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
