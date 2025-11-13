@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DeliveryMistakeConfirmation extends Model
 {
+    use HasFactory;
+
     public $timestamps = false;
 
     protected $table = 'delivery_mistake_confirmations';

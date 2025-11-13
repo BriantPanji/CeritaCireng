@@ -27,6 +27,8 @@ class UserFactory extends Factory
             'display_name' => fake()->name(),
             'username' => fake()->unique()->userName(),
             'phone' => fake()->phoneNumber(),
+            'role_id' => \App\Models\Role::factory(),
+            'outlet_id' => \App\Models\Outlet::factory(),
             'status' => 'AKTIF',
             
             'password' => static::$password ??= Hash::make('password'),

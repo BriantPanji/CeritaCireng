@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ReturnConfirmation extends Model
 {
+    use HasFactory;
+
     public $timestamps = false;
 
     protected $table = 'return_confirmations';
@@ -14,6 +17,7 @@ class ReturnConfirmation extends Model
         'id_return',
         'id_inventaris',
         'notes',
+        'confirmed_at',
     ];
 
     public function inventaris()

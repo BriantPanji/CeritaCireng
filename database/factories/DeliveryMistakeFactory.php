@@ -19,8 +19,8 @@ class DeliveryMistakeFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_delivery' => Delivery::inRandomOrder()->first()->id,
-            'id_staff' => User::inRandomOrder()->first()->id,
+            'id_delivery' => Delivery::factory(),
+            'id_staff' => User::factory(),
             'photo_url' => fake()->imageUrl(),
             'notes' => fake()->optional(0.3)->sentence(),
             'reported_at' => fake()->dateTimeBetween('-1 week', 'now'),

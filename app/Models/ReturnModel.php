@@ -2,11 +2,23 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ReturnModel extends Model
 {
+    use HasFactory;
+
     protected $table = 'returns';
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'id_staff',
+        'id_deliverer',
+        'notes',
+        'returned_at',
+    ];
 
     public function deliverer(){
         return $this->belongsTo(User::class, 'id_deliverer');

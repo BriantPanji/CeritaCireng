@@ -5,21 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Attendance extends Model
+class Inventory extends Model
 {
     use HasFactory;
+
+    protected $table = 'inventory';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'id_user',
-        'status',
-        'attendance_date',
-        'attendance_time',
+        'id_item',
+        'stock',
     ];
 
-    public function user()
+    public function item()
     {
-        return $this->belongsTo(User::class, 'id_user');
+        return $this->belongsTo(Item::class, 'id_item');
     }
 }

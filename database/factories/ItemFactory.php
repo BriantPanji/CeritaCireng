@@ -17,10 +17,10 @@ class ItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word(),
+            'name' => fake()->unique()->words(2, true),
             'cost' => fake()->numberBetween(1000, 100000),
             'unit' => fake()->randomElement(['pcs', 'gr', 'ml', 'unit']),
-            'type' => fake()->randomElement(['BAHAN_BAKU', 'BARANG_PENUNJANG', 'KEMASAN'])
+            'type' => fake()->randomElement(['BAHAN_MENTAH', 'BAHAN_PENUNJANG', 'KEMASAN'])
         ];
     }
 }

@@ -2,10 +2,23 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DeliveryMistake extends Model
 {
+    use HasFactory;
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'id_delivery',
+        'id_staff',
+        'photo_url',
+        'notes',
+        'reported_at',
+    ];
+
     public function delivery()
     {
         return $this->belongsTo(Delivery::class);
