@@ -2,10 +2,25 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Delivery extends Model
 {
+    use HasFactory;
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'id_inventaris',
+        'id_kurir',
+        'id_outlet',
+        'status',
+        'photo_evidence',
+        'assigned_at',
+        'delivered_at',
+    ];
+
     public function outlet()
     {
         return $this->belongsTo(Outlet::class);

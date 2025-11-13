@@ -18,8 +18,8 @@ class AttendanceFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_user' => User::inRandomOrder()->first()->id,
-            'status' => fake()->randomElement(['HADIR', 'IZIN', 'SAKIT', 'ALPHA']),
+            'id_user' => User::factory(),
+            'status' => fake()->randomElement(['HADIR', 'IZIN', 'SAKIT', 'ABSEN']),
             'attendance_date' => fake()->date(),
             'attendance_time' => fake()->time()
         ];

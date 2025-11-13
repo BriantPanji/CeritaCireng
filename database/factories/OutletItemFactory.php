@@ -19,8 +19,8 @@ class OutletItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_outlet' => Outlet::inRandomOrder()->first()->id,
-            'id_item' => Item::inRandomOrder()->first()->id,
+            'id_outlet' => Outlet::factory(),
+            'id_item' => Item::factory(),
             'quantity' => fake()->numberBetween(1, 100),
         ];
     }

@@ -19,8 +19,8 @@ class ReturnItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_return' => ReturnModel::inRandomOrder()->first()->id,
-            'id_item' => Item::inRandomOrder()->first()->id,
+            'id_return' => ReturnModel::factory(),
+            'id_item' => Item::factory(),
             'quantity' => fake()->numberBetween(1, 50),
         ];
     }

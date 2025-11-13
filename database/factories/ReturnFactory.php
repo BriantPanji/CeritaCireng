@@ -3,13 +3,21 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Models\ReturnModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ReturnModel>
  */
 class ReturnFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = ReturnModel::class;
+
     /**
      * Define the model's default state.
      *
@@ -18,8 +26,8 @@ class ReturnFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_staff' => User::inRandomOrder()->first()->id,
-            'id_deliverer' => fake()->optional(0.45)->randomElement(User::pluck('id')->toArray()),
+            'id_staff' => User::factory(),
+            'id_deliverer' => fake()->optional(0.45)->passthrough(User::factory()),
             'notes' => fake()->optional(0.3)->sentence(),
             'returned_at' => fake()->dateTimeBetween('-1 week', 'now'),
         ];
