@@ -15,9 +15,22 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
+        
+        
+        $this->call(RoleSeeder::class);
+        $this->call(OutletSeeder::class);
+        User::create([
+            'display_name' => 'Super Admin',
+            'username' => 'superadmin',
+            'phone' => '081234567890',
+            'password' => bcrypt('pass#123'),
+            'role_id' => 1,
+            'outlet_id' => 1,
+            'status' => 'AKTIF',
         ]);
     }
 }

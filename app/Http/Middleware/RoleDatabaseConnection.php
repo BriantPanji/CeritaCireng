@@ -21,6 +21,7 @@ class RoleDatabaseConnection
             $role = Auth::user()->role;
             if ($role && $role->db_connection) {
                 Config::set('database.default', $role->db_connection);
+                // Config::set('database.connections.'.$role->db_connection, $role->db_config);
             }
         }
 

@@ -45,9 +45,13 @@ return [
     |
     */
 
-    'username' => 'email',
+    // Use the 'username' column for authentication in this app.
+    'username' => 'username',
 
-    'email' => 'email',
+    // Fortify still refers to the contact/email field as 'email' in some
+    // features; set this to 'username' to align with the application's
+    // user table which uses a username column instead of email.
+    'email' => 'username',
 
     /*
     |--------------------------------------------------------------------------
