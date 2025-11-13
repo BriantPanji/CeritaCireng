@@ -4,12 +4,9 @@ use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Laravel\Fortify\Features;
-use Laravel\Fortify\Fortify;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
@@ -33,17 +30,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
         $this->ensureIsNotRateLimited();
 
         $user = $this->validateCredentials();
-
-        if (Features::canManageTwoFactorAuthentication() && $user->hasEnabledTwoFactorAuthentication()) {
-            Session::put([
-                'login.id' => $user->getKey(),
-                'login.remember' => $this->remember,
-            ]);
-
-            $this->redirect(route('two-factor.login'), navigate: true);
-
-            return;
-        }
 
         Auth::login($user, $this->remember);
 
@@ -101,19 +87,72 @@ new #[Layout('components.layouts.auth')] class extends Component {
     }
 }; ?>
 
-<div class="flex flex-col gap-6">
-    @auth
-    anjing
-    @endauth
-    @guest
-    bangsat
-    @endguest
-    <form action="{{ route('login.store') }}" method="POST" class="flex flex-col gap-6">
-        @csrf
+<div class="flex flex-col items-center justify-center min-h-screen p-4">
+    {{-- Login Card --}}
+    <div class="w-full max-w-md">
+        {{-- Header --}}
+        <div class="bg-primary rounded-t-lg px-6 py-4 text-center">
+            <h1 class="text-l2 font-bold text-dark">Cerita Cireng</h1>
+            <p class="text-reguler text-dark mt-1">Sistem Internal Perusahaan</p>
+        </div>
 
-        <input name="{{ \Laravel\Fortify\Fortify::username() }}" type="text" required
-            autocomplete="{{ \Laravel\Fortify\Fortify::username() }}" placeholder="panji" />
-        <input name="password" type="password" required autocomplete="current-password" placeholder="Password" />
-        <button type="submit">Login</button>
-    </form>
+        {{-- Login Form --}}
+        <div class="bg-white shadow-reguler rounded-b-lg px-6 py-8">
+            <h2 class="text-l1 font-semibold text-dark mb-6 text-center">Login</h2>
+
+            <form wire:submit="login" class="flex flex-col gap-4">
+                {{-- Username Input --}}
+                <div>
+                    <label for="username" class="block text-reguler font-medium text-dark mb-2">Username</label>
+                    <input 
+                        wire:model="username"
+                        type="text" 
+                        id="username"
+                        class="w-full px-4 py-3 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary transition-colors text-reguler"
+                        placeholder="Masukkan username"
+                        required
+                        autofocus
+                    />
+                    @error('username')
+                        <p class="text-secondary text-1 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Password Input --}}
+                <div>
+                    <label for="password" class="block text-reguler font-medium text-dark mb-2">Password</label>
+                    <input 
+                        wire:model="password"
+                        type="password" 
+                        id="password"
+                        class="w-full px-4 py-3 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary transition-colors text-reguler"
+                        placeholder="Masukkan password"
+                        required
+                    />
+                    @error('password')
+                        <p class="text-secondary text-1 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Remember Me --}}
+                <div class="flex items-center">
+                    <input 
+                        wire:model="remember"
+                        type="checkbox" 
+                        id="remember"
+                        class="w-4 h-4 text-primary border-neutral-200 rounded focus:ring-primary"
+                    />
+                    <label for="remember" class="ml-2 text-1 text-neutral-400">Ingat saya</label>
+                </div>
+
+                {{-- Submit Button --}}
+                <button 
+                    type="submit"
+                    class="w-full bg-primary text-white py-3 rounded-lg font-semibold text-reguler hover:bg-primary-200 transition-colors mt-2"
+                >
+                    Login
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
