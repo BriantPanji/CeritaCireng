@@ -34,7 +34,7 @@
                             <div class="h-full absolute left-0 bg-neutral-50/80 w-[3px] top-0"></div>
                         @endif
 
-                        <i class="fa-light fa-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
+                        <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
 
                         <p class="text-1 w-full text-right font-medium ml-[12px]">{{ $menu['name'] }}</p>
                     </a>

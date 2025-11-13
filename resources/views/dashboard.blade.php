@@ -17,6 +17,7 @@
                     <i class="fa-light fa-box text-l1 bg-primary-50 rounded-full  w-14 h-14 text-center  p-4"></i>
                     <div>
                         <h2 class="text-reguler font-medium">Stok Gudang</h2>
+                        <i class="ph ph-warehouse"></i>
                         <p class="text-h3 font-semibold">11.500</p>
                     </div>
                 </div>
