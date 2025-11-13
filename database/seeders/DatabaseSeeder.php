@@ -20,7 +20,6 @@ class DatabaseSeeder extends Seeder
         $this->call(OutletItemSettingSeeder::class);
         $this->call(ProductSeeder::class);
         $this->call(ProductItemSeeder::class);
-        $this->call(InventorySeeder::class);
         $this->call(DeliverySeeder::class);
         $this->call(DeliveryItemSeeder::class);
         $this->call(DeliveryConfirmationSeeder::class);
