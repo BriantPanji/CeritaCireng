@@ -18,7 +18,7 @@ class ReturnEvidenceFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_return' => ReturnModel::inRandomOrder()->first()->id,
+            'id_return' => ReturnModel::inRandomOrder()->first()->id ?? ReturnModel::factory()->create()->id,
             'url' => fake()->imageUrl(),
         ];
     }

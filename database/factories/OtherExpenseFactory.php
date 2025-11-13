@@ -18,7 +18,7 @@ class OtherExpenseFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_staff' => User::inRandomOrder()->first()->id,
+            'id_staff' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
             'category' => fake()->randomElement(['GAS', 'GALON', 'LAINNYA']),
             'description' => fake()->sentence(),
             'cost' => fake()->numberBetween(10000, 500000),

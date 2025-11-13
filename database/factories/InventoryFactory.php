@@ -18,7 +18,7 @@ class InventoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_item' => Item::inRandomOrder()->first()->id,
+            'id_item' => Item::inRandomOrder()->first()->id ?? Item::factory()->create()->id,
             'stock' => fake()->numberBetween(0, 500)
         ];
     }

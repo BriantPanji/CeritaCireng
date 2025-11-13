@@ -23,17 +23,18 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $roles = \App\Models\Role::pluck('id')->toArray();
+        $outlets = \App\Models\Outlet::pluck('id')->toArray();
+
         return [
             'display_name' => fake()->name(),
             'username' => fake()->unique()->userName(),
             'phone' => fake()->phoneNumber(),
+            'role_id' => !empty($roles) ? fake()->randomElement($roles) : \App\Models\Role::factory(),
+            'outlet_id' => !empty($outlets) ? fake()->randomElement($outlets) : \App\Models\Outlet::factory(),
             'status' => 'AKTIF',
-            
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'two_factor_secret' => Str::random(10),
-            'two_factor_recovery_codes' => Str::random(10),
-            'two_factor_confirmed_at' => now(),
         ];
     }
 

@@ -13,24 +13,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-        
-        
         $this->call(RoleSeeder::class);
         $this->call(OutletSeeder::class);
-        User::create([
-            'display_name' => 'Super Admin',
-            'username' => 'superadmin',
-            'phone' => '081234567890',
-            'password' => bcrypt('pass#123'),
-            'role_id' => 1,
-            'outlet_id' => 1,
-            'status' => 'AKTIF',
-        ]);
+        $this->call(UserSeeder::class);
+        $this->call(ItemSeeder::class);
+        $this->call(OutletItemSettingSeeder::class);
+        $this->call(ProductSeeder::class);
+        $this->call(ProductItemSeeder::class);
+        $this->call(InventorySeeder::class);
+        $this->call(DeliverySeeder::class);
+        $this->call(DeliveryItemSeeder::class);
+        $this->call(DeliveryConfirmationSeeder::class);
+        $this->call(DeliveryMistakeSeeder::class);
+        $this->call(DeliveryMistakeItemSeeder::class);
+        $this->call(DeliveryMistakeConfirmationSeeder::class);
+        $this->call(ReturnSeeder::class);
+        $this->call(ReturnItemSeeder::class);
+        $this->call(ReturnEvidenceSeeder::class);
+        $this->call(ReturnConfirmationSeeder::class);
+        $this->call(OtherExpenseSeeder::class);
+        $this->call(AttendanceSeeder::class);
     }
 }

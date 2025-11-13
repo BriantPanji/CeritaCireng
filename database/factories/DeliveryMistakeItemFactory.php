@@ -19,8 +19,8 @@ class DeliveryMistakeItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_delivery_mistake' => DeliveryMistake::inRandomOrder()->first()->id,
-            'id_item' => Item::inRandomOrder()->first()->id,
+            'id_delivery_mistake' => DeliveryMistake::inRandomOrder()->first()->id ?? DeliveryMistake::factory()->create()->id,
+            'id_item' => Item::inRandomOrder()->first()->id ?? Item::factory()->create()->id,
             'quantity' => fake()->numberBetween(1, 50),
         ];
     }
