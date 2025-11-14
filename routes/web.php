@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,6 +18,12 @@ Route::get('/inventory-add-item', function () {
 Route::get('/inventory', function () {
     return view('inventory');
 });
+
+Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.management');
+
+Route::delete('/users/delete-selected', 
+    [UserManagementController::class, 'destroy']
+)->name('users.destroy');
 
 
 
