@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('cost')->min(0);
             $table->enum('unit', ['pcs', 'gr', 'ml', 'unit']);
             $table->enum('type', ['BAHAN_MENTAH', 'BAHAN_PENUNJANG', 'KEMASAN']);
+            $table->string('image', 512)->nullable()->default('https://placehold.co/600x400.webp?text=Foto+Item');
             $table->timestamps();
         });
     }
