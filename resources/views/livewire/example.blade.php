@@ -1,9 +1,10 @@
 <?php
 
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
 
-new #[Layout('components.layouts.app')] class extends Component {
+new #[Layout('components.layouts.app'), Title('Contoh Halaman')] class extends Component {
     public string $message = 'Selamat datang di Cerita Cireng!';
 
     public function updateMessage(): void
@@ -35,14 +36,15 @@ new #[Layout('components.layouts.app')] class extends Component {
             <h3 class="text-reguler font-semibold text-dark mb-3">Cara Menggunakan Layout:</h3>
             
             <div class="space-y-2 text-1 text-dark">
-                <p><strong>1. Untuk Volt Component:</strong></p>
+                <p><strong>1. Untuk Volt Component (dengan custom title):</strong></p>
                 <pre class="bg-white p-3 rounded border border-neutral-100 overflow-x-auto"><code>use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
-new #[Layout('components.layouts.app')] class extends Component {
+new #[Layout('components.layouts.app'), Title('Judul Halaman Saya')] class extends Component {
     // Component logic here
 };</code></pre>
 
-                <p class="mt-4"><strong>2. Untuk Blade Views:</strong></p>
+                <p class="mt-4"><strong>2. Untuk Blade Views (dengan custom title):</strong></p>
                 <pre class="bg-white p-3 rounded border border-neutral-100 overflow-x-auto"><code>&lt;x-layouts.app title="Judul Halaman"&gt;
     &lt;!-- Konten halaman di sini --&gt;
 &lt;/x-layouts.app&gt;</code></pre>

@@ -34,6 +34,28 @@ new #[Layout('components.layouts.app')] class extends Component {
 </div>
 ```
 
+**Mengatur Title Halaman:**
+
+Untuk mengatur title halaman yang berbeda-beda di setiap Volt component, gunakan attribute `#[Title()]`:
+
+```php
+<?php
+
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Volt\Component;
+
+new #[Layout('components.layouts.app'), Title('Dashboard - Cerita Cireng')] class extends Component {
+    // Component logic
+};
+?>
+```
+
+**Catatan:**
+- Attribute `#[Title()]` akan mengatur judul yang muncul di browser tab
+- Anda bisa menggunakan multiple attributes dengan memisahkan menggunakan koma
+- Title akan otomatis ditampilkan di tag `<title>` pada layout
+
 ### 2. Menggunakan Layout dengan Blade Views
 
 Untuk menggunakan layout dalam Blade view biasa, gunakan syntax komponen Blade `<x-layouts.*>`:
@@ -88,15 +110,97 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
 ### Contoh 1: Halaman Dashboard dengan Volt
 
-File: `resources/views/pages/dashboard.blade.php`
+File: `resources/views/livewire/dashboard.blade.php`
 
 ```php
 <?php
 
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Volt\Component;
+use App\Models\User;
+
+new #[Layout('components.layouts.app'), Title('Dashboard - Cerita Cireng')] class extends Component {
+    public int $totalUsers = 0;
+    
+    public function mount(): void
+    {
+        $this->totalUsers = User::count();
+    }
+};
+```
+
+## Mengatur Title Halaman
+
+### Untuk Volt Components
+
+Gunakan attribute `#[Title()]` untuk mengatur judul halaman yang berbeda-beda:
+
+```php
+<?php
+
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
 
-new #[Layout('components.layouts.app')] class extends Component {
+// Halaman Dashboard
+new #[Layout('components.layouts.app'), Title('Dashboard - Cerita Cireng')] class extends Component {
+    // ...
+};
+
+// Halaman Inventory
+new #[Layout('components.layouts.app'), Title('Inventory - Cerita Cireng')] class extends Component {
+    // ...
+};
+
+// Halaman Laporan
+new #[Layout('components.layouts.app'), Title('Laporan - Cerita Cireng')] class extends Component {
+    // ...
+};
+?>
+```
+
+### Untuk Blade Views
+
+Pass attribute `title` ke component layout:
+
+```blade
+{{-- Dashboard --}}
+<x-layouts.app title="Dashboard - Cerita Cireng">
+    <!-- Konten -->
+</x-layouts.app>
+
+{{-- Inventory --}}
+<x-layouts.app title="Inventory - Cerita Cireng">
+    <!-- Konten -->
+</x-layouts.app>
+
+{{-- Laporan --}}
+<x-layouts.app title="Laporan - Cerita Cireng">
+    <!-- Konten -->
+</x-layouts.app>
+```
+
+**Tips:**
+- Gunakan format yang konsisten, misalnya: "Nama Halaman - Cerita Cireng"
+- Title akan muncul di tab browser dan bookmarks
+- Jika tidak diset, akan menggunakan default "Cerita Cireng"
+
+## Contoh Implementasi
+
+### Contoh 1: Halaman Dashboard dengan Volt
+
+File: `resources/views/livewire/dashboard.blade.php`
+
+```php
+<?php
+
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Volt\Component;
+use App\Models\User;
+
+new #[Layout('components.layouts.app'), Title('Dashboard - Cerita Cireng')] class extends Component {
     public int $totalUsers = 0;
     
     public function mount(): void
@@ -133,9 +237,10 @@ File: `resources/views/livewire/auth/login.blade.php`
 <?php
 
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
 
-new #[Layout('components.layouts.auth')] class extends Component {
+new #[Layout('components.layouts.auth'), Title('Login - Cerita Cireng')] class extends Component {
     public string $username = '';
     public string $password = '';
     
