@@ -56,7 +56,107 @@ new #[Layout('components.layouts.app'), Title('Dashboard - Cerita Cireng')] clas
 - Anda bisa menggunakan multiple attributes dengan memisahkan menggunakan koma
 - Title akan otomatis ditampilkan di tag `<title>` pada layout
 
-### 2. Menggunakan Layout dengan Blade Views
+### 2. Menggunakan Layout dengan Livewire Component (Class-based)
+
+Untuk menggunakan layout dengan Livewire component biasa (bukan Volt), ada beberapa cara:
+
+#### a. Menggunakan Property `$layout`
+
+Di dalam class Livewire component Anda:
+
+```php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class Dashboard extends Component
+{
+    protected $layout = 'components.layouts.app';
+    
+    public int $totalUsers = 0;
+    
+    public function mount()
+    {
+        $this->totalUsers = User::count();
+    }
+    
+    public function render()
+    {
+        return view('livewire.dashboard');
+    }
+}
+```
+
+#### b. Menggunakan Method `render()` dengan `->layout()`
+
+```php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class Inventory extends Component
+{
+    public function render()
+    {
+        return view('livewire.inventory')
+            ->layout('components.layouts.app');
+    }
+}
+```
+
+#### c. Mengatur Title dengan `->title()`
+
+```php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class Reports extends Component
+{
+    public function render()
+    {
+        return view('livewire.reports')
+            ->layout('components.layouts.app')
+            ->title('Laporan - Cerita Cireng');
+    }
+}
+```
+
+#### d. Passing Data ke Layout
+
+```php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class Settings extends Component
+{
+    public function render()
+    {
+        return view('livewire.settings')
+            ->layout('components.layouts.app', [
+                'title' => 'Pengaturan - Cerita Cireng'
+            ]);
+    }
+}
+```
+
+**Catatan untuk Livewire Class Components:**
+- File view component terpisah dari class (di `resources/views/livewire/`)
+- Gunakan property `$layout` untuk set layout default
+- Method `->layout()` di `render()` lebih fleksibel
+- Method `->title()` untuk set page title
+- Bisa pass data ke layout dengan array di parameter kedua `->layout()`
+
+### 3. Menggunakan Layout dengan Blade Views
 
 Untuk menggunakan layout dalam Blade view biasa, gunakan syntax komponen Blade `<x-layouts.*>`:
 
@@ -160,6 +260,51 @@ new #[Layout('components.layouts.app'), Title('Laporan - Cerita Cireng')] class 
 ?>
 ```
 
+### Untuk Livewire Class Components
+
+Gunakan method `->title()` di dalam `render()`:
+
+```php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+
+// Dashboard Component
+class Dashboard extends Component
+{
+    public function render()
+    {
+        return view('livewire.dashboard')
+            ->layout('components.layouts.app')
+            ->title('Dashboard - Cerita Cireng');
+    }
+}
+
+// Inventory Component
+class Inventory extends Component
+{
+    public function render()
+    {
+        return view('livewire.inventory')
+            ->layout('components.layouts.app')
+            ->title('Inventory - Cerita Cireng');
+    }
+}
+
+// Laporan Component
+class Reports extends Component
+{
+    public function render()
+    {
+        return view('livewire.reports')
+            ->layout('components.layouts.app')
+            ->title('Laporan - Cerita Cireng');
+    }
+}
+```
+
 ### Untuk Blade Views
 
 Pass attribute `title` ke component layout:
@@ -229,7 +374,76 @@ File: `resources/views/inventory.blade.php`
 </x-layouts.app>
 ```
 
-### Contoh 3: Halaman Login dengan Volt
+### Contoh 3: Halaman dengan Livewire Class Component
+
+**File Class:** `app/Livewire/ProductList.php`
+
+```php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+use App\Models\Product;
+
+class ProductList extends Component
+{
+    public $search = '';
+    public $products = [];
+    
+    public function mount()
+    {
+        $this->loadProducts();
+    }
+    
+    public function loadProducts()
+    {
+        $this->products = Product::where('name', 'like', '%' . $this->search . '%')
+            ->get();
+    }
+    
+    public function render()
+    {
+        return view('livewire.product-list')
+            ->layout('components.layouts.app')
+            ->title('Daftar Produk - Cerita Cireng');
+    }
+}
+```
+
+**File View:** `resources/views/livewire/product-list.blade.php`
+
+```blade
+<div class="p-4">
+    <h1 class="text-h2 font-bold mb-4">Daftar Produk</h1>
+    
+    <input 
+        type="text" 
+        wire:model.live="search" 
+        placeholder="Cari produk..."
+        class="border px-4 py-2 rounded"
+    />
+    
+    <div class="mt-4">
+        @foreach($products as $product)
+            <div class="border p-3 mb-2">
+                <h3>{{ $product->name }}</h3>
+                <p>{{ $product->description }}</p>
+            </div>
+        @endforeach
+    </div>
+</div>
+```
+
+**Route:** `routes/web.php`
+
+```php
+use App\Livewire\ProductList;
+
+Route::get('/products', ProductList::class)->name('products');
+```
+
+### Contoh 4: Halaman Login dengan Volt
 
 File: `resources/views/livewire/auth/login.blade.php`
 

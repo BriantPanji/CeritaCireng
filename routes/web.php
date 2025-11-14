@@ -23,6 +23,10 @@ Route::get('/inventory', function () {
 Volt::route('/example', 'example')
     ->name('example');
 
+// Example Livewire class component route
+Route::get('/example-component', App\Livewire\ExampleComponent::class)
+    ->name('example-component');
+
 
 
 // Route::view('dashboard', 'dashboard')
