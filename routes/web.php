@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
+use App\Livewire\ExampleComponent;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -24,7 +25,7 @@ Volt::route('/example', 'example')
     ->name('example');
 
 // Example Livewire class component route
-Route::get('/example-component', App\Livewire\ExampleComponent::class)
+Route::get('/example-component', ExampleComponent::class)
     ->name('example-component');
 
 
