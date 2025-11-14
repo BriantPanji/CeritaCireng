@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Livewire\Volt\Volt;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -17,6 +18,10 @@ Route::get('/inventory-add-item', function () {
 Route::get('/inventory', function () {
     return view('inventory');
 });
+
+// Example Volt component route
+Volt::route('/example', 'example')
+    ->name('example');
 
 
 
