@@ -10,6 +10,9 @@ class Inventory extends Model
     use HasFactory;
 
     protected $table = 'inventory';
+        protected $primaryKey = 'id_item';
+        public $incrementing = false;
+
 
     public $timestamps = false;
 

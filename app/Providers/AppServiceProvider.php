@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -67,5 +68,9 @@ class AppServiceProvider extends ServiceProvider
                 'route' => '/logout',
             ],
         ]);
+
+        Blade::directive('convertRupiah', function ($money) {
+            return "<?php echo 'Rp' . number_format($money, 0, ',', '.'); ?>";
+        });
     }
 }

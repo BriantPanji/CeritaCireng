@@ -1,5 +1,5 @@
 <x-layouts.app title="Dashboard">
-    <div class="p-3">
+    {{-- <div class="p-3"> --}}
 
         {{-- Presensi --}}
         <div class="shadow-reguler px-2 py-3 rounded-md">
@@ -108,7 +108,7 @@
             </canvas>
         </div>
         {{-- End of Grafik --}}
-    </div>
+    {{-- </div> --}}
 </x-layouts.app>
 
 {{-- <script>

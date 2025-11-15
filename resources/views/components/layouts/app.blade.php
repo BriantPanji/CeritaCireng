@@ -17,6 +17,9 @@
     {{-- Tailwind CSS --}}
     @vite('resources/css/app.css')
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5.0.27/dark.min.css">
+
     {{-- Font Awesome --}}
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
 
@@ -33,15 +36,20 @@
     />
 
     {{-- Alpine JS --}}
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {{-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
 
     {{-- Chart JS --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @livewireStyles
 </head>
 
 <body class="text-dark">
     <x-layouts.app.header />
-    {{ $slot }}
+    <main class="p-4 bg-neutral-25 xs:px-8 sm:px-20 md:px-32 lg:px-40 xl:px-48 2xl:px-64 min-h-screen">
+      {{ $slot }}
+    </main>
+    @livewireScripts
+    {{-- <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script> --}}
 </body>
 
 </html>

@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Item extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -34,5 +36,10 @@ class Item extends Model
 
     public function outletSetting(){
         return $this->belongsToMany(Outlet::class, 'outlet_item_settings', 'id_item', 'id_outlet');
+    }
+
+    public function stock()
+    {
+        return $this->hasOne(Inventory::class, 'id_item');
     }
 }

@@ -16,9 +16,9 @@ Route::get('/dashboard', function () {
 Route::get('/inventory-add-item', function () {
     return view('inventory-add-item');
 });
-Route::get('/inventory', function () {
-    return view('inventory');
-});
+// Route::get('/inventory', function () {
+//     return view('inventory');
+// });
 
 // Example Volt component route
 Volt::route('/example', 'example')
@@ -28,7 +28,8 @@ Volt::route('/example', 'example')
 Route::get('/example-component', ExampleComponent::class)
     ->name('example-component');
 
-
+Volt::route('/inventory', 'inventory')
+    ->name('inventory');
 
 // Route::view('dashboard', 'dashboard')
 //     ->middleware(['auth', 'verified'])
