@@ -4,11 +4,14 @@ namespace App\Livewire;
 
 use App\Models\Item;    
 use Livewire\Component;
-
+use Livewire\WithFileUploads;
 
 class InventoryAddItem extends Component
 {
+    use WithFileUploads;
+
     public $showTypeDropdown = false;
+    public $image;
     public $name;
     public $cost;
     public $unit;
@@ -19,36 +22,58 @@ class InventoryAddItem extends Component
         'cost' => 'required|integer|min:0',
         'unit' => 'required|in:pcs,gr,ml,unit',
         'type' => 'required|in:BAHAN_MENTAH,BAHAN_PENUNJANG,KEMASAN',
+        'image' => 'nullable|image|max:10240', 
     ];
+
+    protected $messages = [
+        'name.required' => 'Nama item wajib diisi.',
+        'name.min' => 'Nama item minimal terdiri dari 3 karakter.',
+        'name.unique' => 'Nama item sudah digunakan.',
+        'cost.required' => 'Harga item wajib diisi.',
+        'cost.integer' => 'Harga item harus berupa angka.',
+        'cost.min' => 'Harga item tidak boleh negatif.',
+        'unit.required' => 'Satuan item wajib diisi.',
+        'unit.in' => 'Satuan item tidak valid.',
+        'type.required' => 'Tipe item wajib diisi.',
+        'type.in' => 'Tipe item tidak valid.',
+        'image.image' => 'File harus berupa gambar.',
+        'image.max' => 'Ukuran gambar maksimal 2MB.',
+    ];
+
+    public function updatedImage()
+    {
+        dd(this->image);
+        $this->validate([
+            'image' => 'image|max:2048',
+        ]);
+    }
 
     public function save()
     {
-        $this->validate($this->rules, [
-            'name.required' => 'Nama item wajib diisi.',
-            'name.min' => 'Nama item minimal terdiri dari 3 karakter.',
-            'name.unique' => 'Nama item sudah digunakan.',
-            'cost.required' => 'Harga item wajib diisi.',
-            'cost.integer' => 'Harga item harus berupa angka.',
-            'cost.min' => 'Harga item tidak boleh negatif.',
-            'unit.required' => 'Satuan item wajib diisi.',
-            'unit.in' => 'Satuan item tidak valid.',
-            'type.required' => 'Tipe item wajib diisi.',
-            'type.in' => 'Tipe item tidak valid.',
-        ]);
+        $this->validate();
 
-        Item::create([
-            'name' => $this->name,
-            'cost' => $this->cost,
-            'unit' => $this->unit,
-            'type' => $this->type,
+        try {
+            $imageName = 'default.png';
             
-        ]);
+            if ($this->image) {
+                $imageName = $this->image->store('items', 'public');
+            }
 
-    $this->dispatch('saved');
-    
-    $this->reset(['name', 'cost', 'unit', 'type']);
+            Item::create([
+                'name' => $this->name,
+                'cost' => $this->cost,
+                'unit' => $this->unit,
+                'type' => $this->type,
+                'image' => $imageName,
+            ]);
 
-    return redirect('/inventory')->with('message', 'Item berhasil ditambahkan!');
+            session()->flash('message', 'Item berhasil ditambahkan!');
+            
+            return redirect('/inventory');
+            
+        } catch (\Exception $e) {
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     public function render()
