@@ -3,6 +3,7 @@
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
+use App\Http\Controllers\AttendanceController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -11,6 +12,12 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
+
+
+Route::get('/absensi', [AttendanceController::class, 'index'])
+->name('absensi.index');
+
+
 
 Route::get('/inventory-add-item', function () {
     return view('inventory-add-item');
