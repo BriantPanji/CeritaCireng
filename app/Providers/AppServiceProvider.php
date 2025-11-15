@@ -70,7 +70,7 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         Blade::directive('convertRupiah', function ($money) {
-            return "<?php echo 'Rp' . number_format($money, 0, ',', '.'); ?>";
+            return "<?php echo 'Rp' . number_format({$money}, 0, ',', '.'); ?>";
         });
     }
 }

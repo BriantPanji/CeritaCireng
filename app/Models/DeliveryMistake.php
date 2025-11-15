@@ -28,11 +28,13 @@ class DeliveryMistake extends Model
         return $this->belongsTo(User::class, 'id_staff');
     }
 
-    public function deliveryMistakeItem(){
-        return $this->belongsToMany(Item::class, 'delivery_mistake_items', 'id_delivery_mistake','id_item');
+    public function items()
+    {
+        return $this->belongsToMany(Item::class, 'delivery_mistake_items', 'id_delivery_mistake', 'id_item');
     }
 
-    public function deliveryMistakeConfirmation() {
+    public function confirmation()
+    {
         return $this->hasOne(DeliveryMistakeConfirmation::class, 'id_delivery_mistake');
     }
 }

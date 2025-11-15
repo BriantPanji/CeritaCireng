@@ -24,7 +24,7 @@ class DeliveryMistakeConfirmation extends Model
         return $this->belongsTo(User::class, 'id_inventaris');
     }
 
-    public function deliveryMistake()
+    public function mistake()
     {
         return $this->belongsTo(DeliveryMistake::class, 'id_delivery_mistake');
     }

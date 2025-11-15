@@ -35,36 +35,37 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
     {
         $this->itemDetailById = Item::with('stock')->find($id);
         $this->showModal = true;
-        $this->js("document.body.style.overflow = 'hidden'");
+        $this->dispatch('modal-opened');
     }
 
     public function closeModal()
     {
         $this->showModal = false;
+        $this->showModalDelete = false;
         $this->itemDetailById = null;
-        $this->js("document.body.style.overflow = 'auto'");
+        $this->dispatch('modal-closed');
     }
 
     public function deleteItem($id)
     {
-        $item = Item::find($id);
-        if ($item) {
-            $item->delete();
-        }
+        Item::destroy($id);
         $this->showModalDelete = false;
         $this->showModalDeleteDone = true;
-        $this->closeModal();
-        $this->js("document.body.style.overflow = 'hidden'");
+        $this->itemDetailById = null;
+        $this->showModal = false;
     }
 
     public function closeModalDeleteDone()
     {
         $this->showModalDeleteDone = false;
-        $this->js("document.body.style.overflow = 'auto'");
+        $this->dispatch('modal-closed');
     }
 }; ?>
 
-<div class="min-w-full max-w-full">
+<div class="min-w-full max-w-full" 
+    x-data 
+    @modal-opened.window="document.body.style.overflow = 'hidden'"
+    @modal-closed.window="document.body.style.overflow = 'auto'">
     <section class="min-w-full max-w-full h-fit mb-4">
         <div x-data="{xShow: false}" class="min-w-full max-w-full max-h-full group relative">
             <span onclick="document.getElementById('cari').focus()"
