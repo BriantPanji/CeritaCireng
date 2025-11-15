@@ -15,6 +15,11 @@ class RoleSeeder extends Seeder
     {
         $listRoles = [
             [
+                'name' => 'dev',
+                'display_name' => 'Developer',
+                'db_connection' => 'mysql_dev'
+            ],
+            [
                 'name' => 'admin',
                 'display_name' => 'Administrator',
                 'db_connection' => 'mysql_admin'

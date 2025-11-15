@@ -71,6 +71,8 @@
 
     /* Custom Shadow */
     --shadow-reguler: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+    --breakpoint-xs: 30rem;
 }
 
 @layer theme {
@@ -90,6 +92,10 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
     }
+}
+
+.modal-open {
+    overflow: hidden;
 }
 
 [data-flux-field]:not(ui-radio, ui-checkbox) {
@@ -113,3 +119,35 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    @apply w-2;
+}
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-primary rounded;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/80;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+    @apply bg-primary/60;
+}

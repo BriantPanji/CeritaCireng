@@ -1,9 +1,9 @@
 <div x-data="{ showSideBar: false }">
     {{-- Header --}}
-    <div class="bg-primary h-[56px] flex w-full justify-between items-center p-4 fixed">
-        <i class="fa-light fa-bars text-3xl" x-on:click="showSideBar = !showSideBar"></i>
+    <div class="bg-primary h-[56px] flex w-full justify-between items-center p-4">
+        <i class="ph ph-list text-3xl" x-on:click="showSideBar = !showSideBar"></i>
         <h1 class="text-l2 font-bold">Cerita Cireng</h1>
-        <i class="fa-light fa-bell text-3xl"></i>
+        <i class="ph ph-bell text-3xl"></i>
     </div>
     {{-- End of header --}}
 
