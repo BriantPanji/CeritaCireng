@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
+use Livewire\Volt\Volt;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -10,7 +11,6 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
-
 
 Route::get('/inventory-add-item', function () {
     return view('inventory-add-item');
@@ -34,19 +34,7 @@ Route::delete('/users/delete-selected',
 // Route::middleware(['auth'])->group(function () {
 //     Route::redirect('settings', 'settings/profile');
 
-//     Volt::route('settings/profile', 'settings.profile')->name('profile.edit');
-//     Volt::route('settings/password', 'settings.password')->name('password.edit');
-//     Volt::route('settings/appearance', 'settings.appearance')->name('appearance.edit');
+Volt::route('/inventory', 'inventory')
+    ->name('inventory');
 
-//     Volt::route('settings/two-factor', 'settings.two-factor')
-//         ->middleware(
-//             when(
-//                 Features::canManageTwoFactorAuthentication()
-//                     && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
-//                 ['password.confirm'],
-//                 [],
-//             ),
-//         )
-//         ->name('two-factor.show');
-// });
 require __DIR__ . '/auth.php';
