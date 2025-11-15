@@ -1,6 +1,6 @@
 <div x-data="{ showSideBar: false }">
     {{-- Header --}}
-    <div class="bg-primary h-[56px] flex w-full justify-between items-center p-4">
+    <div class="bg-primary h-[56px] flex w-full justify-between items-center p-4 fixed">
         <i class="fa-light fa-bars text-3xl" x-on:click="showSideBar = !showSideBar"></i>
         <h1 class="text-l2 font-bold">Cerita Cireng</h1>
         <i class="fa-light fa-bell text-3xl"></i>

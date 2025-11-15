@@ -10,6 +10,11 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
+use App\Http\Controllers\AttendanceController;
+Route::get('/absensi', [AttendanceController::class, 'index'])
+->name('absensi.index');
+
+
 
 Route::get('/inventory-add-item', function () {
     return view('inventory-add-item');
