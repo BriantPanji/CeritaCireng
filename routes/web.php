@@ -12,9 +12,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 
-Route::get('/inventory-add-item', function () {
-    return view('inventory-add-item');
-});
+Route::get('/inventory-add-item', App\Livewire\InventoryAddItem::class)
+    ->name('inventory-add-item');
+
 Route::get('/inventory', function () {
     return view('inventory');
 });
