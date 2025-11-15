@@ -50,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
             [
                 'name' => 'Manajemen User',
                 'icon' => 'user-gear',
-                'route' => '/manajemen-user',
+                'route' => '/user-management',
             ],
             [
                 'name' => 'Absensi',
