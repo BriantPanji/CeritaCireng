@@ -94,7 +94,7 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
                     <h3 class="text-lg xs:text-base font w-fit max-w-full truncate cursor-pointer" wire:click="showDetail({{ $item->id }})">{{ \Str::title($item->name) }}</h3>
                     <span class="text-sm min-w-full max-w-full flex items-center justify-between">
                         <span class="font-light xs:text-xs text-neutral-400">Jumlah: {{ $item->stock->stock }}
-                            {{ \Str::title($item->unit) }}</span>
+                            {{ ($item->unit) }}</span>
                         <button type="button" wire:click="showDetail({{ $item->id }})"
                             class="text-primary/80 select-none text-[.8rem] cursor-pointer hover:underline">Detail</button>
                     </span>
@@ -158,13 +158,13 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
                                     <td class="py-2 lg:py-1.5 text-gray-600 w-[40%]">Stok</td>
                                     <td class="py-2 lg:py-1.5 w-[1%]">:</td>
                                     <td class="py-2 lg:py-1.5 font-medium text-right w-[59%]">{{ $itemDetailById->stock->stock }}
-                                        {{ \Str::title($itemDetailById->unit) }}</td>
+                                        {{ ($itemDetailById->unit) }}</td>
                                 </tr>
                                 <tr class="border-b border-gray-200">
                                     <td class="py-2 lg:py-1.5 text-gray-600 w-[40%]">Harga Satuan</td>
                                     <td class="py-2 lg:py-1.5 w-[1%]">:</td>
                                     <td class="py-2 lg:py-1.5 font-medium text-right w-[59%]">@convertRupiah($itemDetailById->cost) /
-                                        {{ \Str::title($itemDetailById->unit) }}</td>
+                                        {{ ($itemDetailById->unit) }}</td>
                                 </tr>
                             </table>
                         </div>
