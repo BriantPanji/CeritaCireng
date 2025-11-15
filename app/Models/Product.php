@@ -15,8 +15,7 @@ class Product extends Model
         'notes',
     ];
 
-    public function items()
-    {
+    public function hasItem(){
         return $this->belongsToMany(Item::class, 'product_items', 'id_product', 'id_item');
     }
 }

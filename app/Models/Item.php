@@ -30,8 +30,7 @@ class Item extends Model
         return $this->belongsToMany(ReturnModel::class, 'return_items', 'id_item', 'id_return');
     }
 
-    public function products()
-    {
+    public function product(){
         return $this->belongsToMany(Product::class, 'product_items', 'id_item', 'id_product');
     }
 
