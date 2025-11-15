@@ -25,7 +25,7 @@ class ReturnConfirmation extends Model
         return $this->belongsTo(User::class, 'id_inventaris');
     }
 
-    public function returnModel()
+    public function returnItem()
     {
         return $this->belongsTo(ReturnModel::class, 'id_return');
     }

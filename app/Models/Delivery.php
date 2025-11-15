@@ -36,18 +36,16 @@ class Delivery extends Model
         return $this->belongsTo(User::class, 'id_kurir');
     }
 
-    public function deliveryConfirmation()
-    {
+    public function hasDeliveryConfirmation() {
         return $this->hasOne(DeliveryConfirmation::class, 'id_delivery');
     }
 
-    public function mistake()
+    public function hasMistake()
     {
         return $this->hasOne(DeliveryMistake::class);
-    }
+    } 
 
-    public function items()
-    {
+    public function hasDeliveryItem(){
         return $this->belongsToMany(Item::class, 'delivery_items', 'id_delivery', 'id_item');
     }
 }

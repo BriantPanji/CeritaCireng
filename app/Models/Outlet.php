@@ -16,13 +16,12 @@ class Outlet extends Model
 
     protected $table = 'outlets';
 
-    public function staff()
+    public function hasStaff()
     {
         return $this->hasMany(User::class, 'id_outlet', 'id');
     }
 
-    public function items()
-    {
+    public function hasItemSetting() {
         return $this->belongsToMany(Item::class, 'outlet_item_settings', 'id_outlet', 'id_item');
     }
 }

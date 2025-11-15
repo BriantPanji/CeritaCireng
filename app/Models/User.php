@@ -68,34 +68,26 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function outlets()
+    public function hasOutlet()
     {
         return $this->belongsToMany(Outlet::class, 'staff_outlets', 'id_user', 'id_outlet');
     }
 
-    public function attendance()
-    {
+    public function attendance() {
         return $this->hasMany(Attendance::class, 'id_user');
     }
 
-    public function todayAttendance()
-    {
+    public function todayAttendance() {
         return $this->hasOne(Attendance::class, 'id_user')->whereDate('attendance_date', now()->toDateString());
     }
-
-    public function isTodayAttendance()
-    {
-        return $this->todayAttendance()->value('status');
+    public function isTodayAttendance() {
+        return $this->todayAttendance?->status ?? null;
     }
-
-    public function attendanceAt($date)
-    {
+    public function hasAttendanceAt($date) {
         return $this->hasOne(Attendance::class, 'id_user')->whereDate('attendance_date', $date);
     }
-
-    public function attendanceStatusAt($date)
-    {
-        return $this->attendanceAt($date)->value('status');
+    public function attendanceStatusAt($date) {
+        return $this->hasAttendanceAt($date)?->status ?? null;
     }
 
 
@@ -105,7 +97,7 @@ class User extends Authenticatable
     }
 
 
-    public function otherExpenses()
+    public function hasOtherExpense()
     {
         return $this->hasMany(OtherExpense::class, 'id_staff');
     }
@@ -119,32 +111,30 @@ class User extends Authenticatable
         return $this->hasMany(Delivery::class, 'id_inventaris');
     }
 
-    public function deliveryConfirmations()
+    public function hasDeliveryConfirmation()
     {
         return $this->hasMany(DeliveryConfirmation::class, 'id_staff');
     }
 
-    public function deliveryMistakes()
+    public function hasDeliveryMistake()
     {
         return $this->hasMany(DeliveryMistake::class, 'id_staff');
     }
 
-    public function deliveryMistakeConfirmations()
+    public function hasDeliveryMistakeConfirmation()
     {
         return $this->hasMany(DeliveryMistakeConfirmation::class, 'id_staff');
     }
 
-    public function returns()
-    {
+
+    public function hasReturnItem() {
         return $this->hasMany(ReturnModel::class, 'id_staff');
     }
-
-    public function deliveredReturns()
-    {
+    public function hasDeliverReturnItem() {
         return $this->hasMany(ReturnModel::class, 'id_deliverer');
     }
 
-    public function returnConfirmations()
+    public function hasReturnConfirmation()
     {
         return $this->hasMany(ReturnConfirmation::class, 'id_staff');
     }
