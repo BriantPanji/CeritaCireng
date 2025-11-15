@@ -82,7 +82,7 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
         </div>
     </section>
 
-    <section class="min-w-full max-w-full min-h-[75vh] flex flex-wrap gap-4">
+    <section class="min-w-full max-w-full min-h-[75vh] flex flex-wrap justify-evenly gap-4">
         @forelse ($items as $item)
             <article wire:key="item-{{ $item->id }}"
                 class="min-w-full max-w-full min-h-10 xs:!max-w-[47%] xs:min-w-[47%] lg:!max-w-[31%] lg:min-w-[31%] h-fit bg-white rounded-xl">
