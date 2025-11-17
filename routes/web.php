@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserManagementController;
+use App\Livewire\UserManagement;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\AttendanceController;
@@ -26,12 +27,9 @@ Route::get('/inventory', function () {
     return view('inventory');
 });
 
-Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.management');
-
-Route::delete('/users/delete-selected', 
-    [UserManagementController::class, 'destroy']
-)->name('users.destroy');
-
+    
+Volt::route('/user-management', 'user-management')
+    ->name('users.management');
 
 
 // Route::view('dashboard', 'dashboard')
