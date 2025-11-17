@@ -16,6 +16,7 @@ class Item extends Model
         'cost',
         'unit',
         'type',
+        'image',
     ];
 
     public function deliveryItem(){
