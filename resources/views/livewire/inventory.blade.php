@@ -2,6 +2,7 @@
 
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
 use App\Models\Item;
 use App\Models\Inventory;
@@ -20,11 +21,15 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
     
     // Add item
     public $showAdd = false;
+    
+    #[Validate('nullable|image|max:2048')]
     public $image;
     
     // Edit item
     public $showEdit = false;
     public $editingItemId = null;
+    
+    #[Validate('nullable|image|max:2048')]
     public $newImage;
     
     // Form data
@@ -111,7 +116,6 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
             'form.type' => 'required|in:BAHAN_MENTAH,BAHAN_PENUNJANG,KEMASAN',
             'form.cost' => 'required|integer|min:0',
             'form.unit' => 'required|in:pcs,gr,ml,unit',
-            'image' => 'nullable|image|max:2048', // 2MB Max
         ]);
         
         $imagePath = 'https://placehold.co/600x400.webp?text=Foto+Item';
@@ -177,7 +181,6 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
             'form.type' => 'required|in:BAHAN_MENTAH,BAHAN_PENUNJANG,KEMASAN',
             'form.cost' => 'required|integer|min:0',
             'form.unit' => 'required|in:pcs,gr,ml,unit',
-            'newImage' => 'nullable|image|max:2048', // 2MB Max
         ]);
         
         $item = Item::find($this->editingItemId);
@@ -435,19 +438,57 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
                             <label class="text-sm font-medium text-gray-700 mb-2 block">
                                 Upload Gambar
                             </label>
-                            <input type="file" wire:model="image" accept="image/*"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary transition">
+                            
+                            <div x-data="{ 
+                                isDragging: false,
+                                handleDrop(e) {
+                                    this.isDragging = false;
+                                    const files = e.dataTransfer.files;
+                                    if (files.length > 0) {
+                                        @this.upload('image', files[0]);
+                                    }
+                                }
+                            }"
+                                @dragover.prevent="isDragging = true"
+                                @dragleave.prevent="isDragging = false"
+                                @drop.prevent="handleDrop"
+                                :class="isDragging ? 'border-primary bg-primary/5' : 'border-gray-300'"
+                                class="relative border-2 border-dashed rounded-lg p-6 transition-colors">
+                                
+                                <div class="text-center">
+                                    <i class="ph ph-upload-simple text-4xl text-gray-400 mb-2"></i>
+                                    <p class="text-sm text-gray-600 mb-2">
+                                        Drag & drop gambar di sini atau
+                                    </p>
+                                    <label class="cursor-pointer inline-block px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">
+                                        <span>Pilih File</span>
+                                        <input type="file" wire:model="image" accept="image/*" class="hidden">
+                                    </label>
+                                    <p class="text-xs text-gray-500 mt-2">PNG, JPG, GIF hingga 2MB</p>
+                                </div>
+                            </div>
+                            
                             @error('image')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
                             
                             {{-- Preview --}}
-                            <div wire:loading wire:target="image" class="text-sm text-gray-500 mt-2">Uploading...</div>
+                            <div wire:loading wire:target="image" class="text-sm text-gray-500 mt-2 flex items-center gap-2">
+                                <svg class="animate-spin h-4 w-4 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Uploading...
+                            </div>
                             @if($image)
-                                <div class="mt-2">
+                                <div class="mt-4">
                                     <p class="text-sm text-gray-600 mb-2">Preview:</p>
-                                    <div class="w-full aspect-[4/3] lg:max-w-xs bg-gray-200 rounded-xl overflow-hidden">
+                                    <div class="w-full aspect-[4/3] lg:max-w-xs bg-gray-200 rounded-xl overflow-hidden relative">
                                         <img src="{{ $image->temporaryUrl() }}" class="w-full h-full object-cover" alt="Preview">
+                                        <button type="button" wire:click="$set('image', null)" 
+                                            class="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700">
+                                            <i class="ph ph-x text-sm"></i>
+                                        </button>
                                     </div>
                                 </div>
                             @endif
@@ -557,19 +598,57 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
                             <label class="text-sm font-medium text-gray-700 mb-2 block">
                                 Upload Gambar Baru (Opsional)
                             </label>
-                            <input type="file" wire:model="newImage" accept="image/*"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary transition">
+                            
+                            <div x-data="{ 
+                                isDragging: false,
+                                handleDrop(e) {
+                                    this.isDragging = false;
+                                    const files = e.dataTransfer.files;
+                                    if (files.length > 0) {
+                                        @this.upload('newImage', files[0]);
+                                    }
+                                }
+                            }"
+                                @dragover.prevent="isDragging = true"
+                                @dragleave.prevent="isDragging = false"
+                                @drop.prevent="handleDrop"
+                                :class="isDragging ? 'border-primary bg-primary/5' : 'border-gray-300'"
+                                class="relative border-2 border-dashed rounded-lg p-6 transition-colors">
+                                
+                                <div class="text-center">
+                                    <i class="ph ph-upload-simple text-4xl text-gray-400 mb-2"></i>
+                                    <p class="text-sm text-gray-600 mb-2">
+                                        Drag & drop gambar di sini atau
+                                    </p>
+                                    <label class="cursor-pointer inline-block px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">
+                                        <span>Pilih File</span>
+                                        <input type="file" wire:model="newImage" accept="image/*" class="hidden">
+                                    </label>
+                                    <p class="text-xs text-gray-500 mt-2">PNG, JPG, GIF hingga 2MB</p>
+                                </div>
+                            </div>
+                            
                             @error('newImage')
                                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
                             @enderror
                             
                             {{-- Preview new upload --}}
-                            <div wire:loading wire:target="newImage" class="text-sm text-gray-500 mt-2">Uploading...</div>
+                            <div wire:loading wire:target="newImage" class="text-sm text-gray-500 mt-2 flex items-center gap-2">
+                                <svg class="animate-spin h-4 w-4 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Uploading...
+                            </div>
                             @if($newImage)
-                                <div class="mt-2">
+                                <div class="mt-4">
                                     <p class="text-sm text-gray-600 mb-2">Preview Gambar Baru:</p>
-                                    <div class="w-full aspect-[4/3] lg:max-w-xs bg-gray-200 rounded-xl overflow-hidden">
+                                    <div class="w-full aspect-[4/3] lg:max-w-xs bg-gray-200 rounded-xl overflow-hidden relative">
                                         <img src="{{ $newImage->temporaryUrl() }}" class="w-full h-full object-cover" alt="Preview">
+                                        <button type="button" wire:click="$set('newImage', null)" 
+                                            class="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700">
+                                            <i class="ph ph-x text-sm"></i>
+                                        </button>
                                     </div>
                                 </div>
                             @endif
