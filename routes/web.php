@@ -32,6 +32,12 @@ Volt::route('/user-management', 'user-management')
     ->name('users.management');
 
 
+Route::middleware(['auth'])->group(function () {
+    Volt::route('/attendance', 'attendance');
+});
+    
+
+
 // Route::view('dashboard', 'dashboard')
 //     ->middleware(['auth', 'verified'])
 //     ->name('dashboard');

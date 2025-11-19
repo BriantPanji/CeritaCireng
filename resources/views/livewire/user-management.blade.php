@@ -28,7 +28,7 @@ new class extends Component {
     public $status = 'AKTIF';
     public $password;
 
-    protected $updatesQueryString = ['search', 'role'];
+    protected $updatesQueryString = ['role' => ['except' => ''],];
 
     // Reset pagination when filtering
     public function updatingSearch() { $this->resetPage(); }
@@ -39,18 +39,21 @@ new class extends Component {
     // ================================
     protected function getUsers()
     {
-        $query = User::query(); // semua user, aktif & nonaktif
+        $query = User::query();
 
-        if ($this->search) {
+        // Jika sedang melakukan pencarian
+        if ($this->search !== '') {
+            // Search berlaku untuk SEMUA user
             $query->where('display_name', 'like', "%{$this->search}%");
         }
-
-        if ($this->role !== '') {
+        // Jika search kosong → role filter aktif
+        elseif ($this->role !== '') {
             $query->where('role_id', $this->role);
         }
 
         return $query->paginate(8)->withQueryString();
     }
+
 
 
     // ================================
@@ -210,13 +213,17 @@ new class extends Component {
             'outlets' => Outlet::all(),
         ];
     }
+
+    public function setRole($id)
+    {
+        $this->role = $id;
+        $this->search = ''; // reset search
+        $this->resetPage();
+    }
+
 };
 
 ?>
-
-<!-- =================================================================== -->
-<!--                               BLADE UI                              -->
-<!-- =================================================================== -->
 
 <div class="p-4 space-y-4">
 
@@ -226,6 +233,7 @@ new class extends Component {
             <i class="ph ph-magnifying-glass text-gray-400 text-base"></i>
             <input type="text"
                    wire:model.debounce.300ms="search"
+                   wire:keydown.enter="$refresh"
                    placeholder="Cari pengguna"
                    class="ml-2 w-full outline-none text-sm">
         </div>
@@ -238,10 +246,10 @@ new class extends Component {
 
             <div x-show="open" @click.outside="open = false"
                  class="absolute right-0 mt-2 bg-white shadow-lg rounded-lg w-44 text-sm z-50">
-                <button wire:click="$set('role','')" class="px-4 py-2 w-full text-left hover:bg-gray-200 border-b cursor-pointer">Semua Role</button>
+                <button wire:click="setRole('')" class="px-4 py-2 w-full text-left hover:bg-gray-200 border-b cursor-pointer">Semua Role</button>
 
                 @foreach($roles as $r)
-                    <button wire:click="$set('role','{{ $r->id }}')" class="px-4 py-2 w-full text-left hover:bg-gray-200 cursor-pointer {{ !$loop->last ? 'border-b' : '' }}">
+                    <button wire:click="setRole({{ $r->id }})" class="px-4 py-2 w-full text-left hover:bg-gray-200 cursor-pointer {{ !$loop->last ? 'border-b' : '' }}">
                         {{ $r->name }}
                     </button>
                 @endforeach
@@ -408,14 +416,14 @@ new class extends Component {
                     <div>
                         <label class="text-sm font-medium">Username</label>
                         <input type="text" wire:model="username"
-                            class="w-full border p-2 border-neutral-300 rounded-lg" placeholder="Masukkan nama username">
+                            class="w-full border p-2 border-neutral-300 rounded-lg" placeholder="Masukkan username">
                         @error('username') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="text-sm font-medium">Phone</label>
                         <input type="text" wire:model="phone"
-                            class="w-full border p-2 border-neutral-300 rounded-lg" placeholder="Masukkan nama nomor telepon">
+                            class="w-full border p-2 border-neutral-300 rounded-lg" placeholder="Masukkan nomor telepon">
                         @error('phone') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
                     </div>
 

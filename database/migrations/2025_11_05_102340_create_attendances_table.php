@@ -6,23 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_user')->references('id')->on('users');
+            $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
             $table->date('attendance_date');
-            $table->time('attendance_time');
-            $table->enum('status', ['HADIR', 'IZIN', 'SAKIT', 'ABSEN']);
+            $table->time('attendance_time')->nullable(); // boleh null sampai user check-in
+            $table->enum('status', ['HADIR', 'IZIN', 'SAKIT', 'ABSEN'])->default('ABSEN');
+            $table->timestamps();
+
+            $table->unique(['id_user','attendance_date']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('attendances');
