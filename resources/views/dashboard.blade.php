@@ -3,6 +3,19 @@
         <div class="flex flex-wrap md:justify-center max-w-[1200px] mx-auto">
             {{-- Inventaris --}}
             <div class="mt-4 w-full lg:w-fit">
+    {{-- <div class="p-3"> --}}
+
+        {{-- Presensi 
+        <div class="shadow-reguler px-2 py-3 rounded-md">
+            <h1 class="text-1">Presensi</h1>
+            <p class="text-reguler font-semibold">Anda belum absen hari ini</p>
+            <button class="bg-primary text-white p-2 mt-2 rounded-lg">Absen Sekarang</button>
+        </div>
+       End of presensi --}}
+
+        {{-- Inventaris --}}
+        <div class="mt-4">
+            <div>
                 <h1 class="border-b-2 border-b-primary-50 w-fit font-medium">Inventaris</h1>
                 <div class="md:flex gap-9">
                     <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
@@ -83,7 +96,7 @@
             </canvas>
         </div>
         {{-- End of Grafik --}}
-    </div>
+    {{-- </div> --}}
 </x-layouts.app>
 
 <script>
