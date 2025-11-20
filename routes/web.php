@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PengantaranController;
 use App\Http\Controllers\UserManagementController;
+use App\Livewire\UserManagement;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\AttendanceController;
@@ -29,14 +30,18 @@ Route::get('/inventory', function () {
     return view('inventory');
 });
 
+    
+Volt::route('/user-management', 'user-management')
+    ->name('users.management');
 // Pengantaran Route
 Route::get('/pengantaran', PengantaranTable::class);
-Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.management');
+//Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.management');
 
-Route::delete('/users/delete-selected', 
-    [UserManagementController::class, 'destroy']
-)->name('users.destroy');
 
+Route::middleware(['auth'])->group(function () {
+    Volt::route('/attendance', 'attendance');
+});
+    
 
 
 // Route::view('dashboard', 'dashboard')
