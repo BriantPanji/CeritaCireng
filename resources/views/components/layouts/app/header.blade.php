@@ -1,9 +1,9 @@
 <div x-data="{ showSideBar: false }">
     {{-- Header --}}
     <div class="bg-primary h-[56px] flex w-full justify-between items-center p-4">
-        <i class="fa-light fa-bars text-3xl" x-on:click="showSideBar = !showSideBar"></i>
+        <i class="fa-light fa-bars text-3xl cursor-pointer" x-on:click="showSideBar = !showSideBar"></i>
         <h1 class="text-l2 font-bold">Cerita Cireng</h1>
-        <i class="fa-light fa-bell text-3xl"></i>
+        <i class="fa-light fa-bell text-3xl cursor-pointer"></i>
     </div>
     {{-- End of header --}}
 
@@ -28,7 +28,6 @@
                 @foreach ($sidebarMenus as $menu)
                     <a href="{{ $menu['route'] }}"
                         class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/15 duration-300 relative {{ request()->is(ltrim($menu['route'], '/')) ? 'bg-neutral-50/10' : '' }}">
-
                         {{-- Validasi indikator --}}
                         @if (request()->is(ltrim($menu['route'], '/')))
                             <div class="h-full absolute left-0 bg-neutral-50/80 w-[3px] top-0"></div>

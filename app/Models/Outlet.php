@@ -21,7 +21,13 @@ class Outlet extends Model
         return $this->hasMany(User::class, 'id_outlet', 'id');
     }
 
-    public function hasItemSetting() {
+    public function hasItemSetting()
+    {
         return $this->belongsToMany(Item::class, 'outlet_item_settings', 'id_outlet', 'id_item');
+    }
+
+    public function delivery()
+    {
+        return $this->hasMany(Delivery::class);
     }
 }
