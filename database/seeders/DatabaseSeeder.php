@@ -2,20 +2,21 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use DB;
 use App\Models\Item;
+use App\Models\User;
 use App\Models\Product;
-use App\Models\Inventory;
 use App\Models\Delivery;
-use App\Models\DeliveryConfirmation;
-use App\Models\DeliveryMistake;
-use App\Models\DeliveryMistakeConfirmation;
-use App\Models\ReturnModel;
-use App\Models\ReturnConfirmation;
+use App\Models\Inventory;
 use App\Models\Attendance;
+use App\Models\ReturnModel;
 use App\Models\OtherExpense;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\DeliveryMistake;
 use Illuminate\Database\Seeder;
+use App\Models\ReturnConfirmation;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\DeliveryConfirmation;
+use App\Models\DeliveryMistakeConfirmation;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,10 +27,10 @@ class DatabaseSeeder extends Seeder
     {
         // Seed roles first
         $this->call(RoleSeeder::class);
-        
+
         // Seed outlets
         $this->call(OutletSeeder::class);
-        
+
         // Create super admin user
         User::create([
             'display_name' => 'Super Admin',
@@ -40,28 +41,28 @@ class DatabaseSeeder extends Seeder
             'outlet_id' => 1,
             'status' => 'AKTIF',
         ]);
-        
+
         // Create additional sample users for each role
         $roles = \App\Models\Role::all();
         $outlets = \App\Models\Outlet::all();
-        
+
         foreach ($roles as $role) {
             User::factory()->count(2)->create([
                 'role_id' => $role->id,
                 'outlet_id' => $outlets->random()->id,
             ]);
         }
-        
+
         // Seed items
         Item::factory()->count(20)->create();
-        
+
         // Seed products
         Product::factory()->count(15)->create();
-        
+
         // Seed product items (relationships between products and items)
         $products = Product::all();
         $items = Item::all();
-        
+
         foreach ($products as $product) {
             // Each product has 2-5 items
             $productItems = $items->random(rand(2, 5));
@@ -74,14 +75,14 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
-        
+
         // Seed inventory
         foreach ($items as $item) {
             Inventory::factory()->create([
                 'id_item' => $item->id,
             ]);
         }
-        
+
         // Seed outlet item settings
         foreach ($outlets as $outlet) {
             $outletItems = $items->random(rand(10, 15));
@@ -95,13 +96,13 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
-        
+
         // Seed deliveries
         $users = User::all();
         $inventarisUsers = $users->where('role_id', 2); // Inventaris role
         $kurirUsers = $users->where('role_id', 3); // Kurir role
         $staffUsers = $users->where('role_id', 4); // Staff role
-        
+
         $deliveries = collect();
         if ($inventarisUsers->count() > 0 && $kurirUsers->count() > 0) {
             foreach (range(1, 10) as $i) {
@@ -111,7 +112,7 @@ class DatabaseSeeder extends Seeder
                     'id_outlet' => $outlets->random()->id,
                 ]);
                 $deliveries->push($delivery);
-                
+
                 // Add delivery items
                 $deliveryItems = $items->random(rand(3, 7));
                 foreach ($deliveryItems as $item) {
@@ -123,7 +124,7 @@ class DatabaseSeeder extends Seeder
                 }
             }
         }
-        
+
         // Seed delivery confirmations (for some deliveries)
         if ($staffUsers->count() > 0 && $deliveries->count() > 0) {
             foreach ($deliveries->random(rand(5, 8)) as $delivery) {
@@ -133,7 +134,7 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
-        
+
         // Seed delivery mistakes (for some deliveries)
         $deliveryMistakes = collect();
         if ($staffUsers->count() > 0 && $deliveries->count() > 0) {
@@ -143,11 +144,11 @@ class DatabaseSeeder extends Seeder
                     'id_staff' => $staffUsers->random()->id,
                 ]);
                 $deliveryMistakes->push($mistake);
-                
+
                 // Add delivery mistake items
                 $mistakeItems = $items->random(rand(1, 3));
                 foreach ($mistakeItems as $item) {
-                    \DB::table('delivery_mistake_items')->insert([
+                    DB::table('delivery_mistake_items')->insert([
                         'id_delivery_mistake' => $mistake->id,
                         'id_item' => $item->id,
                         'quantity' => rand(1, 10),
@@ -155,7 +156,7 @@ class DatabaseSeeder extends Seeder
                 }
             }
         }
-        
+
         // Seed delivery mistake confirmations (for some mistakes)
         if ($inventarisUsers->count() > 0 && $deliveryMistakes->count() > 0) {
             foreach ($deliveryMistakes->random(min(2, $deliveryMistakes->count())) as $mistake) {
@@ -165,7 +166,7 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
-        
+
         // Seed returns
         $returns = collect();
         if ($staffUsers->count() > 0 && $kurirUsers->count() > 0) {
@@ -175,7 +176,7 @@ class DatabaseSeeder extends Seeder
                     'id_deliverer' => $kurirUsers->random()->id,
                 ]);
                 $returns->push($returnModel);
-                
+
                 // Add return items
                 $returnItems = $items->random(rand(2, 5));
                 foreach ($returnItems as $item) {
@@ -185,7 +186,7 @@ class DatabaseSeeder extends Seeder
                         'quantity' => rand(1, 20),
                     ]);
                 }
-                
+
                 // Add return evidences (1-3 photos per return)
                 foreach (range(1, rand(1, 3)) as $j) {
                     \DB::table('return_evidences')->insert([
@@ -195,7 +196,7 @@ class DatabaseSeeder extends Seeder
                 }
             }
         }
-        
+
         // Seed return confirmations (for some returns)
         if ($inventarisUsers->count() > 0 && $returns->count() > 0) {
             foreach ($returns->random(min(3, $returns->count())) as $returnModel) {
@@ -205,14 +206,14 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
-        
+
         // Seed attendances for all users
         foreach ($users as $user) {
             Attendance::factory()->count(rand(5, 15))->create([
                 'id_user' => $user->id,
             ]);
         }
-        
+
         // Seed other expenses
         if ($staffUsers->count() > 0) {
             foreach (range(1, 10) as $i) {

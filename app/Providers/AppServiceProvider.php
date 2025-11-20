@@ -38,11 +38,6 @@ class AppServiceProvider extends ServiceProvider
                 'route' => '/inventory',
             ],
             [
-                'name' => 'Penerimaan Barang',
-                'icon' => 'archive-box',
-                'route' => '/penerimaan-barang',
-            ],
-            [
                 'name' => 'Laporan',
                 'icon' => 'files',
                 'route' => '/laporan',
