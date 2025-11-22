@@ -23,7 +23,7 @@ class Delivery extends Model
 
     public function outlet()
     {
-        return $this->belongsTo(Outlet::class);
+        return $this->belongsTo(Outlet::class,'id_outlet');
     }
 
     public function inventaris()
@@ -36,16 +36,33 @@ class Delivery extends Model
         return $this->belongsTo(User::class, 'id_kurir');
     }
 
-    public function hasDeliveryConfirmation() {
+    public function hasDeliveryConfirmation()
+    {
         return $this->hasOne(DeliveryConfirmation::class, 'id_delivery');
     }
 
     public function hasMistake()
     {
         return $this->hasOne(DeliveryMistake::class);
-    } 
+    }
 
-    public function hasDeliveryItem(){
+    public function hasDeliveryItem()
+    {
         return $this->belongsToMany(Item::class, 'delivery_items', 'id_delivery', 'id_item');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(DeliveryItem::class, 'id_delivery');
+    }
+
+    public function confirmations()
+    {
+        return $this->hasMany(DeliveryConfirmation::class, 'id_delivery');
+    }
+    
+    public function mistakes()
+    {
+        return $this->hasMany(DeliveryMistake::class, 'id_delivery');
     }
 }

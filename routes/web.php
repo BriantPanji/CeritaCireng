@@ -32,6 +32,11 @@ Route::delete('/users/delete-selected',
     [UserManagementController::class, 'destroy']
 )->name('users.destroy');
 
+use App\Livewire\ReceivingTable;
+
+Route::get('/penerimaan-barang', ReceivingTable::class)
+    ->name('receiving.index')
+    ->middleware('auth');
 
 
 // Route::view('dashboard', 'dashboard')
