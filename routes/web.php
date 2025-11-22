@@ -38,6 +38,11 @@ Route::get('/pengantaran', PengantaranTable::class);
 //Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.management');
 
 
+use App\Livewire\ReceivingTable;
+
+Route::get('/penerimaan-barang', ReceivingTable::class)
+    ->name('receiving.index')
+    ->middleware('auth');
 Route::middleware(['auth'])->group(function () {
     Volt::route('/attendance', 'attendance');
 });

@@ -61,7 +61,7 @@
                         <th class="px-4 py-3 text-left">Role</th>
                         <th class="px-4 py-3 text-left">Tanggal</th>
                         <th class="px-4 py-3 text-left">Waktu</th>
-                        <th class="px-4 py-3 text-left">Status</th>
+                        <th class="px-4 py-3 text-center">Status</th>
                     </tr>
                 </thead>
 
@@ -87,16 +87,15 @@
                             </td>
 
                             <td class="px-4 py-3">
-                                <span class="px-3 py-1 rounded-lg text-xs 
-                                    @if ($att->status === 'HADIR') 
-                                        bg-emerald-700 text-white 
+                                <span
+                                    class="px-3 py-1 rounded-lg text-xs text-center
+                                    @if ($att->status === 'HADIR') bg-emerald-700 text-white text-center
                                     @elseif($att->status === 'IZIN')
-                                        bg-purple-700 text-white
+                                        bg-purple-700 text-white text-center
                                     @elseif($att->status === 'SAKIT')
-                                        bg-cyan-600 text-white
+                                        bg-cyan-600 text-white text-center
                                     @else
-                                        bg-red-700 text-white
-                                    @endif
+                                        bg-red-700 text-white text-center @endif
                                 ">
                                     {{ $att->status }}
                                 </span>
@@ -112,50 +111,55 @@
         </div>
 
         {{-- CUSTOM PAGINATION --}}
-        @if ($attendances->hasPages())
-            <div class="mt-3 flex items-center justify-center gap-2 py-4">
+        <div class="overflow-x-auto w-full">
+            @if ($attendances->hasPages())
+                <div class="mt-3 flex items-center justify-center gap-2 py-4">
 
-                {{-- Previous --}}
-                @if ($attendances->onFirstPage())
-                    <button class="px-3 py-2 rounded-xl border border-gray-200 bg-gray-100 text-gray-400 text-sm" disabled>
-                        &lt;
-                    </button>
-                @else
-                    <button wire:click="previousPage" class="px-3 py-2 rounded-xl border border-gray-300 bg-white shadow-sm text-sm text-gray-700
-                        hover:border-yellow-500 hover:text-yellow-500 transition">
-                        &lt;
-                    </button>
-                @endif
-
-                {{-- Page Numbers --}}
-                @foreach ($attendances->getUrlRange(1, $attendances->lastPage()) as $page => $url)
-                    @if ($page == $attendances->currentPage())
-                        <button class="px-3 py-2 rounded-xl border border-yellow-500 bg-white shadow-sm text-sm text-yellow-500 font-semibold">
-                            {{ $page }}
+                    {{-- Previous --}}
+                    @if ($attendances->onFirstPage())
+                        <button class="px-3 py-2 rounded-xl border border-gray-200 bg-gray-100 text-gray-400 text-sm"
+                            disabled>
+                            &lt;
                         </button>
                     @else
-                        <button wire:click="gotoPage({{ $page }})"
-                            class="px-3 py-2 rounded-xl border border-gray-300 bg-white shadow-sm text-sm text-gray-700 hover:border-yellow-500 hover:text-yellow-500 transition">
-                            {{ $page }}
+                        <button wire:click="previousPage"
+                            class="px-3 py-2 rounded-xl border border-gray-300 bg-white shadow-sm text-sm text-gray-700
+                        hover:border-yellow-500 hover:text-yellow-500 transition">
+                            &lt;
                         </button>
                     @endif
-                @endforeach
 
-                {{-- Next --}}
-                @if ($attendances->hasMorePages())
-                    <button wire:click="nextPage" class="px-3 py-2 rounded-xl border border-gray-300 bg-white shadow-sm text-sm text-gray-700
+                    {{-- Page Numbers --}}
+                    @foreach ($attendances->getUrlRange(1, $attendances->lastPage()) as $page => $url)
+                        @if ($page == $attendances->currentPage())
+                            <button
+                                class="px-3 py-2 rounded-xl border border-yellow-500 bg-white shadow-sm text-sm text-yellow-500 font-semibold">
+                                {{ $page }}
+                            </button>
+                        @else
+                            <button wire:click="gotoPage({{ $page }})"
+                                class="px-3 py-2 rounded-xl border border-gray-300 bg-white shadow-sm text-sm text-gray-700 hover:border-yellow-500 hover:text-yellow-500 transition">
+                                {{ $page }}
+                            </button>
+                        @endif
+                    @endforeach
+
+                    {{-- Next --}}
+                    @if ($attendances->hasMorePages())
+                        <button wire:click="nextPage"
+                            class="px-3 py-2 rounded-xl border border-gray-300 bg-white shadow-sm text-sm text-gray-700
                         hover:border-yellow-500 hover:text-yellow-500 transition">
-                        &gt;
-                    </button>
-                @else
-                    <button class="px-3 py-2 rounded-xl border bg-gray-100 border-gray-200 text-gray-400 text-sm" disabled>
-                        &gt;
-                    </button>
-                @endif
+                            &gt;
+                        </button>
+                    @else
+                        <button class="px-3 py-2 rounded-xl border bg-gray-100 border-gray-200 text-gray-400 text-sm"
+                            disabled>
+                            &gt;
+                        </button>
+                    @endif
 
-            </div>
-        @endif
-
+                </div>
+            @endif
+        </div>
     </div>
 </div>
-

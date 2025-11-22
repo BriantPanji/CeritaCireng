@@ -50,4 +50,19 @@ class Delivery extends Model
     {
         return $this->belongsToMany(Item::class, 'delivery_items', 'id_delivery', 'id_item');
     }
+
+    public function items()
+    {
+        return $this->hasMany(DeliveryItem::class, 'id_delivery');
+    }
+
+    public function confirmations()
+    {
+        return $this->hasMany(DeliveryConfirmation::class, 'id_delivery');
+    }
+    
+    public function mistakes()
+    {
+        return $this->hasMany(DeliveryMistake::class, 'id_delivery');
+    }
 }
