@@ -23,7 +23,7 @@ class Delivery extends Model
 
     public function outlet()
     {
-        return $this->belongsTo(Outlet::class,'id_outlet');
+        return $this->belongsTo(Outlet::class, 'id_outlet');
     }
 
     public function inventaris()

@@ -71,6 +71,7 @@
 
     /* Custom Shadow */
     --shadow-reguler: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    --shadow-button: rgba(99, 99, 99, 0.2) 0px 0px 8px 0px;
 
     --breakpoint-xs: 30rem;
 }
@@ -116,6 +117,18 @@ select:focus[data-flux-control] {
     display: none !important;
 }
 
+.table-container {
+  /* Set a fixed height and/or width to trigger overflow if content exceeds it */
+  max-height: 300px; /* Example height */
+  overflow-y: auto;  /* Enable vertical scrolling when content overflows */
+
+  /* Hide scrollbar for Chrome, Safari, and Opera */ */
+   &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
