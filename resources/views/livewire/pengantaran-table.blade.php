@@ -1,6 +1,6 @@
 <div class="p-3">
     {{-- SEARCH --}}
-    <div class="mt-4 flex items-center gap-2">
+    <div class="mt-12 flex items-center gap-2">
         <div class="flex items-center bg-white shadow-reguler px-3 py-3 rounded-xl flex-1 cursor-pointer">
             <i class="ph ph-magnifying-glass"> </i>
             <input type="text" wire:model.live="search" class="ml-2 w-full text-sm focus:outline-none"
@@ -52,8 +52,8 @@
                         <th class="px-4 py-3 font-semibold text-left">Outlet Tujuan</th>
                         <th class="px-4 py-3 font-semibold text-left">Waktu Ditugaskan</th>
                         <th class="px-4 py-3 font-semibold text-left">Waktu Kirim</th>
-                        <th class="px-4 py-3 font-semibold text-left">Status</th>
-                        <th class="px-4 py-3 font-semibold text-left">Aksi</th>
+                        <th class="px-4 py-3 font-semibold text-center">Status</th>
+                        <th class="px-4 py-3 font-semibold text-center">Aksi</th>
                     </tr>
                 </thead>
 
@@ -73,16 +73,16 @@
                             <td class="px-4 py-3 rounded-lg">
                                 <p x-data
                                     :class="{
-                                        'bg-secondary text-white': '{{ $delivery->status }}'
+                                        'border border-secondary text-secondary': '{{ $delivery->status }}'
                                         === 'DIBATALKAN',
-                                        'bg-primary-200 text-white': '{{ $delivery->status }}'
+                                        'border border-primary-200 text-primary-200': '{{ $delivery->status }}'
                                         === 'DITUGASKAN',
-                                        'bg-tertiary text-white': '{{ $delivery->status }}'
+                                        'border border-green-500 text-green-500': '{{ $delivery->status }}'
                                         === 'SELESAI',
-                                        'bg-primary/90 text-white': '{{ $delivery->status }}'
+                                        'border border-neutral-200 text-neutral-200': '{{ $delivery->status }}'
                                         === 'DIKIRIM',
                                     }"
-                                    class="p-2 px-3 rounded-lg text-center text-xs lg:text-reguler">
+                                    class="p-2 px-3 rounded-xl text-center text-xs lg:text-1">
                                     {{ $delivery->status }}
                                 </p>
                             </td>
@@ -90,16 +90,16 @@
                             <td class="px-4">
                                 @if ($delivery->status == 'DITUGASKAN' || $delivery->status == 'DIKIRIM')
                                     <button wire:click="confirmBatal({{ $delivery->id }})"
-                                        class="bg-secondary hover:bg-secondary/90 text-white px-3 py-2 rounded-md shadow-button text-xs cursor-pointer lg:text-reguler">
+                                        class="bg-secondary hover:bg-secondary/90 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-pointer lg:text-1">
                                         Batalkan</button>
                                 @else
                                     <button
-                                        class="bg-neutral-200 text-white px-3 py-2 rounded-md shadow-button text-xs cursor-not-allowed lg:text-reguler">
+                                        class="bg-neutral-200 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-not-allowed lg:text-1">
                                         Batalkan</button>
                                 @endif
                                 <span x-data="{ modalIsOpen: false }">
                                     <button x-on:click="modalIsOpen = true" type="button"
-                                        class="bg-primary text-white px-3 py-2   rounded-md shadow-button text-xs ml-2 cursor-pointer mr-4 hover:bg-primary/90 lg:text-reguler">Detail</button>
+                                        class="bg-primary text-white px-3 py-2   rounded-xl shadow-button text-xs ml-2 cursor-pointer mr-4 hover:bg-primary/90 lg:text-1">Detail</button>
                                     <div x-cloak x-show="modalIsOpen" x-transition.opacity.duration.200ms
                                         x-trap.inert.noscroll="modalIsOpen"
                                         x-on:keydown.esc.window="modalIsOpen = false"
@@ -112,7 +112,7 @@
                                             x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
                                             x-transition:enter-start="opacity-0 translate-y-8"
                                             x-transition:enter-end="opacity-100 translate-y-0"
-                                            class="flex flex-col gap-4 overflow-x-hidden overflow-y-scroll h-[400px] rounded-radius border border-outline bg-white w-[90%] md:max-w-[600px]">
+                                            class="flex flex-col gap-4 overflow-x-hidden overflow-y-scroll h-[400px] rounded-radius border border-outline bg-white w-[90%] xl:max-w-[600px]">
                                             <!-- Dialog Header -->
                                             <div class="flex items-center justify-between border-b border-outline p-4">
                                                 <h3 id="defaultModalTitle" class="font-semibold tracking-wide text-l2">
@@ -130,7 +130,7 @@
                                             <div class="px-4 py-8 space-y-3 text-xs lg:text-1">
                                                 <div class="flex justify-between relative">
                                                     <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
+                                                        class="before:content-[':'] font-semibold before:block before:left-35 xl:before:left-50 before:absolute">
                                                         Nama Inventaris</p>
                                                     <p class="w-[60%] text-left">
                                                         {{ $delivery->inventaris->display_name }}
@@ -138,7 +138,7 @@
                                                 </div>
                                                 <div class="flex justify-between relative">
                                                     <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
+                                                        class="before:content-[':'] font-semibold before:block before:left-35 xl:before:left-50 before:absolute">
                                                         Nama Kurir</p>
                                                     <p class="w-[60%] text-left">
                                                         {{ $delivery->kurir->display_name }}
@@ -146,7 +146,7 @@
                                                 </div>
                                                 <div class="flex justify-between relative">
                                                     <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
+                                                        class="before:content-[':'] font-semibold before:block before:left-35 xl:before:left-50 before:absolute">
                                                         Outlet</p>
                                                     <p class="w-[60%] text-left">
                                                         {{ $delivery->outlet->name }}</p>
@@ -161,7 +161,7 @@
                                                             === 'DIBATALKAN',
                                                             'text-primary-200': '{{ $delivery->status }}'
                                                             === 'DITUGASKAN',
-                                                            'text-tertiary': '{{ $delivery->status }}'
+                                                            'text-tertiary-200': '{{ $delivery->status }}'
                                                             === 'SELESAI',
                                                             'text-primary/90': '{{ $delivery->status }}'
                                                             === 'DIKIRIM',

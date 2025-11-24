@@ -1,11 +1,10 @@
 <x-layouts.app title="Dashboard">
-    <div class="p-3">
-        <div class="flex flex-wrap md:justify-center max-w-[1200px] mx-auto">
-            {{-- Inventaris --}}
-            <div class="mt-4 w-full lg:w-fit">
-    {{-- <div class="p-3"> --}}
+    <div class="flex md:justify-center mx-auto">
+        {{-- Inventaris --}}
+        <div class="mt-4 w-full lg:w-fit">
+            {{-- <div class="p-3"> --}}
 
-        {{-- Presensi 
+            {{-- Presensi
         <div class="shadow-reguler px-2 py-3 rounded-md">
             <h1 class="text-1">Presensi</h1>
             <p class="text-reguler font-semibold">Anda belum absen hari ini</p>
@@ -13,34 +12,29 @@
         </div>
        End of presensi --}}
 
-        {{-- Inventaris --}}
-        <div class="mt-4">
-            <div>
+            {{-- Inventaris --}}
+            <div class="mt-4">
                 <h1 class="border-b-2 border-b-primary-50 w-fit font-medium">Inventaris</h1>
-                <div class="md:flex gap-9">
-                    <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
-                        <i class="fa-light fa-box text-l1 bg-primary-50 rounded-full  w-14 h-14 text-center  p-4"></i>
-                        <div>
-                            <h2 class="text-reguler font-medium">Stok Gudang</h2>
-                            <p class="text-h3 font-semibold">11.500</p>
-                        </div>
-                    </div>
-                    <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
-                        <i
-                            class="fa-light fa-wine-glass-crack text-l1 bg-primary-50 rounded-full w-14 h-14 text-center p-4"></i>
-                        <div>
-                            <h2 class="text-reguler font-medium">Barang Rusak</h2>
-                            <p class="text-h3 font-semibold">541</p>
-                        </div>
+                <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
+                    <i class="fa-light fa-box text-l1 bg-primary-50 rounded-full  w-14 h-14 text-center  p-4"></i>
+                    <div>
+                        <h2 class="text-reguler font-medium">Stok Gudang</h2>
+                        <p class="text-h3 font-semibold">11.500</p>
                     </div>
                 </div>
-            </div>
-            {{-- End of Inventaris --}}
+                <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
+                    <i
+                        class="fa-light fa-wine-glass-crack text-l1 bg-primary-50 rounded-full w-14 h-14 text-center p-4"></i>
+                    <div>
+                        <h2 class="text-reguler font-medium">Barang Rusak</h2>
+                        <p class="text-h3 font-semibold">541</p>
+                    </div>
+                </div>
+                {{-- End of Inventaris --}}
 
-            {{-- Pengiriman --}}
-            <div class="mt-4 w-full lg:w-fit">
-                <h1 class="border-b-2 border-b-primary-50 w-fit font-medium">Pengiriman</h1>
-                <div class="md:flex gap-9">
+                {{-- Pengiriman --}}
+                <div class="mt-4 w-full lg:w-fit">
+                    <h1 class="border-b-2 border-b-primary-50 w-fit font-medium">Pengiriman</h1>
                     <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
                         <i
                             class="fa-light fa-truck-ramp-box text-l1 bg-primary-50 rounded-full  w-14 h-14 text-center  p-4"></i>
@@ -61,13 +55,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            {{-- End of Pengiriman --}}
+                {{-- End of Pengiriman --}}
 
-            {{-- Outlet --}}
-            <div class="mt-4 w-full lg:w-fit">
-                <h1 class="border-b-2 border-b-primary-50 w-fit font-medium">Outlet</h1>
-                <div class="md:flex gap-9">
+                {{-- Outlet --}}
+                <div class="mt-4 w-full lg:w-fit">
+                    <h1 class="border-b-2 border-b-primary-50 w-fit font-medium">Outlet</h1>
                     <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
                         <i
                             class="fa-light fa-shop text-[1.25rem] bg-primary-50 rounded-full w-[56px] h-[56px] text-center p-4"></i>
@@ -86,17 +78,15 @@
                         </div>
                     </div>
                 </div>
+                {{-- End of Outlet --}}
             </div>
-            {{-- End of Outlet --}}
-        </div>
 
-        {{-- Grafik --}}
-        <div class="mt-12 lg:w-[500px] flex flex-wrap justify-center mx-auto">
-            <canvas id="myChart">
-            </canvas>
-        </div>
-        {{-- End of Grafik --}}
-    {{-- </div> --}}
+            {{-- Grafik --}}
+            <div class="mt-12 lg:w-[500px] flex flex-wrap justify-center mx-auto">
+                <canvas id="myChart">
+                </canvas>
+            </div>
+            {{-- End of Grafik --}}
 </x-layouts.app>
 
 <script>

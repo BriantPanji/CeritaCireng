@@ -3,10 +3,6 @@
 use App\Livewire\PengantaranTable;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PengantaranController;
-use App\Http\Controllers\UserManagementController;
-use App\Livewire\UserManagement;
-use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\AttendanceController;
 
@@ -18,19 +14,13 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 
 Route::get('/absensi', [AttendanceController::class, 'index'])
-->name('absensi.index');
-
-
-
-Route::get('/inventory-add-item', function () {
-    return view('inventory-add-item');
-});
+    ->name('absensi.index');
 
 Route::get('/inventory', function () {
     return view('inventory');
 });
 
-    
+
 Volt::route('/user-management', 'user-management')
     ->name('users.management');
 // Pengantaran Route
@@ -46,7 +36,7 @@ Route::get('/penerimaan-barang', ReceivingTable::class)
 Route::middleware(['auth'])->group(function () {
     Volt::route('/attendance', 'attendance');
 });
-    
+
 
 
 // Route::view('dashboard', 'dashboard')
