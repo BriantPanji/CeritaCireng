@@ -123,7 +123,7 @@ new class extends Component {
                                     </button>
                                 @else
                                     <button disabled
-                                        class="px-4 py-2 rounded-xl bg-gray-200 text-gray-500 shadow cursor-not-allowed">
+                                        class="px-4 py-2 rounded-xl border border-gray-500 bg-gray-200 text-gray-500 shadow cursor-not-allowed">
                                         Presensi
                                     </button>
                                 @endif

@@ -16,9 +16,9 @@ class Outlet extends Model
 
     protected $table = 'outlets';
 
-    public function hasStaff()
+    public function users()
     {
-        return $this->hasMany(User::class, 'id_outlet', 'id');
+        return $this->hasMany(User::class, 'outlet_id', 'id');
     }
 
     public function hasItemSetting()

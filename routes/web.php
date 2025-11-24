@@ -27,6 +27,9 @@ Volt::route('/user-management', 'user-management')
 Route::get('/pengantaran', PengantaranTable::class);
 //Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.management');
 
+Volt::route('/outlet-management', 'outlet-management')
+    ->name('outlets.management');
+
 
 use App\Livewire\ReceivingTable;
 
