@@ -12,26 +12,66 @@ class AbsensiTable extends Component
     use WithPagination;
 
     public $search = '';
-    public $filter_range = 'today';
+    public $filter_range = 'all';
     public $filter_status = '';
     public $filter_role = '';
 
     protected $paginationTheme = 'tailwind';
 
     // Reset page setiap kali filter berubah
-    public function updatingSearch() { $this->resetPage(); }
-    public function updatingFilterRange() { $this->resetPage(); }
-    public function updatingFilterStatus() { $this->resetPage(); }
-    public function updatingFilterRole() { $this->resetPage(); }
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+    public function updatingFilterRange()
+    {
+        $this->resetPage();
+    }
+    public function updatingFilterStatus()
+    {
+        $this->resetPage();
+    }
+    public function updatingFilterRole()
+    {
+        $this->resetPage();
+    }
 
-    public function render()
+    public function getPagesProperty()
+    {
+        $paginator = $this->attendances;
+        $currentPage = $paginator->currentPage();
+        $lastPage = $paginator->lastPage();
+
+        $show = 3;
+
+        if ($lastPage <= $show) {
+            return range(1, $lastPage);
+        }
+
+        $start = $currentPage - 1;
+        $end = $currentPage + 1;
+
+        if ($start < 1) {
+            $start = 1;
+            $end = $show; // 3
+        }
+
+        if ($end > $lastPage) {
+            $end = $lastPage;
+            $start = $lastPage - ($show - 1);
+        }
+
+        return range($start, $end);
+    }
+
+    public function getAttendancesProperty()
     {
         $query = Attendance::with(['user.role']);
 
         // ==================
         // 🔎 SEARCH BY NAME
         // ==================
-        if ($this->search) {
+        if (!empty($this->search)) {
             $query->whereHas('user', function ($q) {
                 $q->where('display_name', 'like', '%' . $this->search . '%');
             });
@@ -67,22 +107,26 @@ class AbsensiTable extends Component
                 break;
 
             case 'all':
+                // tidak ada filter
+                break;
+
             default:
-                // Tidak ada filter waktu
+                // fallback aman → anggap today
+                $query->whereDate('attendance_date', Carbon::today());
                 break;
         }
 
         // ==================
         // 🟢 FILTER STATUS
         // ==================
-        if ($this->filter_status) {
+        if (!empty($this->filter_status)) {
             $query->where('status', $this->filter_status);
         }
 
         // ==================
         // 🟦 FILTER ROLE
         // ==================
-        if ($this->filter_role) {
+        if (!empty($this->filter_role)) {
             $query->whereHas('user.role', function ($q) {
                 $q->where('display_name', $this->filter_role);
             });
@@ -91,13 +135,16 @@ class AbsensiTable extends Component
         // ==================
         // 📌 ORDER & PAGINATION
         // ==================
-        $attendances = $query
-            ->orderBy('attendance_date', 'desc')
+        return $query->orderBy('attendance_date', 'desc')
             ->orderBy('attendance_time', 'desc')
             ->paginate(10);
+    }
 
+    public function render()
+    {
         return view('livewire.absensi-table', [
-            'attendances' => $attendances,
+            'attendances' => $this->attendances, // ← dynamic dari magic property
+            'pages' => $this->pages,
         ]);
     }
 }
