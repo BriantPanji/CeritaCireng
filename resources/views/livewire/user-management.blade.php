@@ -165,8 +165,8 @@ new class extends Component {
 
         $this->resetForm();
         $this->showModal = false;
-        return redirect()->route('users.management')->with('success', 'Pengguna berhasil ditambahkan.');
 
+        session()->flash('success', 'User berhasil ditambahkan.');
     }
 
     // Role untuk Promote/Demote
@@ -182,8 +182,8 @@ new class extends Component {
 
         $this->selectedUsers = [];
         $this->selectAll = false;
-        return redirect()->route('users.management')->with('success', 'Pengguna berhasil dipromote.');
 
+        session()->flash('success', 'User berhasil dipromote.');
 
     }
 
@@ -199,6 +199,18 @@ new class extends Component {
         $this->roleToChange = '';
 
         session()->flash('success', 'Pengguna berhasil didemote.');
+    }
+
+    public function deleteUser()
+    {
+        if (empty($this->selectedUsers)) return;
+
+        User::whereIn('id', $this->selectedUsers)->delete();
+
+        $this->selectedUsers = [];
+        $this->selectAll = false;
+
+        session()->flash('success', 'User berhasil dihapus.');
     }
 
 
@@ -285,6 +297,7 @@ new class extends Component {
                     wire:click="toggleSelectAll">Nama Pengguna</th>
                     <th class="px-3 py-2 text-center">Status</th>
                     <th class="px-3 py-2 text-center">Role</th>
+                    <th class="px-3 py-2 text-center">Edit</th>
                     <th class="px-3 py-2 text-center">Aksi</th>
                 </tr>
             </thead>
@@ -324,9 +337,17 @@ new class extends Component {
                             </span>
                         </td>
 
+                        <!-- Edit -->
+                        <td class="px-3 py-2 align-middle text-center cursor-pointer">
+                            <button class="bg-green-600 text-white px-3 py-1 rounded-lg text-xs shadow cursor-pointer"
+                                    wire:click.stop>
+                                Edit
+                            </button>
+                        </td>
+
                         <!-- Aksi -->
                         <td class="px-3 py-2 align-middle text-center">
-                            <button class="bg-primary text-white px-3 py-1 rounded-lg text-xs shadow"
+                            <button class="bg-primary text-white px-3 py-1 rounded-lg text-xs shadow cursor-pointer"
                                     wire:click.stop>
                                 Detail
                             </button>
@@ -352,7 +373,7 @@ new class extends Component {
             <button @click="open = !open"
                 class="bg-orange-500 text-white px-4 py-1 rounded-lg shadow text-sm disabled:opacity-50 w-full sm:w-auto cursor-pointer"
                 :disabled="!{{ count($selectedUsers) }}">
-                Change Role
+                Role
             </button>
 
             <!-- Dropdown muncul di atas -->
@@ -367,6 +388,11 @@ new class extends Component {
             </div>
         </div>
         <!-- Non Aktif & Aktif -->
+        <button wire:click.stop="deleteUser"
+            class="bg-neutral-200 text-white px-4 py-1 rounded-lg shadow text-sm disabled:opacity-50 w-full sm:w-auto cursor-pointer"
+            @disabled(empty($selectedUsers))>
+            Hapus
+        </button>
         <button wire:click="nonActiveSelected"
             class="bg-red-700 text-white px-4 py-1 rounded-lg shadow text-sm disabled:opacity-50 w-full sm:w-auto cursor-pointer"
             @disabled(empty($selectedUsers))>

@@ -31,6 +31,9 @@ Route::get('/inventory', function () {
 Volt::route('/user-management', 'user-management')
     ->name('users.management');
 
+Volt::route('/outlet-management', 'outlet-management')
+    ->name('outlets.management');
+
 
 Route::middleware(['auth'])->group(function () {
     Volt::route('/attendance', 'attendance');
