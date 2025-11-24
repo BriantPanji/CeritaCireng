@@ -55,7 +55,7 @@
                         <th class="px-4 py-3 text-left">Role</th>
                         <th class="px-4 py-3 text-left">Tanggal</th>
                         <th class="px-4 py-3 text-left">Waktu</th>
-                        <th class="px-4 py-3 text-left">Status</th>
+                        <th class="px-4 py-3 text-center">Status</th>
                     </tr>
                 </thead>
 
@@ -168,5 +168,8 @@
             </div>
         @endif
 
+                </div>
+            @endif
+        </div>
     </div>
 </div>
