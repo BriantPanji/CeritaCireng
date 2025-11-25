@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 
 class TempDirectoryServiceProvider extends ServiceProvider
@@ -36,7 +37,11 @@ class TempDirectoryServiceProvider extends ServiceProvider
         $phpTmpDir = storage_path('app/private/tmp');
 
         if (!is_dir($phpTmpDir)) {
-            @mkdir($phpTmpDir, 0755, true);
+            $created = @mkdir($phpTmpDir, 0755, true);
+
+            if (!$created && !is_dir($phpTmpDir)) {
+                Log::warning("TempDirectoryServiceProvider: Failed to create PHP temp directory: {$phpTmpDir}");
+            }
         }
     }
 
@@ -54,7 +59,11 @@ class TempDirectoryServiceProvider extends ServiceProvider
             $fullPath = $diskConfig['root'] . DIRECTORY_SEPARATOR . $directory;
 
             if (!is_dir($fullPath)) {
-                @mkdir($fullPath, 0755, true);
+                $created = @mkdir($fullPath, 0755, true);
+
+                if (!$created && !is_dir($fullPath)) {
+                    Log::warning("TempDirectoryServiceProvider: Failed to create Livewire temp directory: {$fullPath}");
+                }
             }
         }
     }
