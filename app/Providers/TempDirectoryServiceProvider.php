@@ -50,8 +50,8 @@ class TempDirectoryServiceProvider extends ServiceProvider
      */
     protected function ensureLivewireTempDirectoryExists(): void
     {
-        $disk = config('livewire.temporary_file_upload.disk') ?: config('filesystems.default');
-        $directory = config('livewire.temporary_file_upload.directory') ?: 'livewire-tmp';
+        $disk = config('livewire.temporary_file_upload.disk', config('filesystems.default'));
+        $directory = config('livewire.temporary_file_upload.directory', 'livewire-tmp');
 
         $diskConfig = config("filesystems.disks.{$disk}");
 
