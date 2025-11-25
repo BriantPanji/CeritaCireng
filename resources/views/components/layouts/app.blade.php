@@ -47,10 +47,19 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
-<body class="text-dark">
-    <x-layouts.app.header />
-    <main class="p-4 bg-neutral-25 xs:px-8 sm:px-20 md:px-32 lg:px-40 xl:px-48 2xl:px-64 min-h-screen">
-      {{ $slot }}
+<body class="text-dark lg:grid lg:grid-cols-12 lg:overflow-x-auto">
+    <x-layouts.app.navbar />
+    <main class=" bg-neutral-25 lg:col-span-9 xl:col-span-10 min-h-screen relative ">
+        <div class=" w-full justify-around items-center bg-primary fixed right-0 left-0 top-0 hidden lg:block">
+            <div class="flex justify-around items-center w-full h-[65px]">
+                <img src={{ asset('favicon.svg') }} class="w-[40px]" alt="">
+                <h1 class="text-l2 font-bold">Cerita Cireng</h1>
+                <i class="ph ph-bell text-3xl"></i>
+            </div>
+        </div>
+        <div class="px-4 xs:px-8 sm:px-20 mt-12">
+            {{ $slot }}
+        </div>
     </main>
     @livewireScripts
     {{-- <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script> --}}

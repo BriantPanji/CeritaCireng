@@ -17,19 +17,13 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 
 Route::get('/absensi', [AttendanceController::class, 'index'])
-->name('absensi.index');
-
-
-
-Route::get('/inventory-add-item', function () {
-    return view('inventory-add-item');
-});
+    ->name('absensi.index');
 
 Route::get('/inventory', function () {
     return view('inventory');
 });
 
-    
+
 Volt::route('/user-management', 'user-management')
     ->name('users.management');
 
@@ -40,6 +34,9 @@ Route::get('/user-details/{id}', \App\Livewire\UserDetails::class)
 Route::get('/pengantaran', PengantaranTable::class);
 //Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.management');
 
+Volt::route('/outlet-management', 'outlet-management')
+    ->name('outlets.management');
+
 
 use App\Livewire\ReceivingTable;
 
@@ -49,7 +46,7 @@ Route::get('/penerimaan-barang', ReceivingTable::class)
 Route::middleware(['auth'])->group(function () {
     Volt::route('/attendance', 'attendance');
 });
-    
+
 
 
 // Route::view('dashboard', 'dashboard')

@@ -96,7 +96,7 @@ class PengantaranTable extends Component
             });
         }
 
-        return $query->orderBy("delivered_at", 'desc')->paginate(3);
+        return $query->orderBy("delivered_at", 'desc')->paginate(4);
     }
 
     public function getPagesProperty()
