@@ -3,6 +3,9 @@
 use App\Livewire\PengantaranTable;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PengantaranController;
+use App\Http\Controllers\UserManagementController;
+use App\Livewire\UserManagement;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\AttendanceController;
 
@@ -23,6 +26,10 @@ Route::get('/inventory', function () {
 
 Volt::route('/user-management', 'user-management')
     ->name('users.management');
+
+Route::get('/user-details/{id}', \App\Livewire\UserDetails::class)
+    ->name('user.details');
+
 // Pengantaran Route
 Route::get('/pengantaran', PengantaranTable::class);
 //Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.management');
