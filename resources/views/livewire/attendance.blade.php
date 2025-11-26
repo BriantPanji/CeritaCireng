@@ -98,7 +98,7 @@ new class extends Component {
     }
 
     public function with()
-    {
+    { 
         return [
             'attendances' => Attendance::with('user')
                 ->where('id_user', auth()->id())
