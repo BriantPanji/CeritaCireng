@@ -56,6 +56,16 @@ class AppServiceProvider extends ServiceProvider
                 'route' => '/user-management',
             ],
             [
+                'name' => 'Manajemen Outlet',
+                'icon' => 'storefront',
+                'route' => '/outlet-management',
+            ],
+            [
+                'name' => 'Attendance',
+                'icon' => 'user-focus',
+                'route' => '/attendance',
+            ],
+            [
                 'name' => 'Absensi',
                 'icon' => 'identification-badge',
                 'route' => '/absensi',
