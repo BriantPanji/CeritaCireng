@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'mysql_dev'),
 
     /*
     |--------------------------------------------------------------------------
@@ -70,7 +70,7 @@ return [
             'password' => '',
             'port' => env('DB_PORT_DEV'),
         ],
-        
+
         'mysql_owner' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST_OWNER'),
