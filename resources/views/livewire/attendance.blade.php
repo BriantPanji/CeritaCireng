@@ -95,8 +95,7 @@ new class extends Component {
         ]);
 
         $this->refresh++;
-    }
-
+    } 
     public function with()
     { 
         return [
