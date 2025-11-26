@@ -2,6 +2,7 @@
 
 use App\Livewire\Forms\ItemForm;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
 use App\Models\Item;
@@ -13,22 +14,16 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
     use WithFileUploads;
 
     public ItemForm $createForm;
+    public ItemForm $editForm;
 
     public $query = '';
     public $itemDetailById = null;
     public $showModal = false;
     public $showModalDelete = false;
     public $showModalDeleteDone = false;
-    public $editModal = true;
-
-//    public $form = [
-//        'name' => '',
-//        'cost' => '',
-//        'type' => '',
-//        'unit' => '',
-//        'image' => null,
-//    ];
-
+    public $addModal = false;
+    public $editModal = false;
+    public $editItemById = null;
 
     public function updatedQuery()
     {
@@ -37,17 +32,40 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
 
     public function simpan()
     {
-        $this->createForm->store();
-
-        dd($this->createForm);
-
-        $this->redirectRoute('inventory');
+        $this->dispatch('confirm-simpan', ...[
+            'title' => 'Konfirmasi Simpan',
+            'text' => 'Apakah Anda yakin ingin menyimpan data ini?',
+            'icon' => 'warning',
+            'confirmButtonText' => 'Ya, Simpan',
+            'cancelButtonText' => 'Batal',
+        ]);
     }
 
-    public function mount()
+    public function simpanEdit()
     {
-        $this->dispatch('modal-opened');
+        $this->dispatch('confirm-edit', ...[
+            'title' => 'Konfirmasi Simpan Edit',
+            'text' => 'Apakah Anda yakin ingin mengedit  data ini?',
+            'icon' => 'warning',
+            'confirmButtonText' => 'Ya, Simpan Edit',
+            'cancelButtonText' => 'Batal',
+        ]);
     }
+
+    #[On('storeCreateForm')]
+    public function storeCreateForm()
+    {
+        $this->createForm->store();
+        return redirect()->to(request()->header('Referer'));
+    }
+
+    #[On('storeEditform')]
+    public function storeEditform()
+    {
+        $this->editForm->update();
+        return redirect()->to(request()->header('Referer'));
+    }
+
 
     public function with()
     {
@@ -58,6 +76,35 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
                 })
                 ->paginate(10),
         ];
+    }
+
+    public function showAddModal()
+    {
+        $this->addModal = true;
+        $this->dispatch('modal-add-opened');
+    }
+
+    public function closeAddModal()
+    {
+        $this->addModal = false;
+        $this->dispatch('modal-add-closed');
+    }
+
+    public function showEditModal($id)
+    {
+        $this->editItemById = Item::find($id);
+        $this->editForm->setItem(Item::find($id));
+        $this->closeModal();
+        $this->editModal = true;
+        $this->dispatch('modal-edit-opened');
+    }
+
+    public function closeEditModal($id)
+    {
+        $this->editItemById = null;
+        $this->editModal = false;
+        $this->dispatch('modal-edit-closed');
+        $this->showDetail($id);
     }
 
     public function showDetail($id)
@@ -89,14 +136,23 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
         $this->showModalDeleteDone = false;
         $this->dispatch('modal-closed');
     }
+
+    public function deletePreview()
+    {
+        $this->createForm->imageFile = null;
+    }
 }; ?>
 
 <div class="min-w-full max-w-full"
      x-data
      @modal-opened.window="document.body.style.overflow = 'hidden'"
-     @modal-closed.window="document.body.style.overflow = 'auto'">
-    <section class="min-w-full max-w-full h-fit mb-4">
-        <div x-data="{xShow: false}" class="min-w-full max-w-full max-h-full group relative">
+     @modal-closed.window="document.body.style.overflow = 'auto'"
+     @modal-edit-opened.window="document.body.style.overflow = 'hidden'"
+     @modal-edit-closed.window="document.body.style.overflow = 'auto'"
+     @modal-add-opened.window="document.body.style.overflow = 'hidden'"
+     @modal-add-closed.window="document.body.style.overflow = 'auto'">
+    <section class="min-w-full max-w-full h-fit mb-4 flex gap-2 items-center">
+        <div x-data="{xShow: false}" class="w-full max-w-full max-h-full group relative">
             <span onclick="document.getElementById('cari').focus()"
                   class="max-h-full min-h-full w-9 absolute flex cursor-text items-center justify-center">
                 <i class="ph ph-magnifying-glass"></i>
@@ -111,6 +167,16 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
                 <i class="ph ph-x text-lg"></i>
             </button>
         </div>
+        <div class="w-max max-w-full min-h-full">
+            <button type="button" wire:click="showAddModal"
+                    class="px-4 py-2 w-max hidden sm:flex h-full max-w-full bg-primary text-white rounded-lg hover:bg-primary/90 transition cursor-pointer">
+                Tambah Barang
+            </button>
+            <button type="button" wire:click="showAddModal"
+                    class="px-4 py-2 flex sm:hidden items-center justify-center w-max min-h-full max-w-full bg-primary text-white rounded-lg hover:bg-primary/90 transition cursor-pointer">
+                <i class="ph ph-plus text-xl h-full"></i>
+            </button>
+        </div>
     </section>
 
     <section class="min-w-full max-w-full min-h-[75vh] flex flex-wrap gap-4">
@@ -119,8 +185,15 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
                      class="min-w-full max-w-full min-h-10 xs:!max-w-[47%] xs:min-w-[47%] lg:!max-w-[31%] lg:min-w-[31%] h-fit bg-white rounded-xl">
                 <div wire:dblclick="showDetail({{ $item->id }})"
                      class="min-w-full max-w-full aspect-[4/3] bg-gray-400 rounded-t-xl object-cover">
-                    <img src="{{ $item->image }}" class="max-h-full min-w-full aspect-[4/3] object-cover rounded-t-xl"
-                         alt="">
+                    @if(\Str::startsWith($item->image, 'https://'))
+                        <img src="{{ $item->image }}"
+                             class="max-h-full min-w-full aspect-[4/3] object-cover rounded-t-xl"
+                             alt="{{ $item->name }}">
+                    @else
+                        <img src="{{ asset('storage/' . $item->image) }}"
+                             class="max-h-full min-w-full aspect-[4/3] object-cover rounded-t-xl"
+                             alt="{{ $item->name }}">
+                    @endif
                 </div>
                 <div class="min-h-22 max-h-full min-w-full max-w-full p-4 flex flex-col justify-between">
                     <h3 class="text-lg xs:text-base font w-fit max-w-full truncate cursor-pointer"
@@ -151,80 +224,238 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
         </div>
     </section>
 
-    @if($editModal)
+    @if($addModal)
         <div class="fixed inset-0  bg-black/30 flex items-center justify-center p-4 z-50">
-            <div @click.stop
-                 class="bg-white rounded-2xl max-w-3xl w-full xs:w-sm lg:w-3xl max-h-[90vh] overflow-y-auto shadow-xl">
-                <form wire:submit="simpan">
+            <form wire:submit.prevent="simpan">
+                <div @click.stop
+                     class="bg-white max-h-[80vh] rounded-2xl max-w-3xl w-full xs:w-sm lg:w-3xl overflow-y-auto shadow-xl">
                     <div
                         class="sticky top-0 bg-white border-b border-gray-200 px-4 pt-3 pb-2 flex items-center justify-between rounded-t-2xl">
-                        <h2 class="text-lg font-medium">Edit Barang</h2>
-                        <button type="button" wire:click="$set('editModal', false)"
+                        <h2 class="text-lg font-medium">Tambah Barang</h2>
+                        <button type="button" wire:click="closeAddModal" title="Tutup Popup"
                                 class="cursor-pointer text-gray-400 hover:text-gray-600">
                             <i class="ph ph-x text-2xl"></i>
                         </button>
                     </div>
 
-                    <div class="p-6 space-y-6 mb-2 lg:space-y-0 lg:mb-0 lg:flex lg:gap-6 lg:items-center">
-                        <div class="">
-                            <label for="nama_barang" class="select-none">Nama Barang:</label>
-                            <input wire:model="createForm.name" type="text" id="nama_barang" required
-                                   class="w-full mt-1 p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md"
-                                   placeholder="Ayam pedas...">
+                    <div class="py-3 px-4 flex flex-col lg:flex-row gap-3">
+
+                        <div class="flex flex-col gap-4 w-full">
+                            <div class="flex flex-col gap-1">
+                                <label for="nama_barang" class="select-none">Nama Barang:</label>
+                                <input wire:model="createForm.name" type="text" id="nama_barang"
+                                       class="w-full p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md"
+                                       placeholder="Ayam pedas...">
+                                @error('createForm.name') <span
+                                    class="text-sm text-red-600">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="flex flex-col gap-1">
+                                <label for="harga_barang" class="select-none">Harga Barang (Rp):</label>
+                                <input wire:model="createForm.cost" type="number" min="0" id="harga_barang" required
+                                       class="w-full p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md"
+                                       placeholder="20">
+                                @error('createForm.cost') <span
+                                    class="text-sm text-red-600">{{ $message }}</span> @enderror
+                            </div>
+
+
+                            <div class="flex flex-col gap-1">
+                                <label for="unit_barang" class="select-none">Unit:</label>
+                                <select wire:model="createForm.unit" id="unit_barang"
+                                        class="w-full p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md">
+                                    <option value="pcs">pcs</option>
+                                    <option value="gr">gr</option>
+                                    <option value="ml">ml</option>
+                                    <option value="unit">unit</option>
+                                </select>
+                                @error('createForm.unit') <span
+                                    class="text-sm text-red-600">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="flex flex-col gap-1">
+                                <label for="type_barang" class="select-none">Kategori:</label>
+                                <select wire:model="createForm.type" id="type_barang"
+                                        class="w-full p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md">
+                                    <option disabled selected value="DEFAULT">Pilih Kategori</option>
+                                    <option value="BAHAN_MENTAH">Bahan Mentah</option>
+                                    <option value="BAHAN_PENUNJANG">Bahan Penunjang</option>
+                                    <option value="KEMASAN">Kemasan</option>
+                                </select>
+                                @error('createForm.type') <span
+                                    class="text-sm text-red-600">{{ $message }}</span> @enderror
+                            </div>
+
                         </div>
 
-
-                        <div class="">
-                            <label for="harga_barang" class="select-none">Harga Barang:</label>
-                            <input wire:model="createForm.cost" type="number" min="0" id="harga_barang" required
-                                   class="w-full mt-1 p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md"
-                                   placeholder="Ayam pedas...">
+                        <div class="w-full h-full flex flex-col gap-3 lg:min-w-2/5 lg:max-w-2/5">
+                            <div class="flex flex-col gap-1">
+                                <label for="gambar" class="select-none">Gambar:</label>
+                                <input type="file" wire:model="createForm.imageFile" wire:click="deletePreview"
+                                       id="gambar" accept="image/*"
+                                       class="w-full p-2 ring file:bg-primary file:min-h-full file:max-h-full file:px-2 file:text-base cursor-pointer file:cursor-pointer file:rounded-sm outline-none focus:ring-gray-600 ring-gray-300 rounded-md"/>
+                                @error('createForm.imageFile') <span
+                                    class="text-sm text-red-600">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="w-full h-full flex flex-col">
+                                <span>Preview:</span>
+                                <div
+                                    class="flex items-center justify-center aspect-[4/3] mb-4 rounded-xl *:rounded-xl overflow-hidden">
+                                    @if($createForm->imageFile)
+                                        @if($errors->has('image'))
+                                            <img src="https://placehold.co/600x400.webp?text=Tidak%20Valid"
+                                                 alt="Preview"
+                                                 class="w-full object-cover aspect-[4/3]"/>
+                                        @else
+                                            <img src="{{ $createForm->imageFile->temporaryUrl() }}" alt="Preview"
+                                                 class="w-full object-cover aspect-[4/3]"/>
+                                        @endif
+                                    @else
+                                        <img src="https://placehold.co/600x400.webp?text=Foto+Item"
+                                             alt="Placeholder Image" title="Klik untuk menambahkan gambar"
+                                             class="w-full object-cover aspect-[4/3]"
+                                             onclick="document.getElementById('gambar').click()"/>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
-
-
-                        <div class="">
-                            <label for="unit_barang" class="select-none">Unit</label>
-                            <select wire:model="createForm.unit" id="unit_barang" class="w-full mt-1 p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md">
-                                <option value="pcs">pcs</option>
-                                <option value="gr">gr</option>
-                                <option value="ml">ml</option>
-                                <option value="unit">unit</option>
-                            </select>
-                        </div>
-
-                        <div class="">
-                            <label for="type_barang" class="select-none">Kategori</label>
-                            <select wire:model="createForm.type" id="type_barang" class="w-full mt-1 p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md">
-                                <option value="BAHAN_MENTAH">Bahan Mentah</option>
-                                <option value="BAHAN_PENUNJANG">Bahan Penunjang</option>
-                                <option value="KEMASAN">Kemasan</option>
-                            </select>
-                        </div>
-
-                        <div class="">
-                            <label for="gambar" class="select-none">Gambar</label>
-                            <input type="file" wire:model="createForm.imageFile" id="gambar" accept="image/*" required
-                                   class="w-full mt-1 p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md"/>
-                        </div>
-
-                        @if($createForm->imageFile)
-                            <img src="{{ $createForm->imageFile->temporaryUrl() }}" alt="Preview" />
-                        @elseif($createForm->image)
-                            <img src="{{ $createForm->image }}" alt="Current Image" />
-                        @endif
-
-
                     </div>
 
                     <div
                         class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-4 py-2.5 flex justify-end gap-2 rounded-b-2xl">
+                        <button autofocus type="reset"
+                                class="px-4 py-1 cursor-pointer focus:shadow-[0_0_0_2px_#111] bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-300 transition">
+                            Reset
+                        </button>
                         <button autofocus type="submit"
-                                class="px-4 py-1 cursor-pointer focus:shadow-[0_0_0_2px_#111] bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                                class="px-4 py-1 cursor-pointer focus:shadow-[0_0_0_2px_#111] bg-primary border border-gray-300 text-black rounded-lg hover:bg-primary/75 transition">
                             Simpan
                         </button>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
+        </div>
+    @endif
+    @if($editModal && $editItemById)
+        <div class="fixed inset-0  bg-black/30 flex items-center justify-center p-4 z-50">
+            <form wire:submit.prevent="simpanEdit">
+                <div @click.stop
+                     class="bg-white max-h-[80vh] rounded-2xl max-w-3xl w-full xs:w-sm lg:w-3xl overflow-y-auto shadow-xl">
+                    <div
+                        class="sticky top-0 bg-white border-b border-gray-200 px-4 pt-3 pb-2 flex items-center justify-between rounded-t-2xl">
+                        <h2 class="text-lg font-medium">Edit Barang</h2>
+                        <button type="button" wire:click="closeEditModal({{$editItemById->id}})" title="Tutup Popup"
+                                class="cursor-pointer text-gray-400 hover:text-gray-600">
+                            <i class="ph ph-x text-2xl"></i>
+                        </button>
+                    </div>
+
+                    <div class="py-3 px-4 flex flex-col lg:flex-row gap-3">
+
+                        <div class="flex flex-col gap-4 w-full">
+                            <div class="flex flex-col gap-1">
+                                <label for="nama_barang" class="select-none">Nama Barang:</label>
+                                <input wire:model="editForm.name" type="text" id="nama_barang"
+                                       class="w-full p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md"
+                                       placeholder="Ayam pedas...">
+                                @error('editForm.name') <span
+                                    class="text-sm text-red-600">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="flex flex-col gap-1">
+                                <label for="harga_barang" class="select-none">Harga Barang (Rp):</label>
+                                <input wire:model="editForm.cost" type="number" min="0" id="harga_barang" required
+                                       class="w-full p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md"
+                                       placeholder="20">
+                                @error('editForm.cost') <span
+                                    class="text-sm text-red-600">{{ $message }}</span> @enderror
+                            </div>
+
+
+                            <div class="flex flex-col gap-1">
+                                <label for="unit_barang" class="select-none">Unit:</label>
+                                <select wire:model="editForm.unit" id="unit_barang"
+                                        class="w-full p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md">
+                                    <option value="pcs">pcs</option>
+                                    <option value="gr">gr</option>
+                                    <option value="ml">ml</option>
+                                    <option value="unit">unit</option>
+                                </select>
+                                @error('editForm.unit') <span
+                                    class="text-sm text-red-600">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="flex flex-col gap-1">
+                                <label for="type_barang" class="select-none">Kategori:</label>
+                                <select wire:model="editForm.type" id="type_barang"
+                                        class="w-full p-2 ring outline-none focus:ring-gray-600 ring-gray-300 rounded-md">
+                                    <option disabled selected value="DEFAULT">Pilih Kategori</option>
+                                    <option value="BAHAN_MENTAH">Bahan Mentah</option>
+                                    <option value="BAHAN_PENUNJANG">Bahan Penunjang</option>
+                                    <option value="KEMASAN">Kemasan</option>
+                                </select>
+                                @error('editForm.type') <span
+                                    class="text-sm text-red-600">{{ $message }}</span> @enderror
+                            </div>
+
+                        </div>
+
+                        <div class="w-full h-full flex flex-col gap-3 lg:min-w-2/5 lg:max-w-2/5">
+                            <div class="flex flex-col gap-1">
+                                <label for="gambar" class="select-none">Gambar:</label>
+                                <input type="file" wire:model="editForm.imageFile" wire:click="deletePreview"
+                                       id="gambar" accept="image/*"
+                                       class="w-full p-2 ring file:bg-primary file:min-h-full file:max-h-full file:px-2 file:text-base cursor-pointer file:cursor-pointer file:rounded-sm outline-none focus:ring-gray-600 ring-gray-300 rounded-md"/>
+                                @error('editForm.imageFile') <span
+                                    class="text-sm text-red-600">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="w-full h-full flex flex-col">
+                                <span>Preview:</span>
+                                <div
+                                    class="flex items-center justify-center aspect-[4/3] mb-4 rounded-xl *:rounded-xl overflow-hidden">
+                                    @if($editForm->imageFile)
+                                        @if($errors->has('image'))
+                                            <img src="https://placehold.co/600x400.webp?text=Tidak%20Valid"
+                                                 alt="Preview"
+                                                 class="w-full object-cover aspect-[4/3]"/>
+                                        @else
+                                            <img src="{{ $editForm->imageFile->temporaryUrl() }}" alt="Preview"
+                                                 class="w-full object-cover aspect-[4/3]"/>
+                                        @endif
+                                    @elseif($editForm->image)
+                                        @if(\Str::startsWith($editForm->image, 'https://'))
+                                            <img src="{{ $editForm->image }}"
+                                                 class="w-full object-cover aspect-[4/3]"
+                                                 alt="Preview">
+                                        @else
+                                            <img src="{{ asset('storage/' . $editForm->image) }}"
+                                                 class="w-full object-cover aspect-[4/3]"
+                                                 alt="Preview">
+                                        @endif
+                                    @else
+                                        <img src="https://placehold.co/600x400.webp?text=Foto+Item"
+                                             alt="Placeholder Image" title="Klik untuk menambahkan gambar"
+                                             class="w-full object-cover aspect-[4/3]"
+                                             onclick="document.getElementById('gambar').click()"/>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-4 py-2.5 flex justify-end gap-2 rounded-b-2xl">
+                        <button autofocus type="reset"
+                                class="px-4 py-1 cursor-pointer focus:shadow-[0_0_0_2px_#111] bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-300 transition">
+                            Reset
+                        </button>
+                        <button autofocus type="submit"
+                                class="px-4 py-1 cursor-pointer focus:shadow-[0_0_0_2px_#111] bg-primary border border-gray-300 text-black rounded-lg hover:bg-primary/75 transition">
+                            Simpan
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     @endif
 
@@ -247,8 +478,15 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
 
                 <div class="p-6 space-y-6 mb-2 lg:space-y-0 lg:mb-0 lg:flex lg:gap-6 lg:items-center">
                     <div class="w-full aspect-[4/3] lg:min-w-2/5 lg:max-w-2/5 bg-gray-200 rounded-xl overflow-hidden">
-                        <img src="{{ $itemDetailById->image }}" class="w-full h-full object-cover"
-                             alt="{{ $itemDetailById->name }}">
+                        @if(\Str::startsWith($itemDetailById->image, 'https://'))
+                            <img src="{{ $itemDetailById->image }}"
+                                 class="max-h-full min-w-full aspect-[4/3] object-cover rounded-t-xl"
+                                 alt="{{ $itemDetailById->name }}">
+                        @else
+                            <img src="{{ asset('storage/' . $itemDetailById->image) }}"
+                                 class="max-h-full min-w-full aspect-[4/3] object-cover rounded-t-xl"
+                                 alt="{{ $itemDetailById->name }}">
+                        @endif
                     </div>
 
                     <div class="space-y-4 lg:space-y-3 lg:w-full">
@@ -289,7 +527,7 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
                             class="px-4 py-1 cursor-pointer bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
                         Hapus
                     </button>
-                    <button type="button"
+                    <button type="button" wire:click="showEditModal({{ $itemDetailById->id }})"
                             class="px-4 py-1 cursor-pointer bg-primary text-white rounded-lg hover:bg-primary/90 transition">
                         Edit
                     </button>
@@ -343,6 +581,42 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
             </div>
         </div>
     @endif
-
+    @script
+    <script>
+        document.addEventListener('confirm-simpan', event => {
+            Swal.fire({
+                title: event.detail.title,
+                text: event.detail.text,
+                icon: event.detail.icon,
+                showCancelButton: true,
+                confirmButtonText: event.detail.confirmButtonText,
+                cancelButtonText: event.detail.cancelButtonText,
+                confirmButtonColor: "#efa800",
+                cancelButtonColor: "#990000"
+            }).then(result => {
+                if (result.isConfirmed) {
+                    // console.log($wire);
+                    $wire.dispatch('storeCreateForm');
+                }
+            });
+        });
+        document.addEventListener('confirm-edit', event => {
+            Swal.fire({
+                title: event.detail.title,
+                text: event.detail.text,
+                icon: event.detail.icon,
+                showCancelButton: true,
+                confirmButtonText: event.detail.confirmButtonText,
+                cancelButtonText: event.detail.cancelButtonText,
+                confirmButtonColor: "#efa800",
+                cancelButtonColor: "#990000"
+            }).then(result => {
+                if (result.isConfirmed) {
+                    $wire.dispatch('storeEditform');
+                }
+            });
+        });
+    </script>
+    @endscript
 
 </div>
