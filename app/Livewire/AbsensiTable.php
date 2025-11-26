@@ -15,6 +15,10 @@ class AbsensiTable extends Component
     public $filter_range = 'all';
     public $filter_status = '';
     public $filter_role = '';
+    public $editId;
+    public $edit_date;
+    public $edit_time;
+    public $edit_status;
 
     protected $paginationTheme = 'tailwind';
 
@@ -147,4 +151,36 @@ class AbsensiTable extends Component
             'pages' => $this->pages,
         ]);
     }
+
+    public function openEditModal($id)
+{
+    $att = Attendance::find($id);
+
+    if (!$att) return;
+
+    $this->editId = $att->id;
+    $this->edit_date = $att->attendance_date;
+    $this->edit_time = $att->attendance_time;
+    $this->edit_status = $att->status;
+
+    $this->dispatch('open-edit-modal');
+}
+
+public function saveEdit()
+{
+    $this->validate([
+        'edit_date' => 'required|date',
+        'edit_time' => 'required',
+        'edit_status' => 'required|in:HADIR,IZIN,SAKIT,ABSEN',
+    ]);
+
+    Attendance::where('id', $this->editId)->update([
+        'attendance_date' => $this->edit_date,
+        'attendance_time' => $this->edit_time,
+        'status' => $this->edit_status,
+    ]);
+
+    $this->dispatch('close-edit-modal');
+}
+
 }

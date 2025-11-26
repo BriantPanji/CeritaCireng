@@ -56,6 +56,8 @@
                         <th class="px-4 py-3 text-left">Tanggal</th>
                         <th class="px-4 py-3 text-left">Waktu</th>
                         <th class="px-4 py-3 text-center">Status</th>
+                        <th class="px-4 py-3 text-center">Aksi</th>
+
                     </tr>
                 </thead>
 
@@ -99,6 +101,13 @@
 
 
                             </td>
+                            <td class="px-4 py-3 text-center">
+                                <button wire:click="openEditModal({{ $att->id }})"
+                                    class="px-3 py-1 bg-primary text-white rounded-lg text-xs hover:bg-primary-200 duration-200">
+                                    Edit
+                                </button>
+                            </td>
+
                         </tr>
                     @empty
                         <tr>
@@ -169,6 +178,66 @@
 
             </div>
         @endif
+
+    </div>
+
+
+    {{-- ==================== MODAL EDIT ==================== --}}
+    <div x-data="{ open: false }" x-on:open-edit-modal.window="open = true" x-on:close-edit-modal.window="open = false">
+
+        <div x-show="open" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+
+            <div x-show="open" class="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6" @click.away="open = false">
+
+                <h2 class="text-lg font-semibold mb-4 text-center">Edit Kehadiran</h2>
+
+                <div class="space-y-3">
+
+                    {{-- Tanggal --}}
+                    <div>
+                        <label class="text-sm text-gray-600">Tanggal</label>
+                        <input type="date" wire:model="edit_date"
+                            class="w-full mt-1 px-3 py-2 border rounded-xl focus:outline-none focus:ring-primary">
+                    </div>
+
+                    {{-- Jam --}}
+                    <div>
+                        <label class="text-sm text-gray-600">Waktu</label>
+                        <input type="time" wire:model="edit_time"
+                            class="w-full mt-1 px-3 py-2 border rounded-xl focus:outline-none focus:ring-primary">
+                    </div>
+
+                    {{-- Status --}}
+                    <div>
+                        <label class="text-sm text-gray-600">Status Kehadiran</label>
+                        <select wire:model="edit_status"
+                            class="w-full mt-1 px-3 py-2 border rounded-xl focus:outline-none focus:ring-primary">
+                            <option value="HADIR">Hadir</option>
+                            <option value="IZIN">Izin</option>
+                            <option value="SAKIT">Sakit</option>
+                            <option value="ABSEN">Absen</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                {{-- Buttons --}}
+                <div class="mt-5 flex justify-end gap-3">
+
+                    <button @click="open = false"
+                        class="px-4 py-2 border rounded-xl text-gray-600 hover:bg-gray-100 duration-150">
+                        Batal
+                    </button>
+
+                    <button wire:click="saveEdit"
+                        class="px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-200 duration-150">
+                        Simpan
+                    </button>
+
+                </div>
+            </div>
         </div>
     </div>
+    {{-- ================== END MODAL EDIT ================= --}}
+
 </div>
