@@ -81,7 +81,7 @@ class ItemForm extends Form
 
     public function update() {
         $this->validate([
-            'name' => 'required|string|max:64|unique:items,name',
+            'name' => 'required|string|max:64|unique:items,name,'.$this->item->id,
             'cost' => 'required|numeric|min:1',
             'type' => 'required|in:BAHAN_MENTAH,BAHAN_PENUNJANG,KEMASAN',
             'unit' => 'required|in:pcs,gr,ml,unit',
