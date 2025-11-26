@@ -30,4 +30,14 @@ class Outlet extends Model
     {
         return $this->hasMany(Delivery::class);
     }
+
+    public function closedDays()
+    {
+        return $this->belongsToMany(Day::class, 'outlet_closed_days');
+    }
+
+    public function isClosedOn($dayNumber)
+    {
+        return $this->closedDays()->where('day_number', $dayNumber)->exists();
+    }
 }

@@ -25,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
+//        $tmp_dir = ini_get('upload_tmp_dir') ? ini_get('upload_tmp_dir') : sys_get_temp_dir();
+//        die($tmp_dir);
+
+
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }
@@ -56,6 +60,16 @@ class AppServiceProvider extends ServiceProvider
                 'route' => '/user-management',
             ],
             [
+                'name' => 'Manajemen Outlet',
+                'icon' => 'storefront',
+                'route' => '/outlet-management',
+            ],
+            [
+                'name' => 'Attendance',
+                'icon' => 'user-focus',
+                'route' => '/attendance',
+            ],
+            [
                 'name' => 'Absensi',
                 'icon' => 'identification-badge',
                 'route' => '/absensi',
@@ -79,7 +93,7 @@ class AppServiceProvider extends ServiceProvider
             $allowed = array_map('trim', explode(',', $roles));
             return in_array($user->role->name, $allowed);
         });
-        
+
 
         Blade::directive('role', function (...$roles) {
             $roleString = collect($roles)->map(fn($r) => trim($r, " '\""))->implode(',');

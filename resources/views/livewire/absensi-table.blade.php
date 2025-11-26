@@ -1,8 +1,8 @@
 <div class="p-3">
 
     {{-- Search --}}
-    <div class="mt-4 flex items-center gap-2">
-        <div class="flex items-center bg-white shadow-reguler px-3 py-3 rounded-xl flex-1 cursor-pointer">
+    <div class="mt-4 flex items-center gap-2 ">
+        <div class="flex items-center bg-white p-2 rounded-lg w-full mr-3 shadow-sm border hover:border-primary cursor-pointer">
             <i class="ph ph-magnifying-glass"> </i>
             <input type="text" wire:model.live="search" class="ml-2 w-full text-sm focus:outline-none"
                 placeholder="Cari absensi">
@@ -14,7 +14,7 @@
 
         {{-- Filter waktu --}}
         <select wire:model.live="filter_range"
-            class="bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm text-sm cursor-pointer">
+            class="bg-white border border-neutral-200 px-3 py-1 rounded-xl shadow-sm text-sm cursor-pointer">
             <option value="today">Hari Ini</option>
             <option value="week">1 Minggu</option>
             <option value="month">1 Bulan</option>
@@ -24,7 +24,7 @@
 
         {{-- Filter status --}}
         <select wire:model.live="filter_status"
-            class="bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm text-sm cursor-pointer">
+            class="bg-white border border-neutral-200 px-3 py-1 rounded-xl shadow-sm text-sm cursor-pointer">
             <option value="">Semua Kehadiran</option>
             <option value="HADIR">Hadir</option>
             <option value="IZIN">Izin</option>
@@ -33,7 +33,7 @@
 
         {{-- Filter role --}}
         <select wire:model.live="filter_role"
-            class="bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm text-sm cursor-pointer">
+            class="bg-white border border-neutral-200 px-3 py-1 rounded-xl shadow-sm text-sm cursor-pointer">
             <option value="">Semua Role</option>
             <option value="Administrator">Administrator</option>
             <option value="Gudang">Gudang</option>
@@ -52,7 +52,7 @@
                     <tr>
                         <th class="px-4 py-3 text-left">No</th>
                         <th class="px-4 py-3 text-left">Nama</th>
-                        <th class="px-4 py-3 text-left">Role</th>
+                        <th class="px-4 py-3 text-center">Role</th>
                         <th class="px-4 py-3 text-left">Tanggal</th>
                         <th class="px-4 py-3 text-left">Waktu</th>
                         <th class="px-4 py-3 text-center">Status</th>
@@ -70,19 +70,21 @@
                                 {{ $att->user->display_name ?? '-' }}
                             </td>
 
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-center w-[150px]">
+                            <p class="px-2 py-0.5 text-xs rounded-full bg-gray-100 border border-gray-400 text-gray-700">
                                 {{ $att->user->role->display_name ?? '-' }}
+                            </p>
                             </td>
 
                             <td class="px-4 py-3">
-                                {{ $att->attendance_date }}
+                            {{ \Carbon\Carbon::parse($att->attendance_date, 'Asia/Jakarta')->format('d F Y') }}
                             </td>
 
                             <td class="px-4 py-3">
-                                {{ $att->attendance_time }} WIB
+                                {{ $att->attendance_time ?? '-' }}
                             </td>
                             <td class="px-4 py-3">
-                                <span x-data
+                                <p x-data
                                     :class="{
                                         'border border-green-500 text-green-500': '{{ $att->status }}'
                                         === 'HADIR',
@@ -93,9 +95,9 @@
                                         'border border-neutral-200 text-neutral-200': !['HADIR', 'IZIN', 'SAKIT']
                                             .includes('{{ $att->status }}'),
                                     }"
-                                    class="p-2 px-3 rounded-xl block text-center text-xs lg:text-1 w-[100px]">
+                                    class="p-2 px-3 rounded-xl block text-center text-xs lg:text-1 ">
                                     {{ $att->status }}
-                                </span>
+                                </p>
 
 
                             </td>
@@ -148,7 +150,7 @@
                                     class="w-11 flex justify-center text-center px-4 py-2 rounded-lg hover:bg-neutral-50 duration-300">
                                     {{ $p }}
                                 </button>
-                            @endif
+                            @endif   
 
                         </div>
                     @endforeach

@@ -1,7 +1,7 @@
 <div class="p-3">
     {{-- SEARCH --}}
     <div class="mt-12 flex items-center gap-2">
-        <div class="flex items-center bg-white shadow-reguler px-3 py-3 rounded-xl flex-1 cursor-pointer">
+        <div class="flex items-center bg-white shadow-reguler px-3 py-2 flex-1 border rounded-lg hover:border-primary cursor-pointer">
             <i class="ph ph-magnifying-glass"> </i>
             <input type="text" wire:model.live="search" class="ml-2 w-full text-sm focus:outline-none"
                 placeholder="Cari pengantaran">
@@ -13,7 +13,7 @@
 
         {{-- Tanggal --}}
         <select wire:model.live="waktu"
-            class="bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm text-sm cursor-pointer">
+            class="bg-white border border-neutral-200 px-3 py-1 rounded-xl shadow-sm text-sm cursor-pointer">
             <option value="today">Hari ini</option>
             <option value="week">1 Minggu</option>
             <option value="month">1 Bulan</option>
@@ -23,7 +23,7 @@
 
         {{-- Kurir --}}
         <select wire:model.live="kurir"
-            class="bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm text-sm cursor-pointer">
+            class="bg-white border border-neutral-200 px-3 py-1 rounded-xl shadow-sm text-sm cursor-pointer">
             <option value="">Semua Kurir</option>
             @foreach ($couriers as $courier)
                 <option value="{{ $courier->id }}">{{ $courier->display_name }}</option>
@@ -32,7 +32,7 @@
 
         {{-- Status --}}
         <select wire:model.live="status"
-            class="bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm text-sm cursor-pointer">
+            class="bg-white border border-neutral-200 px-3 py-1 rounded-xl shadow-sm text-sm cursor-pointer">
             <option value="">Semua Status</option>
             @foreach ($statuses as $item)
                 <option value="{{ $item->status }}">{{ $item->status }}</option>
@@ -60,17 +60,17 @@
                 <tbody>
                     @forelse ($deliveries as $delivery)
                         <tr class="border-b border-gray-100">
-                            <td class="px-4 py-3">{{ $loop->iteration }}</td>
-                            <td class="px-4 py-3">{{ $delivery->kurir->display_name }}</td>
-                            <td class="px-4 py-3">{{ $delivery->outlet->name }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-1">{{ $loop->iteration }}</td>
+                            <td class="px-4 py-3 text-1">{{ $delivery->kurir->display_name }}</td>
+                            <td class="px-4 py-3 text-1">{{ $delivery->outlet->name }}</td>
+                            <td class="px-4 py-3 text-1">
                                 {{ \Carbon\Carbon::parse($delivery->assigned_at, 'Asia/Jakarta')->format('d F Y, H:i') }}
                                 WIB
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-1">
                                 {{ \Carbon\Carbon::parse($delivery->delivered_at, 'Asia/Jakarta')->format('d F Y, H:i') }}
                                 WIB</td>
-                            <td class="px-4 py-3 rounded-lg">
+                            <td class="px-4 py-3 rounded-lg text-1">
                                 <p x-data
                                     :class="{
                                         'border border-secondary text-secondary': '{{ $delivery->status }}'
