@@ -3,27 +3,81 @@
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
 use App\Models\Attendance;
+use App\Models\User;
 
 new class extends Component {
     use WithPagination;
 
     public $refresh = 0;
 
+    
+
     public function mount()
+
     {
-        $userId = auth()->id();
+
         $today = now()->toDateString();
 
-        Attendance::firstOrCreate(
-            [
-                'id_user' => $userId,
-                'attendance_date' => $today,
-            ],
-            [
-                'status' => 'ABSEN',
-            ]
-        );
+        $dayNumber = now()->dayOfWeekIso; // 1=Senin, 7=Minggu
+
+        // Ambil semua user yang aktif
+
+        $users = User::with('outlet')->where('status', 'AKTIF')->get();
+
+        // Buat absensi untuk setiap user jika belum ada
+
+        foreach ($users as $user) {
+
+            // Skip jika user tidak punya outlet
+
+            if (!$user->outlet) {
+
+                continue;
+
+            }
+            
+            // Skip kalau user punya outlet statusnya nonaktif
+            if ($user->outlet->status === 'NONAKTIF'){
+                continue;
+            }
+
+            // Cek apakah outlet tutup di hari ini
+
+            $isOutletClosed = $user->outlet->isClosedOn($dayNumber);
+
+            // Jika outlet tutup, skip pembuatan absensi
+
+            if ($isOutletClosed) {
+
+                continue;
+
+            }
+
+            // Buat absensi jika outlet buka
+
+            Attendance::firstOrCreate(
+
+                [
+
+                    'id_user' => $user->id,
+
+                    'attendance_date' => $today,
+
+                ],
+
+                [
+
+                    'status' => 'ABSEN',
+
+                ]
+
+            );
+
+        }
+
     }
+
+    
 
     public function checkIn($id)
     {
@@ -57,20 +111,21 @@ new class extends Component {
 };
 ?>
 
-<div>
+<div class="p-3">
 
     {{-- TABLE --}}
-    <div class="mt-4 bg-white shadow-md overflow-hidden ">
-        <div class="overflow-x-auto w-full">
-            <table class="min-w-max w-full text-sm">
-                <thead>
+    {{-- TABLE --}}
+    <div class="mt-12 bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-4 py-3 text-left">No</th>
-                        <th class="px-4 py-3 text-left">Nama</th>
-                        <th class="px-4 py-3 text-left">Tanggal</th>
-                        <th class="px-4 py-3 text-left">Status</th>
-                        <th class="px-4 py-3 text-left">Waktu</th>
-                        <th class="px-4 py-3 text-left">Aksi</th>
+                        <th class="px-4 py-3 text-left whitespace-nowrap">No</th>
+                        <th class="px-4 py-3 text-left whitespace-nowrap">Nama</th>
+                        <th class="px-4 py-3 text-left whitespace-nowrap">Tanggal</th>
+                        <th class="px-4 py-3 text-left whitespace-nowrap">Waktu</th>
+                        <th class="px-4 py-3 text-center whitespace-nowrap">Status</th>
+                        <th class="px-4 py-3 text-center whitespace-nowrap">Aksi</th>
                     </tr>
                 </thead>
 
@@ -84,30 +139,31 @@ new class extends Component {
                             </td>
 
                             <td class="px-4 py-3">
-                                {{ $att->attendance_date }}
+                                {{ \Carbon\Carbon::parse($att->attendance_date, 'Asia/Jakarta')->format('d F Y') }}
                             </td>
 
                             <td class="px-4 py-3">
-                                <span class="px-3 py-1 rounded-lg text-xs 
-                                    @if ($att->status === 'HADIR') 
-                                        bg-emerald-700 text-white 
-                                    @elseif($att->status === 'IZIN')
-                                        bg-purple-700 text-white
-                                    @elseif($att->status === 'SAKIT')
-                                        bg-cyan-600 text-white
-                                    @else
-                                        bg-red-700 text-white
-                                    @endif
-                                ">
+                                {{ $att->attendance_time ?? '-' }} 
+                            </td>
+
+                            <td class="px-4 py-3 rounded-lg">
+                                <p x-data
+                                    :class="{
+                                        'border border-green-500 text-green-500': '{{ $att->status }}'
+                                        === 'HADIR',
+                                        'border border-primary-200 text-primary-200': '{{ $att->status }}'
+                                        === 'IZIN',
+                                        'border border-secondary text-secondary': '{{ $att->status }}'
+                                        === 'SAKIT',
+                                        'border border-neutral-200 text-neutral-200': !['HADIR', 'IZIN', 'SAKIT']
+                                            .includes('{{ $att->status }}'),
+                                    }"
+                                    class="py-1 rounded-xl block text-center text-xs lg:text-1 ">
                                     {{ $att->status }}
-                                </span>
+                                </p>
                             </td>
 
-                            <td class="px-4 py-3">
-                                {{ $att->attendance_time ?? '-' }}
-                            </td>
-
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-center">
 
                                 @php
                                     $attDate = \Carbon\Carbon::parse($att->attendance_date)->toDateString();
@@ -118,7 +174,7 @@ new class extends Component {
 
                                 @if ($isToday && $isAbsent)
                                     <button wire:click="checkIn({{ $att->id }})"
-                                        class="px-4 py-2 rounded-xl bg-green-600 text-white shadow hover:bg-green-700">
+                                        class="px-4 py-2 rounded-xl bg-green-600 text-white shadow hover:bg-green-700 text-center">
                                         Presensi
                                     </button>
                                 @else

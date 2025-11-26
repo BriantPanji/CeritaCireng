@@ -137,7 +137,7 @@ class AbsensiTable extends Component
         // ==================
         return $query->orderBy('attendance_date', 'desc')
             ->orderBy('attendance_time', 'desc')
-            ->paginate(10);
+            ->paginate(5);
     }
 
     public function render()

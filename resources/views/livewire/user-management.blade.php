@@ -19,6 +19,15 @@ new class extends Component {
     // MODAL TAMBAH
     public $showModal = false;
 
+    // MODAL EDIT
+    public $showEditModal = false;
+    public $editUserId;
+
+
+    // MODAL DETAIL
+    public $showDetailModal = false;
+    public $detailUser;
+
     // FORM FIELDS
     public $display_name;
     public $username;
@@ -27,31 +36,47 @@ new class extends Component {
     public $outlet_id;
     public $status = 'AKTIF';
     public $password;
+    public $password_confirmation; // Untuk modal tambah
+    public $old_password; // Untuk modal edit
+    public $new_password; // Untuk modal edit
+
+    // OLD VALUES untuk placeholder di edit modal
+    public $old_display_name;
+    public $old_username;
+    public $old_phone;
 
     protected $updatesQueryString = ['role' => ['except' => ''],];
 
-    // Reset pagination when filtering
-    public function updatingSearch() { $this->resetPage(); }
-    public function updatingRole() { $this->resetPage(); }
+    // Reset pagination when filtering - LIVE SEARCH
+    public function updatedSearch() { 
+        $this->resetPage();
+        $this->selectAll = false;
+        $this->selectedUsers = [];
+    }
+    
+    public function updatedRole() { 
+        $this->resetPage();
+        $this->selectAll = false;
+        $this->selectedUsers = [];
+    }
 
     // ================================
-    // Query User
+    // Query User - INDEPENDEN
     // ================================
     protected function getUsers()
     {
         $query = User::query();
 
-        // Jika sedang melakukan pencarian
+        // Search dan Role filter bekerja bersamaan (independen)
         if ($this->search !== '') {
-            // Search berlaku untuk SEMUA user
             $query->where('display_name', 'like', "%{$this->search}%");
         }
-        // Jika search kosong → role filter aktif
-        elseif ($this->role !== '') {
+
+        if ($this->role !== '') {
             $query->where('role_id', $this->role);
         }
 
-        return $query->paginate(8)->withQueryString();
+        return $query->paginate(5)->withQueryString();
     }
 
 
@@ -126,9 +151,98 @@ new class extends Component {
     public function closeModal()
     {
         $this->showModal = false;
-        return redirect()->route('users.management')->with('success', 'Pengguna berhasil ditambahkan.');
+        $this->showEditModal = false;
+        session()->flash('success', 'Tidak jadi adanya perubahan');
 
     }
+
+    public function openEditModal($id)
+    {
+        $user = User::findOrFail($id);
+
+        $this->editUserId  = $id;
+        $this->display_name = $user->display_name;
+        $this->username     = $user->username;
+        $this->phone        = $user->phone;
+        $this->role_id      = $user->role_id;
+        $this->outlet_id    = $user->outlet_id;
+        $this->status       = $user->status;
+
+        // Simpan old values untuk placeholder
+        $this->old_display_name = $user->display_name;
+        $this->old_username     = $user->username;
+        $this->old_phone        = $user->phone;
+
+        // Reset password fields
+        $this->old_password = '';
+        $this->new_password = '';
+
+        $this->showEditModal = true;
+    }
+
+    public function update()
+    {
+        $rules = [
+            'display_name' => 'required|string|max:100',
+            'phone'        => 'required|string|max:15',
+            'role_id'      => 'required|exists:roles,id',
+            'outlet_id'    => 'required|exists:outlets,id',
+            'status'       => 'required|in:AKTIF,NONAKTIF',
+        ];
+
+        // Validasi password hanya jika salah satu field password diisi
+        if ($this->old_password || $this->new_password) {
+            $rules['old_password'] = 'required';
+            $rules['new_password'] = 'required|min:6';
+        }
+
+        $this->validate($rules);
+
+        $user = User::findOrFail($this->editUserId);
+
+        // Cek password lama jika mau ganti password
+        if ($this->old_password && $this->new_password) {
+            if (!Hash::check($this->old_password, $user->password)) {
+                $this->addError('old_password', 'Password lama tidak sesuai.');
+                return;
+            }
+
+            $user->update([
+                'display_name' => $this->display_name,
+                'phone'        => $this->phone,
+                'role_id'      => $this->role_id,
+                'outlet_id'    => $this->outlet_id,
+                'status'       => $this->status,
+                'password'     => Hash::make($this->new_password)
+            ]);
+        } else {
+            // Update tanpa password
+            $user->update([
+                'display_name' => $this->display_name,
+                'phone'        => $this->phone,
+                'role_id'      => $this->role_id,
+                'outlet_id'    => $this->outlet_id,
+                'status'       => $this->status,
+            ]);
+        }
+
+        $this->showEditModal = false;
+
+        session()->flash('success', 'Data pengguna berhasil diupdate.');
+    }
+
+
+
+    public function openDetailModal($id)
+    {
+        return redirect()->route('/user-details');
+    }
+
+    public function closeDetailModal()
+    {
+        $this->showDetailModal = false;
+    }
+
 
     public function resetForm()
     {
@@ -139,6 +253,12 @@ new class extends Component {
         $this->outlet_id = '';
         $this->status = 'AKTIF';
         $this->password = '';
+        $this->password_confirmation = '';
+        $this->old_password = '';
+        $this->new_password = '';
+        $this->old_display_name = '';
+        $this->old_username = '';
+        $this->old_phone = '';
     }
 
     public function save()
@@ -149,8 +269,10 @@ new class extends Component {
             'phone' => 'required|string|max:15',
             'role_id' => 'required|exists:roles,id',
             'outlet_id' => 'required|exists:outlets,id',
-            'status' => 'required|in:AKTIF,NONAKTIF',
-            'password' => 'required|min:6'
+            'password' => 'required|min:6',
+            'password_confirmation' => 'required|same:password'
+        ], [
+            'password_confirmation.same' => 'Konfirmasi password tidak cocok dengan password.'
         ]);
 
         User::create([
@@ -159,7 +281,7 @@ new class extends Component {
             'phone'       => $this->phone,
             'role_id'     => $this->role_id,
             'outlet_id'   => $this->outlet_id,
-            'status'      => $this->status,
+            'status'      => 'AKTIF', // Default AKTIF
             'password'    => Hash::make($this->password),
         ]);
 
@@ -229,7 +351,7 @@ new class extends Component {
     public function setRole($id)
     {
         $this->role = $id;
-        $this->search = ''; // reset search
+        // TIDAK RESET SEARCH lagi, biarkan independen
         $this->resetPage();
     }
 
@@ -237,17 +359,16 @@ new class extends Component {
 
 ?>
 
-<div class="p-4 space-y-4">
-
+<div class="p-3 space-y-4">
     <!-- Search + Role -->
-    <div class="flex items-center justify-between">
-        <div class="flex items-center bg-white p-2 rounded-lg w-full mr-3 shadow-sm border hover:border-primary cursor-pointer">
+    <div class="flex items-center justify-between mt-12">
+        <div class="flex items-center bg-white p-2 rounded-lg w-full mr-3 shadow-sm border hover:border-primary">
             <i class="ph ph-magnifying-glass text-gray-400 text-base"></i>
             <input type="text"
-                   wire:model.debounce.300ms="search"
-                   wire:keydown.enter="$refresh"
+                   wire:model.live.debounce.150ms="search"
                    placeholder="Cari pengguna"
-                   class="ml-2 w-full outline-none text-sm">
+                   class="ml-2 w-full outline-none text-sm"
+                   autocomplete="off">
         </div>
 
         <div class="relative" x-data="{ open:false }">
@@ -293,7 +414,7 @@ new class extends Component {
                         <input type="checkbox" class="cursor-pointer"{{ $selectAll ? 'checked' : '' }}
                             wire:click="toggleSelectAll">
                     </th>
-                    <th class="px-3 py-2 cursor-pointer select-none"
+                    <th  class="px-3 py-2 cursor-pointer select-none"
                     wire:click="toggleSelectAll">Nama Pengguna</th>
                     <th class="px-3 py-2 text-center">Status</th>
                     <th class="px-3 py-2 text-center">Role</th>
@@ -313,42 +434,42 @@ new class extends Component {
                         </td>
 
                         <!-- Nama -->
-                        <td class="px-3 py-2 cursor-pointer select-none"
+                        <td class="py-2 px-3 cursor-pointer select-none text-1"
                                 wire:click="toggleUser({{ $user->id }})">
                                 {{ $user->display_name }}
                         </td>
 
                         <!-- Status -->
-                        <td class="px-3 py-2 align-middle text-center">
-                            <span class="px-2 py-0.5 text-xs rounded-full bg-transparent border
+                        <td class="px-3 py-2 align-middle text-center w-[100px]">
+                            <p class="px-1 py-0.5 text-xs rounded-full bg-gray-100 border
                                 {{ $user->status === 'AKTIF'
                                     ? 'border-blue-700 text-blue-700'
                                     : 'border-red-700 text-red-700' }}"
                                     wire:click="toggleUser({{ $user->id }})">
                                 {{ $user->status }}
-                            </span>
+                            </p>
                         </td>
 
                         <!-- Role -->
-                        <td class="px-3 py-2 align-middle text-center">
-                            <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 border border-gray-300 text-gray-700"
+                        <td class="px-3 py-2 align-middle text-center w-[130px]">
+                            <p class="px-2 py-0.5 text-xs rounded-full bg-gray-100 border border-gray-400 text-gray-700"
                             wire:click="toggleUser({{ $user->id }})">
-                                {{ $user->role->name ?? '-' }}
-                            </span>
+                                {{ $user->role->display_name ?? '-' }}
+                            </p>
                         </td>
 
                         <!-- Edit -->
-                        <td class="px-3 py-2 align-middle text-center cursor-pointer">
-                            <button class="bg-green-600 text-white px-3 py-1 rounded-lg text-xs shadow cursor-pointer"
-                                    wire:click.stop>
+                        <td class="px-3 py-2 align-middle text-center cursor-pointer w-[100px]">
+                            <button class="bg-green-600 text-white px-5 py-1 rounded-lg text-xs shadow cursor-pointer"
+                                    wire:click.stop="openEditModal({{ $user->id }})">
                                 Edit
                             </button>
                         </td>
 
                         <!-- Aksi -->
-                        <td class="px-3 py-2 align-middle text-center">
+                        <td class="px-3 py-2 align-middle text-center w-[100px]">
                             <button class="bg-primary text-white px-3 py-1 rounded-lg text-xs shadow cursor-pointer"
-                                    wire:click.stop>
+                                    wire:click.stop="openDetailModal({{ $user->id }})">
                                 Detail
                             </button>
                         </td>
@@ -415,6 +536,7 @@ new class extends Component {
 
 
 
+    <!-- MODAL TAMBAH (Status dihapus, Password + Confirm Password) -->
     @if($showModal)
     <div
         class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 overflow-y-auto no-scrollbar"
@@ -422,7 +544,7 @@ new class extends Component {
         wire:click="closeModal"
     >
         <div
-            class="min-h-full flex justify-center items-start py-8 px-4"
+            class="min-h-full flex justify-center items-center py-8 px-4"
             wire:click.stop
         >
             <div
@@ -478,19 +600,21 @@ new class extends Component {
                     </div>
 
                     <div>
-                        <label class="text-sm font-medium">Status</label>
-                        <select wire:model="status"
-                            class="w-full border p-2 rounded-lg border-neutral-300">
-                            <option value="AKTIF">AKTIF</option>
-                            <option value="NONAKTIF">NONAKTIF</option>
-                        </select>
+                        <label class="text-sm font-medium">Password</label>
+                        <input type="password" wire:model="password"
+                            class="w-full border p-2 border-neutral-300 rounded-lg" 
+                            placeholder="Masukkan password"
+                            autocomplete="new-password">
+                        @error('password') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
-                        <label class="text-sm font-medium">Password</label>
-                        <input type="password" wire:model="password"
-                            class="w-full border p-2 border-neutral-300 rounded-lg" autocomplete="new-password">
-                        @error('password') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                        <label class="text-sm font-medium">Konfirmasi Password</label>
+                        <input type="password" wire:model="password_confirmation"
+                            class="w-full border p-2 border-neutral-300 rounded-lg" 
+                            placeholder="Masukkan ulang password"
+                            autocomplete="new-password">
+                        @error('password_confirmation') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
                     </div>
 
                 </div>
@@ -514,5 +638,199 @@ new class extends Component {
     </div>
     @endif
 
+    @if($showDetailModal)
+    <div
+        class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 overflow-y-auto"
+        wire:click="closeDetailModal"
+    >
+        <div class="min-h-full flex justify-center items-center py-8 px-4" wire:click.stop>
+            <div class="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
 
+                <h2 class="text-lg font-bold mb-4">Detail Pengguna</h2>
+
+                @if($detailUser)
+                <div class="space-y-3 text-sm">
+
+                    <div>
+                        <p class="font-medium">Nama</p>
+                        <p class="text-gray-700">{{ $detailUser->display_name }}</p>
+                    </div>
+
+                    <div>
+                        <p class="font-medium">Username</p>
+                        <p class="text-gray-700">{{ $detailUser->username }}</p>
+                    </div>
+
+                    <div>
+                        <p class="font-medium">Phone</p>
+                        <p class="text-gray-700">{{ $detailUser->phone }}</p>
+                    </div>
+
+                    <div>
+                        <p class="font-medium">Role</p>
+                        <p class="text-gray-700">{{ $detailUser->role->display_name ?? '-' }}</p>
+                    </div>
+
+                    <div>
+                        <p class="font-medium">Outlet</p>
+                        <p class="text-gray-700">{{ $detailUser->outlet->name ?? '-' }}</p>
+                    </div>
+
+                    <div>
+                        <p class="font-medium">Status</p>
+                        <span class="px-2 py-1 rounded-full text-xs border
+                            {{ $detailUser->status === 'AKTIF'
+                                ? 'border-blue-700 text-blue-700'
+                                : 'border-red-700 text-red-700' }}">
+                            {{ $detailUser->status }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <p class="font-medium">Dibuat pada</p>
+                        <p class="text-gray-700">
+                            {{ $detailUser->created_at->format('d F Y, H:i') }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="font-medium">Terakhir diupdate</p>
+                        <p class="text-gray-700">
+                            {{ $detailUser->updated_at->format('d F Y, H:i') }}
+                        </p>
+                    </div>
+
+                </div>
+                @endif
+
+                <div class="mt-6 flex justify-end">
+                    <button wire:click="closeDetailModal"
+                            class="px-4 py-2 rounded bg-primary text-white cursor-pointer">
+                        Tutup
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- MODAL EDIT (Ada Status + Password Lama & Baru Opsional) -->
+    @if($showEditModal)
+    <div
+        class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 overflow-y-auto no-scrollbar"
+        style="z-index: 999;"
+        wire:click="showEditModal = false"
+    >
+        <div
+            class="min-h-full flex justify-center items-center py-8 px-4"
+            wire:click.stop
+        >
+            <div
+                class="bg-white w-full max-w-md rounded-xl shadow-lg p-6"
+            >
+                <h2 class="text-lg font-bold mb-4">Edit Pengguna</h2>
+
+                <div class="space-y-3">
+
+                    <div>
+                        <label class="text-sm font-medium">Nama</label>
+                        <input type="text" wire:model="display_name"
+                            class="w-full border p-2 border-neutral-300 rounded-lg" placeholder="{{$old_display_name}}">
+                        @error('display_name') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium">Username</label>
+                        <input type="text" wire:model="username"
+                            class="w-full border p-2 border-neutral-300 rounded-lg bg-gray-100" placeholder="{{$old_username}}" disabled readonly>
+                        <p class="text-xs text-gray-500 mt-1">Username tidak dapat diubah</p>
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium">Phone</label>
+                        <input type="text" wire:model="phone"
+                            class="w-full border p-2 border-neutral-300 rounded-lg" placeholder="{{$old_phone}}">
+                        @error('phone') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium">Role</label>
+                        <select wire:model="role_id"
+                            class="w-full border p-2 rounded-lg border-neutral-300">
+                            <option value="" disabled hidden>Pilih Role</option>
+                            @foreach($roles as $r)
+                                <option value="{{ $r->id }}">{{ $r->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('role_id') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium">Outlet</label>
+                        <select wire:model="outlet_id"
+                            class="w-full border p-2 rounded-lg border-neutral-300">
+                            <option value="" disabled hidden>Pilih Outlet</option>
+                            @foreach($outlets as $o)
+                                <option value="{{ $o->id }}">{{ $o->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('outlet_id') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium">Status</label>
+                        <select wire:model="status"
+                            class="w-full border p-2 rounded-lg border-neutral-300">
+                            <option value="AKTIF">AKTIF</option>
+                            <option value="NONAKTIF">NONAKTIF</option>
+                        </select>
+                    </div>
+
+                    <!-- DIVIDER -->
+                    <div class="border-t pt-3 mt-3">
+                        <p class="text-sm font-medium text-gray-700 mb-2">Ganti Password (Opsional)</p>
+                        <p class="text-xs text-gray-500 mb-3">Isi kedua field di bawah hanya jika ingin mengganti password</p>
+
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-sm font-medium">Password Lama</label>
+                                <input type="password" wire:model="old_password"
+                                    class="w-full border p-2 border-neutral-300 rounded-lg" 
+                                    placeholder="Masukkan password lama"
+                                    autocomplete="current-password">
+                                @error('old_password') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
+                                <label class="text-sm font-medium">Password Baru</label>
+                                <input type="password" wire:model="new_password"
+                                    class="w-full border p-2 border-neutral-300 rounded-lg" 
+                                    placeholder="Masukkan password baru (min. 6 karakter)"
+                                    autocomplete="new-password">
+                                @error('new_password') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <button
+                        wire:click="closeModal"
+                        class="px-4 py-2 rounded border border-neutral-300 bg-white hover:bg-neutral-200 cursor-pointer">
+                        Batal
+                    </button>
+
+                    <button
+                        wire:click="update"
+                        class="px-4 py-2 rounded bg-primary text-white cursor-pointer">
+                        Simpan
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
