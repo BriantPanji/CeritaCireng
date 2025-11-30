@@ -25,8 +25,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-//        $tmp_dir = ini_get('upload_tmp_dir') ? ini_get('upload_tmp_dir') : sys_get_temp_dir();
-//        die($tmp_dir);
+        //        $tmp_dir = ini_get('upload_tmp_dir') ? ini_get('upload_tmp_dir') : sys_get_temp_dir();
+        //        die($tmp_dir);
 
 
         if ($this->app->environment('production')) {
@@ -48,6 +48,11 @@ class AppServiceProvider extends ServiceProvider
                 'name' => 'Inventory',
                 'icon' => 'warehouse',
                 'route' => '/inventory',
+            ],
+            [
+                'name' => 'Stok',
+                'icon' => 'stack',
+                'route' => '/stok',
             ],
             [
                 'name' => 'Laporan',
@@ -95,8 +100,14 @@ class AppServiceProvider extends ServiceProvider
         });
 
 
-        Blade::directive('role', function (...$roles) {
-            $roleString = collect($roles)->map(fn($r) => trim($r, " '\""))->implode(',');
+        Blade::directive('role', function ($expression) {
+            // Remove parentheses and quotes, then split by comma
+            $expression = trim($expression, "()");
+            $roles = array_map(function ($role) {
+                return trim($role, " '\"");
+            }, explode(',', $expression));
+            $roleString = implode(',', $roles);
+
             return "<?php if(auth()->check() && Gate::allows('checkrole', '$roleString')): ?>";
         });
         Blade::directive('endrole', function () {
