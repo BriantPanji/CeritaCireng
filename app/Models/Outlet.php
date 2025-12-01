@@ -18,16 +18,16 @@ class Outlet extends Model
 
     public function hasStaff()
     {
-        return $this->hasMany(User::class, 'id_outlet', 'id');
+        return $this->hasMany(User::class, 'outlet_id', 'id');
     }
 
     public function hasItemSetting()
     {
-        return $this->belongsToMany(Item::class, 'outlet_item_settings', 'id_outlet', 'id_item');
+        return $this->belongsToMany(Item::class, 'outlet_item_settings', 'id_outlet', 'id_item')->withPivot('quantity');
     }
 
     public function delivery()
     {
-        return $this->hasMany(Delivery::class);
+        return $this->hasMany(Delivery::class, "id_outlet");
     }
 }

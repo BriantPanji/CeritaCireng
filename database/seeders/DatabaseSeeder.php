@@ -208,10 +208,27 @@ class DatabaseSeeder extends Seeder
         }
 
         // Seed attendances for all users
+        $start = now()->subMonth();
+        $end = now();
+
         foreach ($users as $user) {
-            Attendance::factory()->count(rand(5, 15))->create([
-                'id_user' => $user->id,
-            ]);
+            // Loop tanggal 1 bulan kebelakang
+            $period = \Carbon\CarbonPeriod::create($start, $end);
+
+            foreach ($period as $date) {
+                // Biar data realistis, random 70% hadir, lainnya izin/sakit/absen
+                $status = fake()->randomElement(['HADIR', 'HADIR', 'HADIR', 'IZIN', 'SAKIT', 'ABSEN']);
+
+                Attendance::factory()->create([
+                    'id_user' => $user->id,
+                    'attendance_date' => $date->format('Y-m-d'),
+                    'attendance_time' => fake()->dateTimeBetween(
+                        $date->format('Y-m-d') . ' 07:00',
+                        $date->format('Y-m-d') . ' 10:00'
+                    ),
+                    'status' => $status,
+                ]);
+            }
         }
 
         // Seed other expenses

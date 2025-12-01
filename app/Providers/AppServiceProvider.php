@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,48 +22,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::share('sidebarMenus', [
-            [
-                'name' => 'Dashboard',
-                'icon' => 'list-dashes',
-                'route' => '/dashboard',
-            ],
-            [
-                'name' => 'Pengantaran',
-                'icon' => 'truck',
-                'route' => '/pengantaran',
-            ],
-            [
-                'name' => 'Inventory',
-                'icon' => 'warehouse',
-                'route' => '/inventory',
-            ],
-            [
-                'name' => 'Laporan',
-                'icon' => 'files',
-                'route' => '/laporan',
-            ],
-            [
-                'name' => 'Manajemen User',
-                'icon' => 'user-gear',
-                'route' => '/user-management',
-            ],
-            [
-                'name' => 'Absensi',
-                'icon' => 'identification-badge',
-                'route' => '/absensi',
-            ],
-            [
-                'name' => 'Log Aktivitas',
-                'icon' => 'note-pencil',
-                'route' => '/log-aktivitas',
-            ],
-            [
-                'name' => 'Keluar',
-                'icon' => 'sign-out',
-                'route' => '/logout',
-            ],
-        ]);
+        View::composer('*', function ($view) {
+            $user = Auth::user();
+
+            if (!$user) {
+                View::share('sidebarMenus', collect());
+                return;
+            }
+
+            $menus = collect(config('sidebar'))
+                ->filter(function ($menu) use ($user) {
+                    return in_array($user->role->name, $menu['roles']);
+                })
+                ->values();
+
+            View::share('sidebarMenus', $menus);
+        });
+
+
 
         Blade::directive('convertRupiah', function ($money) {
             return "<?php echo 'Rp' . number_format({$money}, 0, ',', '.'); ?>";

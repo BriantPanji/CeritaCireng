@@ -46,7 +46,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
     {
         $user = Auth::getProvider()->retrieveByCredentials(['username' => $this->username, 'password' => $this->password]);
 
-        if (! $user || ! Auth::getProvider()->validateCredentials($user, ['password' => $this->password])) {
+        if (!$user || !Auth::getProvider()->validateCredentials($user, ['password' => $this->password])) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -62,7 +62,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     protected function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
@@ -83,7 +83,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->username).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->username) . '|' . request()->ip());
     }
 }; ?>
 
@@ -93,7 +93,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
         {{-- Header --}}
         <div class="bg-primary rounded-t-lg px-6 py-4 text-center">
             <h1 class="text-l2 font-bold text-dark">Cerita Cireng</h1>
-            <p class="text-reguler text-dark mt-1">Sistem Internal Perusahaan</p>
         </div>
 
         {{-- Login Form --}}
@@ -104,15 +103,9 @@ new #[Layout('components.layouts.auth')] class extends Component {
                 {{-- Username Input --}}
                 <div>
                     <label for="username" class="block text-reguler font-medium text-dark mb-2">Username</label>
-                    <input 
-                        wire:model="username"
-                        type="text" 
-                        id="username"
+                    <input wire:model="username" type="text" id="username"
                         class="w-full px-4 py-3 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary transition-colors text-reguler"
-                        placeholder="Masukkan username"
-                        required
-                        autofocus
-                    />
+                        placeholder="Masukkan username" required autofocus />
                     @error('username')
                         <p class="text-secondary text-1 mt-1">{{ $message }}</p>
                     @enderror
@@ -121,14 +114,9 @@ new #[Layout('components.layouts.auth')] class extends Component {
                 {{-- Password Input --}}
                 <div>
                     <label for="password" class="block text-reguler font-medium text-dark mb-2">Password</label>
-                    <input 
-                        wire:model="password"
-                        type="password" 
-                        id="password"
+                    <input wire:model="password" type="password" id="password"
                         class="w-full px-4 py-3 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary transition-colors text-reguler"
-                        placeholder="Masukkan password"
-                        required
-                    />
+                        placeholder="Masukkan password" required />
                     @error('password')
                         <p class="text-secondary text-1 mt-1">{{ $message }}</p>
                     @enderror
@@ -136,20 +124,14 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
                 {{-- Remember Me --}}
                 <div class="flex items-center">
-                    <input 
-                        wire:model="remember"
-                        type="checkbox" 
-                        id="remember"
-                        class="w-4 h-4 text-primary border-neutral-200 rounded focus:ring-primary"
-                    />
+                    <input wire:model="remember" type="checkbox" id="remember"
+                        class="w-4 h-4 text-primary border-neutral-200 rounded focus:ring-primary" />
                     <label for="remember" class="ml-2 text-1 text-neutral-400">Ingat saya</label>
                 </div>
 
                 {{-- Submit Button --}}
-                <button 
-                    type="submit"
-                    class="w-full bg-primary text-white py-3 rounded-lg font-semibold text-reguler hover:bg-primary-200 transition-colors mt-2"
-                >
+                <button type="submit"
+                    class="w-full bg-primary text-white py-3 rounded-lg font-semibold text-reguler hover:bg-primary-200 transition-colors mt-2">
                     Login
                 </button>
             </form>

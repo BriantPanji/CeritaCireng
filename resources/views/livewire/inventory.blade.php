@@ -62,20 +62,20 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
     }
 }; ?>
 
-<div class="min-w-full max-w-full" 
-    x-data 
-    @modal-opened.window="document.body.style.overflow = 'hidden'"
+<div class="min-w-full max-w-full mt-20" x-data @modal-opened.window="document.body.style.overflow = 'hidden'"
     @modal-closed.window="document.body.style.overflow = 'auto'">
     <section class="min-w-full max-w-full h-fit mb-4">
-        <div x-data="{xShow: false}" class="min-w-full max-w-full max-h-full group relative">
+        <div x-data="{ xShow: false }" class="min-w-full max-w-full max-h-full group relative">
             <span onclick="document.getElementById('cari').focus()"
                 class="max-h-full min-h-full w-9 absolute flex cursor-text items-center justify-center">
                 <i class="ph ph-magnifying-glass"></i>
             </span>
-            <input wire:model.live.debounce.300ms="query" @input.debounce.250ms="xShow = $event.target.value.length > 0" type="text" role="searchbox" name="cari" id="cari"
-                autocomplete="off" placeholder="Cari barang..."
+            <input wire:model.live.debounce.300ms="query" @input.debounce.250ms="xShow = $event.target.value.length > 0"
+                type="text" role="searchbox" name="cari" id="cari" autocomplete="off"
+                placeholder="Cari barang..."
                 class="w-full px-9 p-1 max-h-10 h-10 text-xs ring-[0.5px] ring-gray-400 rounded-xl outline-none group-hover:ring-primary group-hover:ring-[0.5px] focus:ring-primary-200 focus:ring-[0.5px]" />
-            <button type="button" x-show="xShow" onclick="document.getElementById('cari').focus();" @click="xShow = false" wire:click="$set('query', '')"
+            <button type="button" x-show="xShow" onclick="document.getElementById('cari').focus();"
+                @click="xShow = false" wire:click="$set('query', '')"
                 class="absolute right-0 top-0 max-h-full min-h-full w-9 flex items-center justify-center cursor-pointer">
                 <i class="ph ph-x text-lg"></i>
             </button>
@@ -86,15 +86,17 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
         @forelse ($items as $item)
             <article wire:key="item-{{ $item->id }}"
                 class="min-w-full max-w-full min-h-10 xs:!max-w-[47%] xs:min-w-[47%] lg:!max-w-[31%] lg:min-w-[31%] h-fit bg-white rounded-xl">
-                <div  wire:dblclick="showDetail({{ $item->id }})" class="min-w-full max-w-full aspect-[4/3] bg-gray-400 rounded-t-xl object-cover">
+                <div wire:dblclick="showDetail({{ $item->id }})"
+                    class="min-w-full max-w-full aspect-[4/3] bg-gray-400 rounded-t-xl object-cover">
                     <img src="{{ $item->image }}" class="max-h-full min-w-full aspect-[4/3] object-cover rounded-t-xl"
                         alt="">
                 </div>
                 <div class="min-h-22 max-h-full min-w-full max-w-full p-4 flex flex-col justify-between">
-                    <h3 class="text-lg xs:text-base font w-fit max-w-full truncate cursor-pointer" wire:click="showDetail({{ $item->id }})">{{ \Str::title($item->name) }}</h3>
+                    <h3 class="text-lg xs:text-base font w-fit max-w-full truncate cursor-pointer"
+                        wire:click="showDetail({{ $item->id }})">{{ \Str::title($item->name) }}</h3>
                     <span class="text-sm min-w-full max-w-full flex items-center justify-between">
                         <span class="font-light xs:text-xs text-neutral-400">Jumlah: {{ $item->stock->stock }}
-                            {{ ($item->unit) }}</span>
+                            {{ $item->unit }}</span>
                         <button type="button" wire:click="showDetail({{ $item->id }})"
                             class="text-primary/80 select-none text-[.8rem] cursor-pointer hover:underline">Detail</button>
                     </span>
@@ -123,7 +125,8 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
         <div x-data x-show="true" x-transition.opacity @click.self="$wire.closeModal()"
             class="fixed inset-0  bg-black/30 flex items-center justify-center p-4 z-50">
 
-            <div @click.stop class="bg-white no-scrollbar rounded-2xl max-w-3xl w-full xs:w-sm lg:w-3xl max-h-[90vh] overflow-y-auto shadow-xl">
+            <div @click.stop
+                class="bg-white no-scrollbar rounded-2xl max-w-3xl w-full xs:w-sm lg:w-3xl max-h-[90vh] overflow-y-auto shadow-xl">
 
                 <div
                     class="sticky top-0 bg-white border-b border-gray-200 px-4 pt-3 pb-2 flex items-center justify-between rounded-t-2xl">
@@ -157,14 +160,15 @@ new #[Layout('components.layouts.app'), Title('Inventaris / Gudang')] class exte
                                 <tr class="border-b border-gray-200">
                                     <td class="py-2 lg:py-1.5 text-gray-600 w-[40%]">Stok</td>
                                     <td class="py-2 lg:py-1.5 w-[1%]">:</td>
-                                    <td class="py-2 lg:py-1.5 font-medium text-right w-[59%]">{{ $itemDetailById->stock->stock }}
-                                        {{ ($itemDetailById->unit) }}</td>
+                                    <td class="py-2 lg:py-1.5 font-medium text-right w-[59%]">
+                                        {{ $itemDetailById->stock->stock }}
+                                        {{ $itemDetailById->unit }}</td>
                                 </tr>
                                 <tr class="border-b border-gray-200">
                                     <td class="py-2 lg:py-1.5 text-gray-600 w-[40%]">Harga Satuan</td>
                                     <td class="py-2 lg:py-1.5 w-[1%]">:</td>
                                     <td class="py-2 lg:py-1.5 font-medium text-right w-[59%]">@convertRupiah($itemDetailById->cost) /
-                                        {{ ($itemDetailById->unit) }}</td>
+                                        {{ $itemDetailById->unit }}</td>
                                 </tr>
                             </table>
                         </div>

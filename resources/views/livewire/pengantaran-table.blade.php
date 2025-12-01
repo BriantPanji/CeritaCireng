@@ -1,6 +1,6 @@
 <div class="p-3">
     {{-- SEARCH --}}
-    <div class="mt-12 flex items-center gap-2">
+    <div class="mt-12 lg:mt-24 flex items-center gap-2">
         <div class="flex items-center bg-white shadow-reguler px-3 py-3 rounded-xl flex-1 cursor-pointer">
             <i class="ph ph-magnifying-glass"> </i>
             <input type="text" wire:model.live="search" class="ml-2 w-full text-sm focus:outline-none"
