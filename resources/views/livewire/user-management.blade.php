@@ -6,8 +6,11 @@ use App\Models\Role;
 use App\Models\Outlet;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
-new class extends Component {
+
+new #[Layout('components.layouts.app'), Title('Manajemen User')] class extends Component {
     use WithPagination;
 
     // FITUR LIST DATA
