@@ -279,29 +279,29 @@ new class extends Component {
 };
 ?>
 
-<div class="p-3 space-y-4">
+<div class="px-3 pt-3 space-y-4">
     <!-- Search + Status Filter -->
-    <div class="flex items-center justify-between mt-12">
+    <div class="flex items-center justify-between">
         <div class="flex items-center bg-white p-2 rounded-lg w-full mr-3 shadow-sm border hover:border-primary">
             <i class="ph ph-magnifying-glass text-gray-400 text-base"></i>
-            <input type="text"
-                   wire:model.live.debounce.150ms="search"
-                   placeholder="Cari outlet (nama atau lokasi)"
-                   class="ml-2 w-full outline-none text-sm"
-                   autocomplete="off">
+            <input type="text" wire:model.live.debounce.150ms="search" placeholder="Cari outlet (nama atau lokasi)"
+                class="ml-2 w-full outline-none text-sm" autocomplete="off">
         </div>
 
         <div class="relative" x-data="{ open:false }">
             <button @click="open = !open"
-                    class="bg-primary text-white px-4 py-1 rounded-lg shadow text-sm flex items-center gap-1 cursor-pointer">
+                class="bg-primary text-white px-4 py-1 rounded-lg shadow text-sm flex items-center gap-1 cursor-pointer">
                 Status <i class="ph ph-funnel-simple ml-1"></i>
             </button>
 
             <div x-show="open" @click.outside="open = false"
-                 class="absolute right-0 mt-2 bg-white shadow-lg rounded-lg w-44 text-sm z-50">
-                <button wire:click="$set('status', '')" class="px-4 py-2 w-full text-left hover:bg-gray-200 border-b cursor-pointer">Semua Status</button>
-                <button wire:click="$set('status', 'AKTIF')" class="px-4 py-2 w-full text-left hover:bg-gray-200 border-b cursor-pointer">AKTIF</button>
-                <button wire:click="$set('status', 'NONAKTIF')" class="px-4 py-2 w-full text-left hover:bg-gray-200 cursor-pointer">NONAKTIF</button>
+                class="absolute right-0 mt-2 bg-white shadow-lg rounded-lg w-44 text-sm z-50">
+                <button wire:click="$set('status', '')"
+                    class="px-4 py-2 w-full text-left hover:bg-gray-200 border-b cursor-pointer">Semua Status</button>
+                <button wire:click="$set('status', 'AKTIF')"
+                    class="px-4 py-2 w-full text-left hover:bg-gray-200 border-b cursor-pointer">AKTIF</button>
+                <button wire:click="$set('status', 'NONAKTIF')"
+                    class="px-4 py-2 w-full text-left hover:bg-gray-200 cursor-pointer">NONAKTIF</button>
             </div>
         </div>
     </div>
@@ -313,7 +313,7 @@ new class extends Component {
         </h2>
 
         <button wire:click="openAddModal"
-                class="flex items-center gap-1 bg-white px-3 py-1 rounded-lg shadow text-sm border border-black cursor-pointer">
+            class="flex items-center gap-1 bg-white px-3 py-1 rounded-lg shadow text-sm border border-black cursor-pointer">
             Tambah Outlet
             <i class="ph ph-plus text-sm"></i>
         </button>
@@ -340,62 +340,63 @@ new class extends Component {
 
             <tbody class="divide-y divide-gray-200 cursor-pointer">
                 @forelse ($outlets as $outlet)
-                    <tr class="hover:bg-gray-100 cursor-pointer" wire:key="outlet-{{ $outlet->id }}">
-                        <!-- Checkbox -->
-                        <td class="px-3 py-2">
-                            <input type="checkbox" 
-                                wire:click.stop="toggleOutlet({{ $outlet->id }})"
-                                {{ in_array($outlet->id, $selectedOutlets) ? 'checked' : '' }}>
-                        </td>
+                <tr class="hover:bg-gray-100 cursor-pointer" wire:key="outlet-{{ $outlet->id }}">
+                    <!-- Checkbox -->
+                    <td class="px-3 py-2">
+                        <input type="checkbox" wire:click.stop="toggleOutlet({{ $outlet->id }})" {{
+                            in_array($outlet->id, $selectedOutlets) ? 'checked' : '' }}>
+                    </td>
 
-                        <!-- Nama -->
-                        <td class="px-3 py-2 cursor-pointer select-none text-1 w-[300px]" wire:click.stop="toggleOutlet({{ $outlet->id }})">
-                            {{ $outlet->name }}
-                        </td>
+                    <!-- Nama -->
+                    <td class="px-3 py-2 cursor-pointer select-none text-1 w-[300px]"
+                        wire:click.stop="toggleOutlet({{ $outlet->id }})">
+                        {{ $outlet->name }}
+                    </td>
 
-                        <!-- Location -->
-                        <td class="px-3 py-2 text-1 w-[450px]" wire:click.stop="toggleOutlet({{ $outlet->id }})">
-                            {{ Str::limit($outlet->location, 60) }}
-                        </td>
+                    <!-- Location -->
+                    <td class="px-3 py-2 text-1 w-[450px]" wire:click.stop="toggleOutlet({{ $outlet->id }})">
+                        {{ Str::limit($outlet->location, 60) }}
+                    </td>
 
-                        <!-- Status -->
-                        <td class="px-3 py-2 align-middle text-center text-1 w-[100px]">
-                            <p class="px-1 py-0.5 text-xs rounded-full bg-gray-100 border
+                    <!-- Status -->
+                    <td class="px-3 py-2 align-middle text-center text-1 w-[100px]">
+                        <p class="px-1 py-0.5 text-xs rounded-full bg-gray-100 border
                                 {{ $outlet->status === 'AKTIF'
                                     ? 'border-blue-700 text-blue-700'
-                                    : 'border-red-700 text-red-700' }}"
-                                    wire:click="toggleOutlet({{ $outlet->id }})">
-                                {{ $outlet->status }}
-                            </p>
-                        </td>
+                                    : 'border-red-700 text-red-700' }}" wire:click="toggleOutlet({{ $outlet->id }})">
+                            {{ $outlet->status }}
+                        </p>
+                    </td>
 
-                        <!-- Staff Count -->
-                        <td class="px-3 py-2 align-middle text-center w-[100px]" wire:click.stop="toggleOutlet({{ $outlet->id }})">
-                            {{ $outlet->users_count }}
-                        </td>
+                    <!-- Staff Count -->
+                    <td class="px-3 py-2 align-middle text-center w-[100px]"
+                        wire:click.stop="toggleOutlet({{ $outlet->id }})">
+                        {{ $outlet->users_count }}
+                    </td>
 
-                        <!-- Edit Button -->
-                        <td class="px-3 py-2 align-middle text-center w-[100px]">
-                            <button class="bg-green-600 text-white px-5 py-1 rounded-lg text-xs shadow cursor-pointer hover:bg-green-800"
-                                    wire:click.stop="openEditModal({{ $outlet->id }})">
-                                Edit
-                            </button>
-                        </td>
+                    <!-- Edit Button -->
+                    <td class="px-3 py-2 align-middle text-center w-[100px]">
+                        <button
+                            class="bg-green-600 text-white px-5 py-1 rounded-lg text-xs shadow cursor-pointer hover:bg-green-800"
+                            wire:click.stop="openEditModal({{ $outlet->id }})">
+                            Edit
+                        </button>
+                    </td>
 
-                        <!-- Aksi Detail -->
-                        <td class="px-3 py-2 align-middle text-center cursor-pointer w-[100px]">
-                            <button class="bg-primary text-white px-3 py-1 rounded-lg text-xs shadow cursor-pointer"
-                                    wire:click.stop="openDetail({{ $outlet->id }})">
-                                Detail
-                            </button>
-                        </td>
-                    </tr>
+                    <!-- Aksi Detail -->
+                    <td class="px-3 py-2 align-middle text-center cursor-pointer w-[100px]">
+                        <button class="bg-primary text-white px-3 py-1 rounded-lg text-xs shadow cursor-pointer"
+                            wire:click.stop="openDetail({{ $outlet->id }})">
+                            Detail
+                        </button>
+                    </td>
+                </tr>
                 @empty
-                    <tr>
-                        <td colspan="7" class="text-center text-gray-500 py-4 text-sm">
-                            Tidak ada outlet ditemukan.
-                        </td>
-                    </tr>
+                <tr>
+                    <td colspan="7" class="text-center text-gray-500 py-4 text-sm">
+                        Tidak ada outlet ditemukan.
+                    </td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
@@ -427,7 +428,7 @@ new class extends Component {
     <!-- ADD OUTLET MODAL -->
     @if($showAddModal)
     <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 overflow-y-auto no-scrollbar" style="z-index: 999;"
-         wire:click="closeAddModal">
+        wire:click="closeAddModal">
         <div class="min-h-full flex justify-center items-center py-8 px-4" wire:click.stop>
             <div class="bg-white w-full max-w-xl rounded-xl shadow-lg p-6">
                 <h2 class="text-lg font-bold mb-4">Tambah Outlet</h2>
@@ -435,14 +436,15 @@ new class extends Component {
                 <div class="space-y-3">
                     <div>
                         <label class="text-sm font-medium">Nama Outlet</label>
-                        <input type="text" wire:model="name"
-                            class="w-full border p-2 border-neutral-300 rounded-lg" placeholder="Masukkan nama outlet">
+                        <input type="text" wire:model="name" class="w-full border p-2 border-neutral-300 rounded-lg"
+                            placeholder="Masukkan nama outlet">
                         @error('name') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="text-sm font-medium">Location</label>
-                        <textarea wire:model="location" class="w-full border p-2 border-neutral-300 rounded-lg" rows="3" placeholder="Masukkan lokasi atau alamat lengkap"></textarea>
+                        <textarea wire:model="location" class="w-full border p-2 border-neutral-300 rounded-lg" rows="3"
+                            placeholder="Masukkan lokasi atau alamat lengkap"></textarea>
                         @error('location') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
                     </div>
 
@@ -460,26 +462,24 @@ new class extends Component {
                         <label class="text-sm font-medium block mb-2">Hari Tutup (Opsional)</label>
                         <div class="border border-neutral-300 rounded-lg p-3 space-y-2">
                             <p class="text-xs text-gray-500 mb-2">Pilih hari-hari ketika outlet ini tutup</p>
-                            
+
                             <div class="grid grid-cols-2 gap-2">
                                 @foreach($allDays as $day)
-                                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
-                                        <input type="checkbox" 
-                                               wire:model="closed_days" 
-                                               value="{{ $day->id }}"
-                                               class="rounded border-gray-300 text-primary focus:ring-primary cursor-pointer">
-                                        <span class="text-sm">{{ $day->name }}</span>
-                                    </label>
+                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                    <input type="checkbox" wire:model="closed_days" value="{{ $day->id }}"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary cursor-pointer">
+                                    <span class="text-sm">{{ $day->name }}</span>
+                                </label>
                                 @endforeach
                             </div>
 
                             @if(!empty($closed_days))
-                                <div class="mt-2 pt-2 border-t border-gray-200">
-                                    <p class="text-xs text-gray-600">
-                                        <strong>Dipilih:</strong> 
-                                        {{ $allDays->whereIn('id', $closed_days)->pluck('name')->join(', ') }}
-                                    </p>
-                                </div>
+                            <div class="mt-2 pt-2 border-t border-gray-200">
+                                <p class="text-xs text-gray-600">
+                                    <strong>Dipilih:</strong>
+                                    {{ $allDays->whereIn('id', $closed_days)->pluck('name')->join(', ') }}
+                                </p>
+                            </div>
                             @endif
                         </div>
                         @error('closed_days') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
@@ -487,11 +487,13 @@ new class extends Component {
                 </div>
 
                 <div class="mt-6 flex justify-end gap-3">
-                    <button wire:click="closeAddModal" class="px-4 py-2 rounded border border-neutral-300 bg-white hover:bg-neutral-200 cursor-pointer">
+                    <button wire:click="closeAddModal"
+                        class="px-4 py-2 rounded border border-neutral-300 bg-white hover:bg-neutral-200 cursor-pointer">
                         Batal
                     </button>
 
-                    <button wire:click="saveOutlet" class="px-4 py-2 rounded bg-primary text-white cursor-pointer hover:bg-primary/90">
+                    <button wire:click="saveOutlet"
+                        class="px-4 py-2 rounded bg-primary text-white cursor-pointer hover:bg-primary/90">
                         Simpan
                     </button>
                 </div>
@@ -503,7 +505,7 @@ new class extends Component {
     <!-- EDIT OUTLET MODAL -->
     @if($showEditModal)
     <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 overflow-y-auto no-scrollbar" style="z-index: 999;"
-         wire:click="closeEditModal">
+        wire:click="closeEditModal">
         <div class="min-h-full flex justify-center items-center py-8 px-4" wire:click.stop>
             <div class="bg-white w-full max-w-xl rounded-xl shadow-lg p-6">
                 <h2 class="text-lg font-bold mb-4">Edit Outlet</h2>
@@ -511,14 +513,15 @@ new class extends Component {
                 <div class="space-y-3">
                     <div>
                         <label class="text-sm font-medium">Nama Outlet</label>
-                        <input type="text" wire:model="name"
-                            class="w-full border p-2 border-neutral-300 rounded-lg" placeholder="Masukkan nama outlet">
+                        <input type="text" wire:model="name" class="w-full border p-2 border-neutral-300 rounded-lg"
+                            placeholder="Masukkan nama outlet">
                         @error('name') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="text-sm font-medium">Location</label>
-                        <textarea wire:model="location" class="w-full border p-2 border-neutral-300 rounded-lg" rows="3" placeholder="Masukkan lokasi atau alamat lengkap"></textarea>
+                        <textarea wire:model="location" class="w-full border p-2 border-neutral-300 rounded-lg" rows="3"
+                            placeholder="Masukkan lokasi atau alamat lengkap"></textarea>
                         @error('location') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
                     </div>
 
@@ -536,26 +539,24 @@ new class extends Component {
                         <label class="text-sm font-medium block mb-2">Hari Tutup (Opsional)</label>
                         <div class="border border-neutral-300 rounded-lg p-3 space-y-2">
                             <p class="text-xs text-gray-500 mb-2">Pilih hari-hari ketika outlet ini tutup</p>
-                            
+
                             <div class="grid grid-cols-2 gap-2">
                                 @foreach($allDays as $day)
-                                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
-                                        <input type="checkbox" 
-                                               wire:model="closed_days" 
-                                               value="{{ $day->id }}"
-                                               class="rounded border-gray-300 text-primary focus:ring-primary cursor-pointer">
-                                        <span class="text-sm">{{ $day->name }}</span>
-                                    </label>
+                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                    <input type="checkbox" wire:model="closed_days" value="{{ $day->id }}"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary cursor-pointer">
+                                    <span class="text-sm">{{ $day->name }}</span>
+                                </label>
                                 @endforeach
                             </div>
 
                             @if(!empty($closed_days))
-                                <div class="mt-2 pt-2 border-t border-gray-200">
-                                    <p class="text-xs text-gray-600">
-                                        <strong>Dipilih:</strong> 
-                                        {{ $allDays->whereIn('id', $closed_days)->pluck('name')->join(', ') }}
-                                    </p>
-                                </div>
+                            <div class="mt-2 pt-2 border-t border-gray-200">
+                                <p class="text-xs text-gray-600">
+                                    <strong>Dipilih:</strong>
+                                    {{ $allDays->whereIn('id', $closed_days)->pluck('name')->join(', ') }}
+                                </p>
+                            </div>
                             @endif
                         </div>
                         @error('closed_days') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
@@ -563,11 +564,13 @@ new class extends Component {
                 </div>
 
                 <div class="mt-6 flex justify-end gap-3">
-                    <button wire:click="closeEditModal" class="px-4 py-2 rounded border border-neutral-300 bg-white hover:bg-neutral-200 cursor-pointer">
+                    <button wire:click="closeEditModal"
+                        class="px-4 py-2 rounded border border-neutral-300 bg-white hover:bg-neutral-200 cursor-pointer">
                         Batal
                     </button>
 
-                    <button wire:click="updateOutlet" class="px-4 py-2 rounded bg-yellow-500 text-white cursor-pointer hover:bg-yellow-600">
+                    <button wire:click="updateOutlet"
+                        class="px-4 py-2 rounded bg-yellow-500 text-white cursor-pointer hover:bg-yellow-600">
                         Update
                     </button>
                 </div>
@@ -579,7 +582,7 @@ new class extends Component {
     <!-- DETAIL OUTLET MODAL (staff list + closed days) -->
     @if($showDetailModal && $detailOutlet)
     <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 overflow-y-auto no-scrollbar" style="z-index: 999;"
-         wire:click="closeDetail">
+        wire:click="closeDetail">
         <div class="min-h-full flex justify-center items-center py-8 px-4" wire:click.stop>
             <div class="bg-white w-full max-w-lg rounded-xl shadow-lg p-6">
                 <h2 class="text-lg font-bold mb-4">Detail - {{ $detailOutlet->name }}</h2>
@@ -599,40 +602,41 @@ new class extends Component {
                     <div class="mt-3 pt-3 border-t">
                         <h3 class="font-medium text-sm mb-2">Hari Tutup</h3>
                         @if($detailOutlet->closedDays->isEmpty())
-                            <p class="text-sm text-gray-500">Buka setiap hari</p>
+                        <p class="text-sm text-gray-500">Buka setiap hari</p>
                         @else
-                            <div class="flex flex-wrap gap-2">
-                                @foreach($detailOutlet->closedDays as $day)
-                                    <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs border border-red-300">
-                                        {{ $day->name }}
-                                    </span>
-                                @endforeach
-                            </div>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($detailOutlet->closedDays as $day)
+                            <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs border border-red-300">
+                                {{ $day->name }}
+                            </span>
+                            @endforeach
+                        </div>
                         @endif
                     </div>
-                    
+
                     <div class="mt-3 pt-3 border-t">
                         <h3 class="font-medium">Daftar Staff ({{ $detailOutlet->users->count() }})</h3>
                         @if($detailOutlet->users->isEmpty())
-                            <p class="text-sm text-gray-500 mt-2">Belum ada staff yang diassign ke outlet ini.</p>
+                        <p class="text-sm text-gray-500 mt-2">Belum ada staff yang diassign ke outlet ini.</p>
                         @else
-                            <ul class="mt-2 space-y-2">
-                                @foreach($detailOutlet->users as $u)
-                                    <li class="flex items-center justify-between">
-                                        <div>
-                                            <div class="font-medium">{{ $u->display_name }}</div>
-                                            <div class="text-xs text-gray-500">{{ $u->username }}</div>
-                                        </div>
-                                        <div class="text-xs text-gray-400">{{ $u->status ?? '' }}</div>
-                                    </li>
-                                @endforeach
-                            </ul>
+                        <ul class="mt-2 space-y-2">
+                            @foreach($detailOutlet->users as $u)
+                            <li class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-medium">{{ $u->display_name }}</div>
+                                    <div class="text-xs text-gray-500">{{ $u->username }}</div>
+                                </div>
+                                <div class="text-xs text-gray-400">{{ $u->status ?? '' }}</div>
+                            </li>
+                            @endforeach
+                        </ul>
                         @endif
                     </div>
                 </div>
 
                 <div class="mt-6 flex justify-end gap-3">
-                    <button wire:click="closeDetail" class="px-4 py-2 rounded border border-neutral-100 bg-white hover:bg-neutral-100 cursor-pointer">
+                    <button wire:click="closeDetail"
+                        class="px-4 py-2 rounded border border-neutral-100 bg-white hover:bg-neutral-100 cursor-pointer">
                         Tutup
                     </button>
                 </div>

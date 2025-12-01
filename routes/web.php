@@ -43,7 +43,7 @@ use App\Livewire\ReceivingTable;
 Route::get('/penerimaan-barang', ReceivingTable::class)
     ->name('receiving.index')
     ->middleware('auth');
-    
+
 Route::middleware(['auth'])->group(function () {
     Volt::route('/attendance', 'attendance');
 });
@@ -59,5 +59,9 @@ Route::middleware(['auth'])->group(function () {
 
 Volt::route('/inventory', 'inventory')
     ->name('inventory');
+
+Route::get('/stok', \App\Livewire\StockTable::class)
+    ->name('stok.index')
+    ->middleware('auth');
 
 require __DIR__ . '/auth.php';

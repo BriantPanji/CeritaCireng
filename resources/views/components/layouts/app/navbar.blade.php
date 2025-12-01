@@ -26,17 +26,17 @@
             </div>
             <div class="nav-list mt-[12px] relative">
                 @foreach ($sidebarMenus as $menu)
-                    <a href="{{ $menu['route'] }}"
-                        class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/15 duration-300 relative {{ request()->is(ltrim($menu['route'], '/')) ? 'bg-neutral-50/10' : '' }}">
-                        {{-- Validasi indikator --}}
-                        @if (request()->is(ltrim($menu['route'], '/')))
-                            <div class="h-full absolute left-0 bg-neutral-50/80 w-[3px] top-0"></div>
-                        @endif
+                <a href="{{ $menu['route'] }}"
+                    class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/15 duration-300 relative {{ request()->is(ltrim($menu['route'], '/')) ? 'bg-neutral-50/10' : '' }}">
+                    {{-- Validasi indikator --}}
+                    @if (request()->is(ltrim($menu['route'], '/')))
+                    <div class="h-full absolute left-0 bg-neutral-50/80 w-[3px] top-0"></div>
+                    @endif
 
-                        <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
+                    <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
 
-                        <p class="text-1 w-full text-right font-medium ml-[12px]">{{ $menu['name'] }}</p>
-                    </a>
+                    <p class="text-1 w-full text-right font-medium ml-[12px]">{{ $menu['name'] }}</p>
+                </a>
                 @endforeach
             </div>
         </div>
@@ -48,13 +48,13 @@
     {{-- <nav class="hidden md:block">
         <div class="nav-list relative flex gap-5 overflow-x-auto px-4 xl:justify-center bg-primary">
             @foreach ($sidebarMenus as $menu)
-                <a href="{{ $menu['route'] }}"
-                    class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/20 duration-300 relative {{ request()->is(ltrim($menu['route'], '/')) ? '' : '' }}">
-                    @if (request()->is(ltrim($menu['route'], '/')))
-                        <div class="h-[3px] absolute left-0 right-0 bg-neutral-50/80 w-full bottom-1"></div>
-                    @endif <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
-                    <p class="text-1 w-full text-left font-medium ml-[12px]">{{ $menu['name'] }}</p>
-                </a>
+            <a href="{{ $menu['route'] }}"
+                class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/20 duration-300 relative {{ request()->is(ltrim($menu['route'], '/')) ? '' : '' }}">
+                @if (request()->is(ltrim($menu['route'], '/')))
+                <div class="h-[3px] absolute left-0 right-0 bg-neutral-50/80 w-full bottom-1"></div>
+                @endif <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
+                <p class="text-1 w-full text-left font-medium ml-[12px]">{{ $menu['name'] }}</p>
+            </a>
             @endforeach
         </div>
     </nav> --}}
@@ -65,7 +65,7 @@
 
     {{-- Navbar md ke atas pt.2 --}}
 
-    <nav x-cloak class="sticky top-0 h-screen bg-primary hidden lg:block ">
+    <nav class="fixed top-0 left-0 h-screen w-64 xl:w-80 bg-primary hidden lg:block overflow-y-auto">
         <div class="p-[8px] pr-4">
             <div class="px-[12px] pb-[13px] flex border-dark border-b-2 mt-[64px]">
                 <img src="{{ asset('images/Conan.jpg') }}" class="rounded-full" alt="Foto Profil" width="42">
@@ -76,17 +76,17 @@
             </div>
             <div class="nav-list mt-4">
                 @foreach ($sidebarMenus as $menu)
-                    <a href="{{ $menu['route'] }}"
-                        class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/25 duration-300 relative {{ request()->is(ltrim($menu['route'], '/')) ? 'bg-neutral-50/25' : '' }}">
-                        {{-- Validasi indikator --}}
-                        @if (request()->is(ltrim($menu['route'], '/')))
-                            <div class="h-full absolute left-0 bg-neutral-50/90 w-[3px] top-0"></div>
-                        @endif
+                <a href="{{ $menu['route'] }}"
+                    class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/25 duration-300 relative {{ request()->is(ltrim($menu['route'], '/')) ? 'bg-neutral-50/25' : '' }}">
+                    {{-- Validasi indikator --}}
+                    @if (request()->is(ltrim($menu['route'], '/')))
+                    <div class="h-full absolute left-0 bg-neutral-50/90 w-[3px] top-0"></div>
+                    @endif
 
-                        <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
+                    <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
 
-                        <p class="text-1 w-full text-left font-medium ml-[12px]">{{ $menu['name'] }}</p>
-                    </a>
+                    <p class="text-1 w-full text-left font-medium ml-[12px]">{{ $menu['name'] }}</p>
+                </a>
                 @endforeach
             </div>
         </div>
