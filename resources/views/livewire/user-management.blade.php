@@ -235,7 +235,7 @@ new class extends Component {
 
     public function openDetailModal($id)
     {
-        return redirect()->route('/user-details');
+        return redirect()->route('user.details', $id);
     }
 
     public function closeDetailModal()
