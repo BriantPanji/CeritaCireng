@@ -38,4 +38,20 @@ class DeliveryMistake extends Model
     {
         return $this->hasOne(DeliveryMistakeConfirmation::class, 'id_delivery_mistake');
     }
+
+    public function staff()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'id_staff');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(DeliveryMistakeItem::class, 'id_delivery_mistake');
+    }
+
+    public function mistakeItems() 
+    { 
+        return $this->hasMany(DeliveryMistakeItem::class, 'id_delivery_mistake'); 
+    }
+
 }
