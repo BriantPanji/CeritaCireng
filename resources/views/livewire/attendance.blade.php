@@ -111,11 +111,11 @@ new class extends Component {
 };
 ?>
 
-<div class="p-3">
+<div class="px-3 pt-3">
 
     {{-- TABLE --}}
     {{-- TABLE --}}
-    <div class="mt-12 bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50">
@@ -131,24 +131,23 @@ new class extends Component {
 
                 <tbody>
                     @forelse ($attendances as $att)
-                        <tr class="border-b border-gray-100">
-                            <td class="px-4 py-3">{{ $loop->iteration }}</td>
+                    <tr class="border-b border-gray-100">
+                        <td class="px-4 py-3">{{ $loop->iteration }}</td>
 
-                            <td class="px-4 py-3">
-                                {{ $att->user->display_name ?? '-' }}
-                            </td>
+                        <td class="px-4 py-3">
+                            {{ $att->user->display_name ?? '-' }}
+                        </td>
 
-                            <td class="px-4 py-3">
-                                {{ \Carbon\Carbon::parse($att->attendance_date, 'Asia/Jakarta')->format('d F Y') }}
-                            </td>
+                        <td class="px-4 py-3">
+                            {{ \Carbon\Carbon::parse($att->attendance_date, 'Asia/Jakarta')->format('d F Y') }}
+                        </td>
 
-                            <td class="px-4 py-3">
-                                {{ $att->attendance_time ?? '-' }} 
-                            </td>
+                        <td class="px-4 py-3">
+                            {{ $att->attendance_time ?? '-' }}
+                        </td>
 
-                            <td class="px-4 py-3 rounded-lg">
-                                <p x-data
-                                    :class="{
+                        <td class="px-4 py-3 rounded-lg">
+                            <p x-data :class="{
                                         'border border-green-500 text-green-500': '{{ $att->status }}'
                                         === 'HADIR',
                                         'border border-primary-200 text-primary-200': '{{ $att->status }}'
@@ -157,39 +156,38 @@ new class extends Component {
                                         === 'SAKIT',
                                         'border border-neutral-200 text-neutral-200': !['HADIR', 'IZIN', 'SAKIT']
                                             .includes('{{ $att->status }}'),
-                                    }"
-                                    class="py-1 rounded-xl block text-center text-xs lg:text-1 ">
-                                    {{ $att->status }}
-                                </p>
-                            </td>
+                                    }" class="py-1 rounded-xl block text-center text-xs lg:text-1 ">
+                                {{ $att->status }}
+                            </p>
+                        </td>
 
-                            <td class="px-4 py-3 text-center">
+                        <td class="px-4 py-3 text-center">
 
-                                @php
-                                    $attDate = \Carbon\Carbon::parse($att->attendance_date)->toDateString();
-                                    $today = now()->toDateString();
-                                    $isToday = $attDate === $today;
-                                    $isAbsent = $att->status === 'ABSEN';
-                                @endphp
+                            @php
+                            $attDate = \Carbon\Carbon::parse($att->attendance_date)->toDateString();
+                            $today = now()->toDateString();
+                            $isToday = $attDate === $today;
+                            $isAbsent = $att->status === 'ABSEN';
+                            @endphp
 
-                                @if ($isToday && $isAbsent)
-                                    <button wire:click="checkIn({{ $att->id }})"
-                                        class="px-4 py-2 rounded-xl bg-green-600 text-white shadow hover:bg-green-700 text-center">
-                                        Presensi
-                                    </button>
-                                @else
-                                    <button disabled
-                                        class="px-4 py-2 rounded-xl border border-gray-500 bg-gray-200 text-gray-500 shadow cursor-not-allowed">
-                                        Presensi
-                                    </button>
-                                @endif
+                            @if ($isToday && $isAbsent)
+                            <button wire:click="checkIn({{ $att->id }})"
+                                class="px-4 py-2 rounded-xl bg-green-600 text-white shadow hover:bg-green-700 text-center">
+                                Presensi
+                            </button>
+                            @else
+                            <button disabled
+                                class="px-4 py-2 rounded-xl border border-gray-500 bg-gray-200 text-gray-500 shadow cursor-not-allowed">
+                                Presensi
+                            </button>
+                            @endif
 
-                            </td>
-                        </tr>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="6" class="text-center py-4 text-gray-500">Tidak ada data</td>
-                        </tr>
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-gray-500">Tidak ada data</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>

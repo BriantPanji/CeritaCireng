@@ -1,7 +1,8 @@
-<div class="p-3">
+<div class="px-3 pt-3">
     {{-- SEARCH --}}
-    <div class="mt-12 flex items-center gap-2">
-        <div class="flex items-center bg-white shadow-reguler px-3 py-2 flex-1 border rounded-lg hover:border-primary cursor-pointer">
+    <div class="flex items-center gap-2">
+        <div
+            class="flex items-center bg-white shadow-reguler px-3 py-2 flex-1 border rounded-lg hover:border-primary cursor-pointer">
             <i class="ph ph-magnifying-glass"> </i>
             <input type="text" wire:model.live="search" class="ml-2 w-full text-sm focus:outline-none"
                 placeholder="Cari pengantaran">
@@ -26,7 +27,7 @@
             class="bg-white border border-neutral-200 px-3 py-1 rounded-xl shadow-sm text-sm cursor-pointer">
             <option value="">Semua Kurir</option>
             @foreach ($couriers as $courier)
-                <option value="{{ $courier->id }}">{{ $courier->display_name }}</option>
+            <option value="{{ $courier->id }}">{{ $courier->display_name }}</option>
             @endforeach
         </select>
 
@@ -35,7 +36,7 @@
             class="bg-white border border-neutral-200 px-3 py-1 rounded-xl shadow-sm text-sm cursor-pointer">
             <option value="">Semua Status</option>
             @foreach ($statuses as $item)
-                <option value="{{ $item->status }}">{{ $item->status }}</option>
+            <option value="{{ $item->status }}">{{ $item->status }}</option>
             @endforeach
         </select>
 
@@ -59,20 +60,19 @@
 
                 <tbody>
                     @forelse ($deliveries as $delivery)
-                        <tr class="border-b border-gray-100">
-                            <td class="px-4 py-3 text-1">{{ $loop->iteration }}</td>
-                            <td class="px-4 py-3 text-1">{{ $delivery->kurir->display_name }}</td>
-                            <td class="px-4 py-3 text-1">{{ $delivery->outlet->name }}</td>
-                            <td class="px-4 py-3 text-1">
-                                {{ \Carbon\Carbon::parse($delivery->assigned_at, 'Asia/Jakarta')->format('d F Y, H:i') }}
-                                WIB
-                            </td>
-                            <td class="px-4 py-3 text-1">
-                                {{ \Carbon\Carbon::parse($delivery->delivered_at, 'Asia/Jakarta')->format('d F Y, H:i') }}
-                                WIB</td>
-                            <td class="px-4 py-3 rounded-lg text-1">
-                                <p x-data
-                                    :class="{
+                    <tr class="border-b border-gray-100">
+                        <td class="px-4 py-3 text-1">{{ $loop->iteration }}</td>
+                        <td class="px-4 py-3 text-1">{{ $delivery->kurir->display_name }}</td>
+                        <td class="px-4 py-3 text-1">{{ $delivery->outlet->name }}</td>
+                        <td class="px-4 py-3 text-1">
+                            {{ \Carbon\Carbon::parse($delivery->assigned_at, 'Asia/Jakarta')->format('d F Y, H:i') }}
+                            WIB
+                        </td>
+                        <td class="px-4 py-3 text-1">
+                            {{ \Carbon\Carbon::parse($delivery->delivered_at, 'Asia/Jakarta')->format('d F Y, H:i') }}
+                            WIB</td>
+                        <td class="px-4 py-3 rounded-lg text-1">
+                            <p x-data :class="{
                                         'border border-secondary text-secondary': '{{ $delivery->status }}'
                                         === 'DIBATALKAN',
                                         'border border-primary-200 text-primary-200': '{{ $delivery->status }}'
@@ -81,82 +81,79 @@
                                         === 'SELESAI',
                                         'border border-neutral-200 text-neutral-200': '{{ $delivery->status }}'
                                         === 'DIKIRIM',
-                                    }"
-                                    class="p-2 px-3 rounded-xl text-center text-xs lg:text-1">
-                                    {{ $delivery->status }}
-                                </p>
-                            </td>
+                                    }" class="p-2 px-3 rounded-xl text-center text-xs lg:text-1">
+                                {{ $delivery->status }}
+                            </p>
+                        </td>
 
-                            <td class="px-4">
-                                @if ($delivery->status == 'DITUGASKAN' || $delivery->status == 'DIKIRIM')
-                                    <button wire:click="confirmBatal({{ $delivery->id }})"
-                                        class="bg-secondary hover:bg-secondary/90 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-pointer lg:text-1">
-                                        Batalkan</button>
-                                @else
-                                    <button
-                                        class="bg-neutral-200 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-not-allowed lg:text-1">
-                                        Batalkan</button>
-                                @endif
-                                <span x-data="{ modalIsOpen: false }">
-                                    <button x-on:click="modalIsOpen = true" type="button"
-                                        class="bg-primary text-white px-3 py-2   rounded-xl shadow-button text-xs ml-2 cursor-pointer mr-4 hover:bg-primary/90 lg:text-1">Detail</button>
-                                    <div x-cloak x-show="modalIsOpen" x-transition.opacity.duration.200ms
-                                        x-trap.inert.noscroll="modalIsOpen"
-                                        x-on:keydown.esc.window="modalIsOpen = false"
-                                        x-on:click.self="modalIsOpen = false"
-                                        class="fixed inset-0 z-30 flex items-center justify-center p-4 pb-8 lg:p-8 bg-neutral-500/30 backdrop-blur-xs"
-                                        x-transition.opacity role="dialog" aria-modal="true"
-                                        aria-labelledby="defaultModalTitle">
-                                        <!-- Modal Dialog -->
-                                        <div x-show="modalIsOpen"
-                                            x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
-                                            x-transition:enter-start="opacity-0 translate-y-8"
-                                            x-transition:enter-end="opacity-100 translate-y-0"
-                                            class="flex flex-col gap-4 overflow-x-hidden overflow-y-scroll h-[400px] rounded-radius border border-outline bg-white w-[90%] xl:max-w-[600px]">
-                                            <!-- Dialog Header -->
-                                            <div class="flex items-center justify-between border-b border-outline p-4">
-                                                <h3 id="defaultModalTitle" class="font-semibold tracking-wide text-l2">
-                                                    Detail Pengantaran</h3>
-                                                <button x-on:click="modalIsOpen = false" aria-label="close modal">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                        aria-hidden="true" stroke="currentColor" fill="none"
-                                                        stroke-width="1.4" class="w-5 h-5">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M6 18L18 6M6 6l12 12" />
-                                                    </svg>
-                                                </button>
+                        <td class="px-4">
+                            @if ($delivery->status == 'DITUGASKAN' || $delivery->status == 'DIKIRIM')
+                            <button wire:click="confirmBatal({{ $delivery->id }})"
+                                class="bg-secondary hover:bg-secondary/90 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-pointer lg:text-1">
+                                Batalkan</button>
+                            @else
+                            <button
+                                class="bg-neutral-200 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-not-allowed lg:text-1">
+                                Batalkan</button>
+                            @endif
+                            <span x-data="{ modalIsOpen: false }">
+                                <button x-on:click="modalIsOpen = true" type="button"
+                                    class="bg-primary text-white px-3 py-2   rounded-xl shadow-button text-xs ml-2 cursor-pointer mr-4 hover:bg-primary/90 lg:text-1">Detail</button>
+                                <div x-cloak x-show="modalIsOpen" x-transition.opacity.duration.200ms
+                                    x-trap.inert.noscroll="modalIsOpen" x-on:keydown.esc.window="modalIsOpen = false"
+                                    x-on:click.self="modalIsOpen = false"
+                                    class="fixed inset-0 z-30 flex items-center justify-center p-4 pb-8 lg:p-8 bg-neutral-500/30 backdrop-blur-xs"
+                                    x-transition.opacity role="dialog" aria-modal="true"
+                                    aria-labelledby="defaultModalTitle">
+                                    <!-- Modal Dialog -->
+                                    <div x-show="modalIsOpen"
+                                        x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
+                                        x-transition:enter-start="opacity-0 translate-y-8"
+                                        x-transition:enter-end="opacity-100 translate-y-0"
+                                        class="flex flex-col gap-4 overflow-x-hidden overflow-y-scroll h-[400px] rounded-radius border border-outline bg-white w-[90%] xl:max-w-[600px]">
+                                        <!-- Dialog Header -->
+                                        <div class="flex items-center justify-between border-b border-outline p-4">
+                                            <h3 id="defaultModalTitle" class="font-semibold tracking-wide text-l2">
+                                                Detail Pengantaran</h3>
+                                            <button x-on:click="modalIsOpen = false" aria-label="close modal">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                    aria-hidden="true" stroke="currentColor" fill="none"
+                                                    stroke-width="1.4" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <!-- Dialog Body -->
+                                        <div class="px-4 py-8 space-y-3 text-xs lg:text-1">
+                                            <div class="flex justify-between relative">
+                                                <p
+                                                    class="before:content-[':'] font-semibold before:block before:left-35 xl:before:left-50 before:absolute">
+                                                    Nama Inventaris</p>
+                                                <p class="w-[60%] text-left">
+                                                    {{ $delivery->inventaris->display_name }}
+                                                </p>
                                             </div>
-                                            <!-- Dialog Body -->
-                                            <div class="px-4 py-8 space-y-3 text-xs lg:text-1">
-                                                <div class="flex justify-between relative">
-                                                    <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 xl:before:left-50 before:absolute">
-                                                        Nama Inventaris</p>
-                                                    <p class="w-[60%] text-left">
-                                                        {{ $delivery->inventaris->display_name }}
-                                                    </p>
-                                                </div>
-                                                <div class="flex justify-between relative">
-                                                    <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 xl:before:left-50 before:absolute">
-                                                        Nama Kurir</p>
-                                                    <p class="w-[60%] text-left">
-                                                        {{ $delivery->kurir->display_name }}
-                                                    </p>
-                                                </div>
-                                                <div class="flex justify-between relative">
-                                                    <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 xl:before:left-50 before:absolute">
-                                                        Outlet</p>
-                                                    <p class="w-[60%] text-left">
-                                                        {{ $delivery->outlet->name }}</p>
-                                                </div>
-                                                <div class="flex justify-between relative">
-                                                    <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
-                                                        Status</p>
-                                                    <p x-data
-                                                        :class="{
+                                            <div class="flex justify-between relative">
+                                                <p
+                                                    class="before:content-[':'] font-semibold before:block before:left-35 xl:before:left-50 before:absolute">
+                                                    Nama Kurir</p>
+                                                <p class="w-[60%] text-left">
+                                                    {{ $delivery->kurir->display_name }}
+                                                </p>
+                                            </div>
+                                            <div class="flex justify-between relative">
+                                                <p
+                                                    class="before:content-[':'] font-semibold before:block before:left-35 xl:before:left-50 before:absolute">
+                                                    Outlet</p>
+                                                <p class="w-[60%] text-left">
+                                                    {{ $delivery->outlet->name }}</p>
+                                            </div>
+                                            <div class="flex justify-between relative">
+                                                <p
+                                                    class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
+                                                    Status</p>
+                                                <p x-data :class="{
                                                             'text-secondary': '{{ $delivery->status }}'
                                                             === 'DIBATALKAN',
                                                             'text-primary-200': '{{ $delivery->status }}'
@@ -165,86 +162,89 @@
                                                             === 'SELESAI',
                                                             'text-primary/90': '{{ $delivery->status }}'
                                                             === 'DIKIRIM',
-                                                        }"
-                                                        class="w-[60%] text-left">
-                                                        {{ $delivery->status }}
-                                                    </p>
-                                                </div>
-                                                <div class="flex justify-between relative">
-                                                    <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
-                                                        Waktu Penugasan</p>
-                                                    <p class="w-[60%] text-left">
-                                                        {{ \Carbon\Carbon::parse($delivery->assigned_at, 'Asia/Jakarta')->format('d F Y, H:i') }}
-                                                        WIB
-                                                    </p>
-                                                </div>
-                                                <div class="flex justify-between relative">
-                                                    <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
-                                                        Waktu Pengiriman</p>
-                                                    <p class="w-[60%] text-left">
-                                                        {{ \Carbon\Carbon::parse($delivery->delivered_at, 'Asia/Jakarta')->format('d F Y, H:i') }}
-                                                        WIB
-                                                    </p>
-                                                </div>
-                                                <div class="flex justify-between relative">
-                                                    <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
-                                                        Waktu Penerimaan</p>
-                                                    @if ($delivery->hasDeliveryConfirmation)
-                                                        <p class="w-[60%] text-left">
-                                                            {{ \Carbon\Carbon::parse($delivery->hasDeliveryConfirmation->received_at, 'Asia/Jakarta')->format('d F Y, H:i') }}
-                                                            WIB
-                                                        </p>
-                                                    @else
-                                                        <p class="w-[60%] text-left">Belum
-                                                            diterima</p>
-                                                    @endif
-                                                </div>
-                                                <div class="flex justify-between relative">
-                                                    <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
-                                                        Staff yang menerima</p>
-                                                    @if ($delivery->hasDeliveryConfirmation)
-                                                        <p class="w-[60%] text-left">
-                                                            {{ $delivery->hasDeliveryConfirmation->staff->display_name }}
-                                                        </p>
-                                                    @else
-                                                        <p class="w-[60%] text-left">Belum
-                                                            diterima</p>
-                                                    @endif
-                                                </div>
-                                                <div class="flex justify-between relative">
-                                                    <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
-                                                        Notes</p>
-                                                    <p class="w-[60%] text-left">
-                                                        {{ $delivery->hasDeliveryConfirmation?->notes ?? '-' }}
-                                                    </p>
-                                                </div>
-                                                <div class="flex  flex-col justify-between relative">
-                                                    <p
-                                                        class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
-                                                        Bukti Photo</p>
-                                                    <img src={{ asset('images/Conan.jpg') }} alt="Bukti Foto"
-                                                        class="w-[300px] mx-auto mt-8">
-                                                </div>
+                                                        }" class="w-[60%] text-left">
+                                                    {{ $delivery->status }}
+                                                </p>
                                             </div>
-
+                                            <div class="flex justify-between relative">
+                                                <p
+                                                    class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
+                                                    Waktu Penugasan</p>
+                                                <p class="w-[60%] text-left">
+                                                    {{ \Carbon\Carbon::parse($delivery->assigned_at,
+                                                    'Asia/Jakarta')->format('d F Y, H:i') }}
+                                                    WIB
+                                                </p>
+                                            </div>
+                                            <div class="flex justify-between relative">
+                                                <p
+                                                    class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
+                                                    Waktu Pengiriman</p>
+                                                <p class="w-[60%] text-left">
+                                                    {{ \Carbon\Carbon::parse($delivery->delivered_at,
+                                                    'Asia/Jakarta')->format('d F Y, H:i') }}
+                                                    WIB
+                                                </p>
+                                            </div>
+                                            <div class="flex justify-between relative">
+                                                <p
+                                                    class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
+                                                    Waktu Penerimaan</p>
+                                                @if ($delivery->hasDeliveryConfirmation)
+                                                <p class="w-[60%] text-left">
+                                                    {{
+                                                    \Carbon\Carbon::parse($delivery->hasDeliveryConfirmation->received_at,
+                                                    'Asia/Jakarta')->format('d F Y, H:i') }}
+                                                    WIB
+                                                </p>
+                                                @else
+                                                <p class="w-[60%] text-left">Belum
+                                                    diterima</p>
+                                                @endif
+                                            </div>
+                                            <div class="flex justify-between relative">
+                                                <p
+                                                    class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
+                                                    Staff yang menerima</p>
+                                                @if ($delivery->hasDeliveryConfirmation)
+                                                <p class="w-[60%] text-left">
+                                                    {{ $delivery->hasDeliveryConfirmation->staff->display_name }}
+                                                </p>
+                                                @else
+                                                <p class="w-[60%] text-left">Belum
+                                                    diterima</p>
+                                                @endif
+                                            </div>
+                                            <div class="flex justify-between relative">
+                                                <p
+                                                    class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
+                                                    Notes</p>
+                                                <p class="w-[60%] text-left">
+                                                    {{ $delivery->hasDeliveryConfirmation?->notes ?? '-' }}
+                                                </p>
+                                            </div>
+                                            <div class="flex  flex-col justify-between relative">
+                                                <p
+                                                    class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
+                                                    Bukti Photo</p>
+                                                <img src={{ asset('images/Conan.jpg') }} alt="Bukti Foto"
+                                                    class="w-[300px] mx-auto mt-8">
+                                            </div>
                                         </div>
+
                                     </div>
-                                </span>
-                            </td>
-                        </tr>
+                                </div>
+                            </span>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <th colspan="7" class="text-center px-4 py-8">
-                                {{-- <img src={{ asset('images/search-no-result.png') }} alt="Search not Avaiable"
-                                    width="200" class="grayscale-100 mx-auto"> --}}
-                                <p class="font-semibold text-neutral-300">Pengantaran tidak tersedia</p>
-                            </th>
-                        </tr>
+                    <tr>
+                        <th colspan="7" class="text-center px-4 py-8">
+                            {{-- <img src={{ asset('images/search-no-result.png') }} alt="Search not Avaiable"
+                                width="200" class="grayscale-100 mx-auto"> --}}
+                            <p class="font-semibold text-neutral-300">Pengantaran tidak tersedia</p>
+                        </th>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
@@ -253,62 +253,59 @@
 
     {{-- CUSTOM PAGINATION --}}
     @if ($deliveries->hasPages())
-        <div class="mt-3 flex items-center justify-center gap-2 py-4 flex-col w-full">
+    <div class="mt-3 flex items-center justify-center gap-2 py-4 flex-col w-full">
 
-            <div class="flex gap-2">
-                {{-- Previous --}}
-                @if ($deliveries->onFirstPage())
-                    <button class="px-3 py-2 rounded-xl text-neutral-300 text-reguler cursor-not-allowed" disabled>
-                        &lt;
-                    </button>
-                @else
-                    <button wire:click="previousPage"
-                        class="px-3 py-2 rounded-xl text-reguler
+        <div class="flex gap-2">
+            {{-- Previous --}}
+            @if ($deliveries->onFirstPage())
+            <button class="px-3 py-2 rounded-xl text-neutral-300 text-reguler cursor-not-allowed" disabled>
+                &lt;
+            </button>
+            @else
+            <button wire:click="previousPage" class="px-3 py-2 rounded-xl text-reguler
                         hover:border-primary hover:text-primary duration-300">
-                        &lt;
-                    </button>
+                &lt;
+            </button>
+            @endif
+
+            {{-- Page Numbers --}}
+            @foreach ($pages as $p)
+            <div wire:key="page-btn-{{ $p }}">
+
+                @if ($p == $deliveries->currentPage())
+                <button
+                    class="w-11 flex justify-center text-center px-4 py-2 rounded-lg border border-primary text-primary font-semibold">
+                    {{ $p }}
+                </button>
+                @else
+                <button wire:click="gotoPage({{ $p }})"
+                    class="w-11 flex justify-center text-center px-4 py-2 rounded-lg hover:bg-neutral-50 duration-300">
+                    {{ $p }}
+                </button>
                 @endif
 
-                {{-- Page Numbers --}}
-                @foreach ($pages as $p)
-                    <div wire:key="page-btn-{{ $p }}">
-
-                        @if ($p == $deliveries->currentPage())
-                            <button
-                                class="w-11 flex justify-center text-center px-4 py-2 rounded-lg border border-primary text-primary font-semibold">
-                                {{ $p }}
-                            </button>
-                        @else
-                            <button wire:click="gotoPage({{ $p }})"
-                                class="w-11 flex justify-center text-center px-4 py-2 rounded-lg hover:bg-neutral-50 duration-300">
-                                {{ $p }}
-                            </button>
-                        @endif
-
-                    </div>
-                @endforeach
-
-                {{-- Next --}}
-                @if ($deliveries->hasMorePages())
-                    <button wire:click="nextPage"
-                        class="px-3 py-2 rounded-xl text-reguler
-                        hover:border-primary hover:text-primary duration-300">
-                        &gt;
-                    </button>
-                @else
-                    <button
-                        class="px-3 py-2 rounded-xlborder-gray-200 text-neutral-300 text-reguler cursor-not-allowed"
-                        disabled>
-                        &gt;
-                    </button>
-                @endif
             </div>
+            @endforeach
 
-            <h1 class="text-neutral-300 text-1 lg:text-reguler">Menampilkan {{ $deliveries->count() }} data dari total
-                {{ $deliveries->total() }}
-                data.</h1>
-
+            {{-- Next --}}
+            @if ($deliveries->hasMorePages())
+            <button wire:click="nextPage" class="px-3 py-2 rounded-xl text-reguler
+                        hover:border-primary hover:text-primary duration-300">
+                &gt;
+            </button>
+            @else
+            <button class="px-3 py-2 rounded-xlborder-gray-200 text-neutral-300 text-reguler cursor-not-allowed"
+                disabled>
+                &gt;
+            </button>
+            @endif
         </div>
+
+        <h1 class="text-neutral-300 text-1 lg:text-reguler">Menampilkan {{ $deliveries->count() }} data dari total
+            {{ $deliveries->total() }}
+            data.</h1>
+
+    </div>
     @endif
 </div>
 
