@@ -133,7 +133,7 @@ class DeliveryAdd extends Component
     public function render()
     {
         return view('livewire.delivery-add', [
-            'couriers' => User::where('role_id', 3)->where('status', 'AKTIF')->get(),
+            'couriers' => User::where('role_id', 4)->where('status', 'AKTIF')->get(),
             'outlets' => Outlet::where('status', 'AKTIF')->get(),
             'items' => Item::with('stock')->get(),
         ]);

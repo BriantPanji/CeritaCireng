@@ -209,12 +209,12 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // Seed attendances for all users
+        // Seed attendances for all users (sampai kemarin, biar hari ini bisa auto-generate dari dashboard)
         $start = now()->subMonth();
-        $end = now();
+        $end = now()->subDay(); // Sampai kemarin aja
 
         foreach ($users as $user) {
-            // Loop tanggal 1 bulan kebelakang
+            // Loop tanggal 1 bulan kebelakang sampai kemarin
             $period = \Carbon\CarbonPeriod::create($start, $end);
 
             foreach ($period as $date) {

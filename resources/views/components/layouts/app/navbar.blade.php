@@ -28,7 +28,7 @@
             {{-- Profile Section --}}
             <div class="px-3 py-4 border-dark border-b-2">
                 <h1 class="text-reguler font-medium">Halo, {{ Auth::user()->display_name }}</h1>
-                <p class="text-1">{{ Auth::user()->role->name }}</p>
+                <p class="text-1">{{ Auth::user()->role->name ?? 'N/A' }}</p>
             </div>
 
             {{-- Navigation Menu --}}
