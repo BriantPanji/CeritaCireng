@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('id_kurir')->references('id')->on('users');
             $table->foreignId('id_outlet')->references('id')->on('outlets');
             $table->enum('status', ['DITUGASKAN', 'DIKIRIM', 'SELESAI', 'DIBATALKAN'])->default('DITUGASKAN');
-            $table->string('photo_evidence', 1024)->nullable();
             $table->dateTime('assigned_at');
             $table->dateTime('delivered_at')->nullable();
         });

@@ -31,7 +31,11 @@ Route::get('/user-details/{id}', \App\Livewire\UserDetails::class)
     ->name('user.details');
 
 // Pengantaran Route
-Route::get('/pengantaran', PengantaranTable::class);
+Route::get('/delivery', PengantaranTable::class)->name('delivery.index');
+Route::get('/delivery/add', function () {
+    return view('delivery-add');
+})->name('delivery.add')->middleware('auth');
+
 //Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.management');
 
 Volt::route('/outlet-management', 'outlet-management')

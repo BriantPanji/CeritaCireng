@@ -49,7 +49,7 @@ class PengantaranTable extends Component
 
     public function getDeliveriesProperty()
     {
-        $query = Delivery::query();
+        $query = Delivery::with(['items.item']);
 
         switch ($this->waktu) {
             case 'today':
@@ -96,7 +96,7 @@ class PengantaranTable extends Component
             });
         }
 
-        return $query->orderBy("delivered_at", 'desc')->paginate(4);
+        return $query->orderBy("assigned_at", 'desc')->paginate(4);
     }
 
     public function getPagesProperty()

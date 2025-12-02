@@ -42,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
             [
                 'name' => 'Pengantaran',
                 'icon' => 'truck',
-                'route' => '/pengantaran',
+                'route' => '/delivery',
             ],
             [
                 'name' => 'Inventory',

@@ -12,6 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Drop view if exists first
+        DB::statement("DROP VIEW IF EXISTS ccv_user_details");
+
+        // Create the view
         DB::statement("
             CREATE VIEW ccv_user_details AS
             SELECT 
