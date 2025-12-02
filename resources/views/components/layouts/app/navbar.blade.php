@@ -20,7 +20,7 @@
     </div>
 
     {{-- Unified Sidebar (Mobile + Desktop) --}}
-    <nav class="fixed left-0 top-0 w-56 h-screen bg-primary z-40 duration-300 overflow-y-auto
+    <nav class="fixed left-0 top-0 w-56 h-screen bg-primary z-40 duration-300 overflow-y-auto no-scrollbar
                 lg:translate-x-0
                 transition-transform"
         x-bind:class="showSideBar ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
