@@ -52,6 +52,19 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('/attendance', 'attendance');
 });
 
+use App\Http\Controllers\StaffController;
+
+Route::middleware(['auth', 'checkrole:staff'])->group(function () {
+    Route::get('/staff/dashboard', [StaffController::class, 'dashboard'])->name('staff.dashboard');
+
+    // Konfirmasi barang masuk
+    Route::get('/staff/receiving/{id}', [StaffController::class, 'receivingForm'])->name('staff.receiving.form');
+    Route::post('/staff/receiving/{id}', [StaffController::class, 'submitReceiving'])->name('staff.receiving.submit');
+
+    // Laporan kesalahan
+    Route::get('/staff/error-report/{id}', [StaffController::class, 'errorForm'])->name('staff.error.form');
+    Route::post('/staff/error-report/{id}', [StaffController::class, 'submitError'])->name('staff.error.submit');
+});
 
 
 // Route::view('dashboard', 'dashboard')

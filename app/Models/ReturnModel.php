@@ -29,18 +29,28 @@ class ReturnModel extends Model
         return ReturnFactory::new();
     }
 
-    public function deliverer(){
+    public function deliverer()
+    {
         return $this->belongsTo(User::class, 'id_deliverer');
     }
-    public function staff(){
+    public function staff()
+    {
         return $this->belongsTo(User::class, 'id_staff');
     }
 
-    public function returnConfirmations(){
+    public function returnConfirmations()
+    {
         return $this->hasMany(ReturnConfirmation::class, 'id_return');
     }
 
-    public function returnItem(){
+    public function returnItem()
+    {
         return $this->belongsToMany(Item::class, 'return_items', 'id_return', 'id_item');
     }
+
+    public function returnErrors()
+    {
+        return $this->hasMany(ReturnError::class, 'id_return');
+    }
+
 }

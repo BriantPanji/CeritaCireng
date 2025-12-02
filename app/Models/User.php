@@ -146,4 +146,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(ReturnConfirmation::class, 'id_staff');
     }
+
+    public function returnErrors()
+    {
+        return $this->hasMany(ReturnError::class, 'id_staff');
+    }
+
 }
