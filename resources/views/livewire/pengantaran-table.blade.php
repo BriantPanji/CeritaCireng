@@ -1,8 +1,7 @@
-<div class="px-3 pt-3">
-    {{-- HEADER with Search and Add Button --}}
-    <div class="flex flex-col sm:flex-row items-center gap-2 mb-4">
-        <div
-            class="flex items-center bg-white shadow-reguler px-3 py-2 flex-1 border rounded-lg hover:border-primary cursor-pointer w-full">
+<div class="p-3">
+    {{-- SEARCH --}}
+    <div class="mt-12 lg:mt-24 flex items-center gap-2">
+        <div class="flex items-center bg-white shadow-reguler px-3 py-3 rounded-xl flex-1 cursor-pointer">
             <i class="ph ph-magnifying-glass"> </i>
             <input type="text" wire:model.live="search" class="ml-2 w-full text-sm focus:outline-none"
                 placeholder="Cari pengantaran">

@@ -22,8 +22,8 @@ class DeliveryFactory extends Factory
             'id_kurir' => User::factory(),
             'id_outlet' => \App\Models\Outlet::factory(),
             'status' => fake()->randomElement(['DITUGASKAN', 'DIKIRIM', 'SELESAI', 'DIBATALKAN']),
-            'assigned_at' => fake()->dateTimeBetween('-2 weeks', 'now'),
-            'delivered_at' => fake()->dateTimeBetween('-1 week', 'now'),
+            'assigned_at' => fake()->dateTimeBetween('-20 hours', 'now'),
+            'delivered_at' => fake()->dateTimeBetween('-19 hours', 'now'),
         ];
     }
 }

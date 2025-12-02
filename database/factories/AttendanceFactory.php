@@ -17,11 +17,15 @@ class AttendanceFactory extends Factory
      */
     public function definition(): array
     {
+        $attendanceDate = fake()->dateTimeBetween('-1 month', 'now');
+
         return [
-            'id_user' => User::factory(),
             'status' => fake()->randomElement(['HADIR', 'IZIN', 'SAKIT', 'ABSEN']),
-            'attendance_date' => fake()->date(),
-            'attendance_time' => fake()->time()
+            'attendance_date' => $attendanceDate,
+            'attendance_time' => fake()->dateTimeBetween(
+                $attendanceDate->format('Y-m-d') . ' 07:00',
+                $attendanceDate->format('Y-m-d') . ' 10:00'
+            )
         ];
     }
 }

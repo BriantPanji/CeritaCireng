@@ -22,7 +22,7 @@ class DeliveryConfirmationFactory extends Factory
             'id_delivery' => Delivery::factory(),
             'id_staff' => User::factory(),
             'notes' => fake()->optional(0.3)->sentence(),
-            'received_at' => fake()->dateTimeBetween('-1 week', 'now'),
+            'received_at' => fake()->dateTimeBetween('-20 hours', 'now'),
         ];
     }
 }

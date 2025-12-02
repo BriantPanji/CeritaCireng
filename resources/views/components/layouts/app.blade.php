@@ -35,9 +35,20 @@
     @modal-closed.window="document.body.style.overflow = 'auto'">
     
     <x-layouts.app.navbar />
-    
+    <div class=" w-full z-10 sjustify-around items-center bg-primary fixed right-0 left-0 top-0 hidden lg:block">
+        <div class="flex justify-between items-center w-full h-[65px] px-2">
+            <div class="flex justify-around items-center w-[15%]">
+                <img src={{ asset('favicon.svg') }} class="w-[40px]" alt="">
+                <h1 class="text-l2 font-bold">Cerita Cireng</h1>
+            </div>
+            <i class="ph ph-bell text-3xl mr-32"></i>
+        </div>
+    </div>
+    <main class=" bg-neutral-25 lg:col-span-9 xl:col-span-10 min-h-screen relative ">
+        <div class="px-4 xs:px-8 sm:px-20">
+    {{-- 
     <main class="bg-neutral-25 lg:ml-64 xl:ml-80">
-        <div class="px-4 xs:px-8 sm:px-20 pt-14 lg:pt-20">
+        <div class="px-4 xs:px-8 sm:px-20 pt-14 lg:pt-20"> --}}
             {{ $slot }}
         </div>
     </main>

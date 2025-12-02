@@ -23,12 +23,12 @@ class Outlet extends Model
 
     public function hasItemSetting()
     {
-        return $this->belongsToMany(Item::class, 'outlet_item_settings', 'id_outlet', 'id_item');
+        return $this->belongsToMany(Item::class, 'outlet_item_settings', 'id_outlet', 'id_item')->withPivot('quantity');
     }
 
     public function delivery()
     {
-        return $this->hasMany(Delivery::class);
+        return $this->hasMany(Delivery::class, "id_outlet");
     }
 
     public function closedDays()

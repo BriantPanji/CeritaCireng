@@ -1,151 +1,399 @@
 <x-layouts.app title="Dashboard">
-    <div class="flex md:justify-center mx-auto">
-        {{-- Inventaris --}}
-        <div class="mt-4 w-full lg:w-fit">
-            {{-- <div class="p-3"> --}}
+    <div class="md:justify-center mx-auto ">
 
-            {{-- Presensi
-        <div class="shadow-reguler px-2 py-3 rounded-md">
-            <h1 class="text-1">Presensi</h1>
-            <p class="text-reguler font-semibold">Anda belum absen hari ini</p>
-            <button class="bg-primary text-white p-2 mt-2 rounded-lg">Absen Sekarang</button>
+        {{-- Outlet --}}
+        <div class="lg:mt-24 w-full pt-8 ">
+            <h1 class="border-b-2 border-b-primary w-fit font-medium text-l2 lg:text-l1">Outlet</h1>
+            <div class="mt-4 grid grid-cols-12 gap-2">
+                @foreach ($outlets as $outlet)
+                    <div
+                        class="p-6 mt-2 shadow-reguler gap-5 rounded-lg col-span-12 md:col-span-6 lg:col-span-4 flex flex-col justify-between">
+                        <div class="">
+                            <div class="flex items-center justify-between">
+                                <h1>Status: {{ $outlet->status }}</h1>
+                                <img src="{{ asset($outlet->status === 'AKTIF' ? 'green-dot.png' : 'red-dot.png') }}"
+                                    class="w-[40px]" alt="">
+                            </div>
+                            <h2 class="text-reguler font-medium">{{ $outlet->name }}</h2>
+                            <p class="text-1 text-neutral-300">{{ $outlet->location }}</p>
+                        </div>
+                        <span x-data="{ modalIsOpen: false }">
+                            <button x-on:click="modalIsOpen = true" type="button"
+                                class="flex items-center mt-2 shadow-button w-fit px-4 py-2 rounded-lg cursor-pointer gap-2">
+                                <i class="ph ph-files"></i> Detail</button>
+                            <div x-cloak x-show="modalIsOpen" x-transition.opacity.duration.200ms
+                                x-trap.inert.noscroll="modalIsOpen" x-on:keydown.esc.window="modalIsOpen = false"
+                                x-on:click.self="modalIsOpen = false"
+                                class="fixed inset-0 z-30 flex items-center justify-center p-4 pb-8 lg:p-8 bg-neutral-500/30 backdrop-blur-xs"
+                                x-transition.opacity role="dialog" aria-modal="true"
+                                aria-labelledby="defaultModalTitle">
+                                <!-- Modal Dialog -->
+                                <div x-show="modalIsOpen"
+                                    x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
+                                    x-transition:enter-start="opacity-0 translate-y-8"
+                                    x-transition:enter-end="opacity-100 translate-y-0"
+                                    class="flex flex-col gap-4 overflow-x-hidden overflow-y-scroll h-[400px] xl:h-[600px] rounded-radius border border-outline bg-white w-[90%] xl:max-w-[900px]">
+                                    <!-- Dialog Header -->
+                                    <div class="flex items-center justify-between border-b border-outline p-4">
+                                        <h3 id="defaultModalTitle" class="font-bold tracking-wide text-l2">
+                                            Detail Outlet</h3>
+                                        <button x-on:click="modalIsOpen = false" aria-label="close modal">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                aria-hidden="true" stroke="currentColor" fill="none"
+                                                stroke-width="1.4" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <!-- Dialog Body -->
+                                    <div class="px-4 pt-8 lg:text-1 grid grid-cols-12">
+                                        <div class="col-span-8 bg-accent">
+                                            h
+                                        </div>
+
+                                        <div class="col-span-4 px-4 text-sm md:text-reguler space-y-2">
+                                            <div class="">
+                                                <h1 class="text-center font-bold">Profil outlet</h1>
+                                                <div class="mt-2">
+                                                    <p><span class="font-medium">Nama outlet:</span>
+                                                        {{ $outlet->name }}</p>
+                                                    <p><span class="font-medium">Lokasi:</span>
+                                                        {{ $outlet->location }}
+                                                    </p>
+                                                    <div class="flex items-center justify-between gap-2 md:gap-0">
+                                                        <p><span class="font-medium">Status:</span>
+                                                            {{ $outlet->status }}
+                                                        </p>
+                                                        <img src="{{ asset($outlet->status === 'AKTIF' ? 'green-dot.png' : 'red-dot.png') }}"
+                                                            class="w-[20px] md:w-[40px]" alt="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="px-4">
+                                        <div class="px-4 py-4 mt-4 shadow-reguler">
+                                            <h1 class="font-bold text-center text-l1">Absensi Staff</h1>
+                                            <div class="mt-4 overflow-x-auto w-full">
+                                                <table class="min-w-max w-full text-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="px-4 py-3 text-left">No</th>
+                                                            <th class="px-4 py-3 text-left">Nama</th>
+                                                            <th class="px-4 py-3 text-left">Tanggal</th>
+                                                            <th class="px-4 py-3 text-left">Waktu</th>
+                                                            <th class="px-4 py-3 text-left">Status</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        @forelse ($outlet->hasStaff as $staff)
+                                                            <tr class="">
+                                                                <td class="px-4 py-3">{{ $loop->iteration }}</td>
+                                                                <td class="px-4 py-3">
+                                                                    {{ $staff->display_name ?? '-' }}
+                                                                </td>
+
+                                                                <td class="px-4 py-3">
+                                                                    {{ \Carbon\Carbon::parse($staff->todayAttendance->attendance_date, 'Asia/Jakarta')->format('d F Y') }}
+                                                                </td>
+
+                                                                <td class="px-4 py-3">
+                                                                    {{ $staff->todayAttendance->attendance_time }} WIB
+                                                                </td>
+                                                                <td class="px-4 py-3">
+                                                                    <span x-data
+                                                                        :class="{
+                                                                            'border border-green-500 text-green-500': '{{ $staff->todayAttendance->status }}'
+                                                                            === 'HADIR',
+                                                                            'border border-primary-200 text-primary-200': '{{ $staff->todayAttendance->status }}'
+                                                                            === 'IZIN',
+                                                                            'border border-secondary text-secondary': '{{ $staff->todayAttendance->status }}'
+                                                                            === 'SAKIT',
+                                                                            'border border-neutral-200 text-neutral-200':
+                                                                                ![
+                                                                                    'HADIR', 'IZIN', 'SAKIT'
+                                                                                ].includes(
+                                                                                    '{{ $staff->todayAttendance->status }}'
+                                                                                ),
+                                                                        }"
+                                                                        class="p-2 px-3 rounded-xl block text-center text-xs lg:text-1 w-[100px]">
+                                                                        {{ $staff->todayAttendance->status }}
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        @empty
+                                                            <tr>
+                                                                <td colspan="6"
+                                                                    class="text-center py-4 text-gray-500">
+                                                                    Tidak ada data</td>
+                                                            </tr>
+                                                        @endforelse
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="px-4 py-4 mt-8 shadow-reguler">
+                                            <h1 class="font-bold text-center text-l1">Pengantaran</h1>
+                                            <div class="mt-4 overflow-x-auto w-full">
+                                                <table class="min-w-max w-full text-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="px-4 py-3 font-semibold text-left w-12">No</th>
+                                                            <th class="px-4 py-3 font-semibold text-left">Nama Kurir
+                                                            </th>
+                                                            <th class="px-4 py-3 font-semibold text-left">Waktu
+                                                                Ditugaskan
+                                                            </th>
+                                                            <th class="px-4 py-3 font-semibold text-left">Waktu Kirim
+                                                            </th>
+                                                            <th class="px-4 py-3 font-semibold text-center">Status</th>
+                                                            <th class="px-4 py-3 font-semibold text-center">Konfirmasi
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        @forelse ($outlet->delivery as $delivery)
+                                                            <tr class="border-b border-gray-100">
+                                                                <td class="px-4 py-3">{{ $loop->iteration }}</td>
+                                                                <td class="px-4 py-3">
+                                                                    {{ $delivery->kurir->display_name ?? '-' }}
+                                                                </td>
+
+                                                                <td class="px-4 py-3">
+                                                                    {{ \Carbon\Carbon::parse($delivery->assigned_at, 'Asia/Jakarta')->format('d F Y, H:i') }}
+                                                                    WIB
+                                                                </td>
+
+                                                                <td class="px-4 py-3">
+                                                                    {{ \Carbon\Carbon::parse($delivery->delivered_at, 'Asia/Jakarta')->format('d F Y, H:i') }}
+                                                                    WIB
+                                                                </td>
+                                                                <td class="px-4 py-3">
+                                                                    <p x-data
+                                                                        :class="{
+                                                                            'border border-secondary text-secondary': '{{ $delivery->status }}'
+                                                                            === 'DIBATALKAN',
+                                                                            'border border-primary-200 text-primary-200': '{{ $delivery->status }}'
+                                                                            === 'DITUGASKAN',
+                                                                            'border border-green-500 text-green-500': '{{ $delivery->status }}'
+                                                                            === 'SELESAI',
+                                                                            'border border-neutral-200 text-neutral-200': '{{ $delivery->status }}'
+                                                                            === 'DIKIRIM',
+                                                                        }"
+                                                                        class="p-2 px-3 rounded-xl text-center text-xs lg:text-1">
+                                                                        {{ $delivery->status }}
+                                                                    </p>
+                                                                </td>
+                                                                <td class="px-4 py-3">
+                                                                    {{ optional($delivery->hasDeliveryConfirmation)->received_at
+                                                                        ? \Carbon\Carbon::parse($delivery->hasDeliveryConfirmation->received_at, 'Asia/Jakarta')->format('d F Y H:i') .
+                                                                            ' WIB'
+                                                                        : 'Belum dikonfirmasi' }}
+                                                                </td>
+                                                            </tr>
+                                                        @empty
+                                                            <tr>
+                                                                <td colspan="6"
+                                                                    class="text-center py-4 text-gray-500">
+                                                                    Tidak ada data</td>
+                                                            </tr>
+                                                        @endforelse
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="px-4 py-4 mt-8 shadow-reguler">
+                                            <h1 class="font-bold text-center text-l1">Kesalahan Pengantaran</h1>
+                                            <div class="mt-4 overflow-x-auto w-full">
+                                                <table class="min-w-max w-full text-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="px-4 py-3 font-semibold text-left w-12">No</th>
+                                                            <th class="px-4 py-3 font-semibold text-left">Nama Kurir
+                                                            </th>
+                                                            <th class="px-4 py-3 font-semibold text-left">Staff yang
+                                                                menerima
+                                                            </th>
+                                                            <th class="px-4 py-3 font-semibold text-center">Foto</th>
+                                                            <th class="px-4 py-3 font-semibold text-center">Catatan
+                                                            </th>
+                                                            <th class="px-4 py-3 font-semibold text-center">Waktu
+                                                                pelaporan
+                                                            </th>
+                                                            <th class="px-4 py-3 font-semibold text-center">Waktu
+                                                                Konfirmasi
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        @php
+                                                            $mistakes = $outlet->delivery->filter(
+                                                                fn($d) => !empty($d->hasMistake),
+                                                            );
+                                                        @endphp
+
+                                                        @forelse ($mistakes as $delivery)
+                                                            <tr>
+                                                                <td class="px-4 py-3">{{ $loop->iteration }}</td>
+                                                                <td class="px-4 py-3">
+                                                                    {{ $delivery->kurir->display_name ?? '-' }}</td>
+
+                                                                <td class="px-4 py-3">
+                                                                    {{ optional(optional($delivery->hasMistake)->reportedBy)->display_name ?? 'Tidak ada' }}
+                                                                </td>
+
+                                                                <td class="px-4 py-3">
+                                                                    {{ optional($delivery->hasMistake)->photo_url ?? '-' }}
+                                                                </td>
+
+                                                                <td class="px-4 py-3">
+                                                                    {{ optional($delivery->hasMistake)->notes ?? '-' }}
+                                                                </td>
+
+                                                                <td class="px-4 py-3">
+                                                                    {{ optional($delivery->hasMistake)->reported_at
+                                                                        ? \Carbon\Carbon::parse($delivery->hasMistake->reported_at, 'Asia/Jakarta')->format('d F Y H:i') . ' WIB'
+                                                                        : 'Belum dilaporkan' }}
+                                                                </td>
+                                                                <td class="px-4 py-3">
+                                                                    {{-- {{ dd($delivery->hasMistake->deliveryMistakeConfirmation->confirmed_at) }} --}}
+                                                                    {{ optional($delivery->hasMistake->deliveryMistakeConfirmation)->confirmed_at
+                                                                        ? \Carbon\Carbon::parse($delivery->hasMistake->deliveryMistakeConfirmation->confirmed_at, 'Asia/Jakarta')->format(
+                                                                                'd F Y H:i',
+                                                                            ) . ' WIB'
+                                                                        : 'Belum dikonfirmasi' }}
+                                                                </td>
+                                                            </tr>
+                                                        @empty
+                                                            <tr>
+                                                                <td colspan="7"
+                                                                    class="text-center py-4 text-gray-500">
+                                                                    Tidak ada data
+                                                                </td>
+                                                            </tr>
+                                                        @endforelse
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="px-4 mt-8 mb-4">
+                                            <h1 class="font-bold text-center text-l1">Stok barang tersisa</h1>
+                                            <div class="mt-2 grid grid-cols-12">
+                                                @foreach ($outlet->hasItemSetting->sortBy('pivot.quantity') as $item)
+                                                    <div
+                                                        class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg col-span-12 md:col-span-6 lg:col-span-4">
+                                                        <img src="{{ $item->image }}" class="w-[40px]"
+                                                            alt="Foto item">
+                                                        <div>
+                                                            <h2 class="text-reguler font-medium">
+                                                                {{ $item->name }}</h2>
+                                                            <p class="text-1 text-neutral-300">Tipe:
+                                                                {{ $item->type }}</p>
+                                                            <p class="text-h3 font-semibold">
+                                                                {{ $item->pivot->quantity }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                @endforeach
+            </div>
         </div>
-       End of presensi --}}
+        {{-- End of Outlet --}}
 
-            {{-- Inventaris --}}
-            <div class="mt-4">
-                <h1 class="border-b-2 border-b-primary-50 w-fit font-medium">Inventaris</h1>
-                <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
-                    <i class="fa-light fa-box text-l1 bg-primary-50 rounded-full  w-14 h-14 text-center  p-4"></i>
-                    <div>
-                        <h2 class="text-reguler font-medium">Stok Gudang</h2>
-                        <p class="text-h3 font-semibold">11.500</p>
-                    </div>
-                </div>
-                <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
-                    <i
-                        class="fa-light fa-wine-glass-crack text-l1 bg-primary-50 rounded-full w-14 h-14 text-center p-4"></i>
-                    <div>
-                        <h2 class="text-reguler font-medium">Barang Rusak</h2>
-                        <p class="text-h3 font-semibold">541</p>
-                    </div>
-                </div>
-                {{-- End of Inventaris --}}
-
-                {{-- Pengiriman --}}
-                <div class="mt-4 w-full lg:w-fit">
-                    <h1 class="border-b-2 border-b-primary-50 w-fit font-medium">Pengiriman</h1>
-                    <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
-                        <i
-                            class="fa-light fa-truck-ramp-box text-l1 bg-primary-50 rounded-full  w-14 h-14 text-center  p-4"></i>
+        {{-- Inventaris --}}
+        <div class="mt-12 w-full ">
+            <h1 class="border-b-2 border-b-primary w-fit font-medium lg:text-l1">Inventaris</h1>
+            <div class="mt-4 grid grid-cols-12 gap-2">
+                @foreach ($inventories as $inventory)
+                    <div
+                        class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg col-span-12 md:col-span-6 lg:col-span-4">
+                        <img src="{{ $inventory->item->image }}" class="w-[40px]" alt="Foto item">
                         <div>
-                            <h2 class="text-reguler font-medium">Total Pengantaran</h2>
-                            <p class="text-h3 font-semibold">12.000</p>
+                            <h2 class="text-reguler font-medium">{{ $inventory->item->name }}</h2>
+                            <p class="text-1 text-neutral-300">Tipe: {{ $inventory->item->type }}</p>
+                            <p class="text-h3 font-semibold">{{ $inventory->stock }}</p>
                         </div>
                     </div>
-                    <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
-                        <i
-                            class="fa-light fa-user-plus text-l1 bg-primary-50 rounded-full w-14 h-14 text-center p-4"></i>
-                        <div>
-                            <h2 class="text-1 font-light"><span class="font-medium">Top Kurir</span>/Total
-                                Pengiriman</h2>
-                            <p class="text-l1 font-semibold">John Doe<span class="text-l2 font-normal">/1.250
-                                    kali</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                {{-- End of Pengiriman --}}
-
-                {{-- Outlet --}}
-                <div class="mt-4 w-full lg:w-fit">
-                    <h1 class="border-b-2 border-b-primary-50 w-fit font-medium">Outlet</h1>
-                    <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
-                        <i
-                            class="fa-light fa-shop text-[1.25rem] bg-primary-50 rounded-full w-[56px] h-[56px] text-center p-4"></i>
-                        <div>
-                            <h2 class="text-reguler font-medium">Total Outlet</h2>
-                            <p class="text-h3 font-semibold">{{ $totalOutlet }}</p>
-                        </div>
-                    </div>
-                    <div class="px-6 py-6 mt-2 shadow-reguler flex gap-5 items-center rounded-lg w-full lg:w-[500px]">
-                        <i
-                            class="fa-light fa-cart-shopping text-l2 bg-primary-50 rounded-full w-[54px] h-[54px] text-center p-4"></i>
-                        <div>
-                            <h2 class="text-1 font-medium">Barang Terjual</h2>
-                            <p class="text-l1 font-semibold">150.300</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                {{-- End of Outlet --}}
+                @endforeach
             </div>
+        </div>
+        {{-- End of inventaris --}}
 
-            {{-- Grafik --}}
-            <div class="mt-12 lg:w-[500px] flex flex-wrap justify-center mx-auto">
-                <canvas id="myChart">
-                </canvas>
-            </div>
-            {{-- End of Grafik --}}
+
+    </div>
+
+    {{-- Grafik --}}
+    <div class="mt-12 w-full ">
+        <h1 class="border-b-2 border-b-primary w-fit font-medium lg:text-l1">Status</h1>
+        <div class="mt-8 lg:w-full grid grid-cols-12 gap-4">
+            <a href="/pengantaran" class="col-span-12 md:col-span-4 text-center  shadow-reguler rounded-lg p-4">
+                <h1 class="font-medium">Status pengantaran hari ini</h1>
+                <canvas id="pengantaranChart"></canvas>
+            </a>
+            <a href="/absensi"
+                class="col-span-12 mt-4 md:mt-0 md:col-span-4 text-center  shadow-reguler rounded-lg p-4">
+                <h1 class="font-medium">Status absensi hari ini</h1>
+                <canvas id="absensiChart"></canvas>
+            </a>
+        </div>
+    </div>
+    {{-- End of Grafik --}}
 </x-layouts.app>
 
 <script>
-    const ctx = document.getElementById('myChart').getContext('2d');
+    // --- Data Pengantaran ---
+    const selesai = @json($selesai);
+    const diantar = @json($diantar);
+    const ditugaskan = @json($ditugaskan);
+    const gagal = @json($gagal);
 
-    // Buat gradient merah (atas -> bawah)
-    const redGradient = ctx.createLinearGradient(0, 0, 0, 400);
-    redGradient.addColorStop(0, 'rgba(255, 99, 132, 0.6)');
-    redGradient.addColorStop(1, 'rgba(255, 99, 132, 0.05)');
-
-    // Buat gradient biru (atas -> bawah)
-    const blueGradient = ctx.createLinearGradient(0, 0, 0, 400);
-    blueGradient.addColorStop(0, 'rgba(54, 162, 235, 0.6)');
-    blueGradient.addColorStop(1, 'rgba(54, 162, 235, 0.05)');
-
-    const labels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
-
-    const data = {
-        labels: labels,
-        datasets: [{
-                label: 'Barang rusak',
-                data: [120, 150, 180, 160],
-                borderColor: 'rgb(54, 162, 235)',
-                backgroundColor: blueGradient,
-                tension: 0.3,
-                fill: true
-            },
-            {
-                label: 'Barang Terjual',
-                data: [200, 340, 650, 550],
-                borderColor: 'rgb(255, 99, 132)',
-                backgroundColor: redGradient,
-                tension: 0.3,
-                fill: true
-            }
-        ]
-    };
-
-    const config = {
-        type: 'line',
-        data: data,
+    const ctxPengantaran = document.getElementById('pengantaranChart').getContext('2d');
+    const pengantaranChart = new Chart(ctxPengantaran, {
+        type: 'doughnut',
+        data: {
+            labels: ['Selesai', 'Diantar', 'Ditugaskan', 'Dibatalkan/Terkendala'],
+            datasets: [{
+                data: [selesai, diantar, ditugaskan, gagal],
+                backgroundColor: ['#00c951', '#A09C97', '#CD9100', '#FF3704'],
+            }]
+        },
         options: {
             responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Grafik Arus Barang'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                }
-            }
+            cutout: '60%',
         }
-    };
+    });
 
-    new Chart(ctx, config);
+    // --- Data Absensi ---
+    const hadir = @json($hadir);
+    const izin = @json($izin);
+    const sakit = @json($sakit);
+    const absen = @json($absen);
+
+    const ctxAbsensi = document.getElementById('absensiChart').getContext('2d');
+    const absensiChart = new Chart(ctxAbsensi, {
+        type: 'doughnut',
+        data: {
+            labels: ['Hadir', 'Izin', 'Sakit', 'Absen'],
+            datasets: [{
+                data: [hadir, izin, sakit, absen],
+                backgroundColor: ['#00c951', '#CD9100', '#FF3704', '#A09C97'],
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '60%',
+        }
+    });
 </script>

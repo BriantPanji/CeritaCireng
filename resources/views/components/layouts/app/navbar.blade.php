@@ -31,15 +31,15 @@
         x-on:click="showSideBar = false" x-transition.opacity>
     </div>
 
-    {{-- Sidebar Mobile --}}
-    <nav x-cloak class="fixed top-0 w-60 h-screen bg-primary-300 z-20 duration-300 lg:hidden no-scrollbar overflow-y-auto"
+    {{-- Sidebar --}}
+    <nav x-cloak class="fixed top-0 w-60 h-screen bg-primary z-20 duration-300 lg:hidden"
         x-bind:class="showSideBar ? '-translate-x-0' : '-translate-x-70'">
         <div class="p-[8px] pr-4 mt-[34px]">
             <div class="px-[12px] py-[8px] flex border-dark border-b-2">
-                <img src="{{ asset('images/Conan.jpg') }}" class="rounded-full" alt="Foto Profil" width="42">
-                <div class="ml-[12px]">
-                    <h1 class="text-reguler font-medium">Hi, John Doe</h1>
-                    <p class="text-1">Owner</p>
+                <img src="{{ asset('favicon.svg') }}" alt="Foto Profil" width="42">
+                <div class="text-right w-full">
+                    <h1 class=" text-reguler font-medium">Halo, {{ Auth::user()->display_name }}</h1>
+                    <p class="text-1">{{ Auth::user()->role->name }}</p>
                 </div>
             </div>
             <div class="nav-list mt-[12px] relative">
@@ -64,19 +64,48 @@
             </div>
         </div>
     </nav>
+    {{-- End of sidebar --}}
 
-    {{-- Sidebar Desktop --}}
-    <nav class="fixed top-0 left-0 h-screen w-64 xl:w-80 bg-primary hidden lg:block overflow-y-auto no-scrollbar">
-        <div class="p-[8px] pr-4">
-            <div class="px-[12px] pb-[13px] flex border-dark border-b-2 mt-[64px]">
-                <img src="{{ asset('images/Conan.jpg') }}" class="rounded-full" alt="Foto Profil" width="42">
-                <div class="ml-[12px]">
-                    <h1 class="text-reguler font-medium">Hi, John Doe</h1>
-                    <p class="text-1">Owner</p>
+    {{-- Navbar md ke atas --}}
+
+    <nav x-cloak class="fixed w-1/4 left-0 top-0 h-screen bg-primary hidden lg:block ">
+        <div class="p-[8px] mr-32 pr-4">
+            <div class="px-[12px] pb-[13px] flex border-dark border-b-2 mt-20">
+                <div>
+                    <h1 class="text-reguler font-medium">Halo, {{ Auth::user()->display_name }}</h1>
+                    <p class="text-1">{{ Auth::user()->role->name }}</p>
                 </div>
             </div>
             <div class="nav-list mt-4">
                 @foreach ($sidebarMenus as $menu)
+                {{--
+                    @if ($menu['route'] === '/logout')
+                        <a href="{{ $menu['route'] }}"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                            class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/25 duration-300 relative {{ request()->is(ltrim($menu['route'], '/')) ? 'bg-neutral-50/25' : '' }}">
+                            {{-- Validasi indikator --}}
+                            @if (request()->is(ltrim($menu['route'], '/')))
+                                <div class="h-full absolute left-0 bg-neutral-50/90 w-[3px] top-0"></div>
+                            @endif
+                            <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
+
+                            <p class="text-1 w-full text-left font-medium ml-[12px]">{{ $menu['name'] }}</p>
+                        </a>
+                        @continue
+                    @endif
+
+                    <a href="{{ $menu['route'] }}"
+                        class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/25 duration-300 relative {{ request()->is(ltrim($menu['route'], '/')) ? 'bg-neutral-50/25' : '' }}">
+                        {{-- Validasi indikator --}}
+                        @if (request()->is(ltrim($menu['route'], '/')))
+                            <div class="h-full absolute left-0 bg-neutral-50/90 w-[3px] top-0"></div>
+                        @endif
+
+                        <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
+
+                        <p class="text-1 w-full text-left font-medium ml-[12px]">{{ $menu['name'] }}</p>
+                    </a>
+                    --}}
                 @if ($menu['route'] === '/logout')
                 <button type="button" onclick="confirmLogout()"
                     class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/25 duration-300 relative w-full text-left">
@@ -97,6 +126,7 @@
             </div>
         </div>
     </nav>
+    {{-- End of navbar md ke atas --}}
 
 </div>
 
