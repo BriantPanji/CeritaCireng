@@ -55,7 +55,7 @@ class User extends Authenticatable
      */
     public function initials(): string
     {
-        return Str::of($this->name)
+        return Str::of($this->display_name ?? '')
             ->explode(' ')
             ->take(2)
             ->map(fn($word) => Str::substr($word, 0, 1))
@@ -151,5 +151,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(ReturnError::class, 'id_staff');
     }
-
 }
