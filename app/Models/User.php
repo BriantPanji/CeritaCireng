@@ -29,6 +29,13 @@ class User extends Authenticatable
     ];
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['role'];
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>

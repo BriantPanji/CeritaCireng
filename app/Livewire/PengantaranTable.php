@@ -53,19 +53,19 @@ class PengantaranTable extends Component
 
         switch ($this->waktu) {
             case 'today':
-                $query->whereDate('delivered_at', Carbon::today());
+                $query->whereDate('assigned_at', Carbon::today());
                 break;
 
             case 'week':
-                $query->where('delivered_at', '>=', Carbon::now()->subWeek()->startOfDay());
+                $query->where('assigned_at', '>=', Carbon::now()->subWeek()->startOfDay());
                 break;
 
             case 'month':
-                $query->where('delivered_at', '>=', Carbon::now()->subMonth()->startOfDay());
+                $query->where('assigned_at', '>=', Carbon::now()->subMonth()->startOfDay());
                 break;
 
             case 'year':
-                $query->where('delivered_at', '>=', Carbon::now()->subYear()->startOfDay());
+                $query->where('assigned_at', '>=', Carbon::now()->subYear()->startOfDay());
                 break;
 
             case 'all':
@@ -73,14 +73,17 @@ class PengantaranTable extends Component
                 break;
 
             default:
-                // Fallback: Jika value aneh/kosong, anggap 'today' atau 'all' (pilih salah satu)
-                // Disini saya set default ke 'today' agar aman
-                $query->whereDate('delivered_at', Carbon::today());
+                // Default: Tampilkan semua jika filter tidak valid/kosong
+                // Ini lebih aman daripada membatasi ke hari ini saja
                 break;
         }
 
         // Filter Kurir
-        if (!empty($this->kurir)) {
+        if (auth()->user()->role->name === 'kurir') {
+            // Jika user adalah kurir, paksa filter ke id user tersebut
+            $query->where('id_kurir', auth()->id());
+        } elseif (!empty($this->kurir)) {
+            // Jika bukan kurir (admin/inventaris), gunakan filter dropdown
             $query->where('id_kurir', $this->kurir);
         }
 
@@ -89,10 +92,15 @@ class PengantaranTable extends Component
             $query->where('status', $this->status);
         }
 
-        // Search
+        // Search (Nama Kurir atau Nama Outlet)
         if (!empty($this->search)) {
-            $query->whereHas('kurir', function ($q) {
-                $q->where('display_name', 'like', '%' . $this->search . '%');
+            $query->where(function($q) {
+                $q->whereHas('kurir', function ($subQ) {
+                    $subQ->where('display_name', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('outlet', function ($subQ) {
+                    $subQ->where('name', 'like', '%' . $this->search . '%');
+                });
             });
         }
 
@@ -131,7 +139,7 @@ class PengantaranTable extends Component
     {
         return view('livewire.pengantaran-table', [
             'deliveries' => $this->deliveries,
-            'couriers' => User::where('role_id', 3)->get(),
+            'couriers' => User::where('role_id', 4)->get(),
             'statuses' => Delivery::select('status')->distinct()->get(),
             'pages' => $this->pages
         ]);

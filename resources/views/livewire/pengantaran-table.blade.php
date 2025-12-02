@@ -6,6 +6,7 @@
             <input type="text" wire:model.live="search" class="ml-2 w-full text-sm focus:outline-none"
                 placeholder="Cari pengantaran">
         </div>
+        @if(auth()->user()->role->name !== 'kurir')
         <a href="{{ route('delivery.add') }}"
             class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 whitespace-nowrap">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -15,6 +16,7 @@
             </svg>
             Tambah Pengantaran
         </a>
+        @endif
     </div>
 
     {{-- FILTER --}}
@@ -31,6 +33,7 @@
         </select>
 
         {{-- Kurir --}}
+        @if(auth()->user()->role->name !== 'kurir')
         <select wire:model.live="kurir"
             class="bg-white border border-neutral-200 px-3 py-1 rounded-xl shadow-sm text-sm cursor-pointer">
             <option value="">Semua Kurir</option>
@@ -38,6 +41,7 @@
             <option value="{{ $courier->id }}">{{ $courier->display_name }}</option>
             @endforeach
         </select>
+        @endif
 
         {{-- Status --}}
         <select wire:model.live="status"
@@ -100,14 +104,16 @@
                         </td>
 
                         <td class="px-4">
-                            @if ($delivery->status == 'DITUGASKAN' || $delivery->status == 'DIKIRIM')
-                            <button wire:click="confirmBatal({{ $delivery->id }})"
-                                class="bg-secondary hover:bg-secondary/90 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-pointer lg:text-1">
-                                Batalkan</button>
-                            @else
-                            <button
-                                class="bg-neutral-200 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-not-allowed lg:text-1">
-                                Batalkan</button>
+                            @if(auth()->user()->role->name !== 'kurir')
+                                @if ($delivery->status == 'DITUGASKAN' || $delivery->status == 'DIKIRIM')
+                                <button wire:click="confirmBatal({{ $delivery->id }})"
+                                    class="bg-secondary hover:bg-secondary/90 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-pointer lg:text-1">
+                                    Batalkan</button>
+                                @else
+                                <button
+                                    class="bg-neutral-200 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-not-allowed lg:text-1">
+                                    Batalkan</button>
+                                @endif
                             @endif
                             <span x-data="{ modalIsOpen: false }">
                                 <button x-on:click="modalIsOpen = true" type="button"
@@ -161,6 +167,13 @@
                                                     Outlet</p>
                                                 <p class="w-[60%] text-left">
                                                     {{ $delivery->outlet->name }}</p>
+                                            </div>
+                                            <div class="flex justify-between relative">
+                                                <p
+                                                    class="before:content-[':'] font-semibold before:block before:left-35 xl:before:left-50 before:absolute">
+                                                    Alamat Outlet</p>
+                                                <p class="w-[60%] text-left">
+                                                    {{ $delivery->outlet->location ?? '-' }}</p>
                                             </div>
                                             <div class="flex justify-between relative">
                                                 <p

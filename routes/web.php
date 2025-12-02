@@ -15,15 +15,22 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
+// Attendance/Absensi - Unified route
+Route::middleware(['auth'])->group(function () {
+    Route::get('/absensi', [AttendanceController::class, 'index'])->name('absensi.index');
+    
+    // Route untuk attendance tetap ada, redirect ke absensi
+    Route::get('/attendance', function () {
+        return redirect()->route('absensi.index');
+    });
+});
 
-Route::get('/absensi', [AttendanceController::class, 'index'])
-    ->name('absensi.index');
-
+// Inventory
 Route::get('/inventory', function () {
     return view('inventory');
 });
 
-
+// User Management
 Volt::route('/user-management', 'user-management')
     ->name('users.management');
 
@@ -36,21 +43,19 @@ Route::get('/delivery/add', function () {
     return view('delivery-add');
 })->name('delivery.add')->middleware('auth');
 
-//Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.management');
+Route::post('/delivery/{id}/start', [DashboardController::class, 'startDelivery'])->name('delivery.start')->middleware('auth');
 
+// Outlet Management
 Volt::route('/outlet-management', 'outlet-management')
     ->name('outlets.management');
 
-
+// Penerimaan Barang
 use App\Livewire\ReceivingTable;
 
 Route::get('/penerimaan-barang', ReceivingTable::class)
     ->name('receiving.index')
     ->middleware('auth');
 
-Route::middleware(['auth'])->group(function () {
-    Volt::route('/attendance', 'attendance');
-});
 
 use App\Http\Controllers\StaffController;
 
