@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,73 +25,31 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        View::composer('*', function ($view) {
+            $user = Auth::user();
 
-        //        $tmp_dir = ini_get('upload_tmp_dir') ? ini_get('upload_tmp_dir') : sys_get_temp_dir();
+            if (!$user) {
+                View::share('sidebarMenus', collect());
+                return;
+            }
+
+            $menus = collect(config('sidebar'))
+                ->filter(function ($menu) use ($user) {
+                    return in_array($user->role->name, $menu['roles']);
+                })
+                ->values();
+
+            View::share('sidebarMenus', $menus);
+        });
+
+
+      //        $tmp_dir = ini_get('upload_tmp_dir') ? ini_get('upload_tmp_dir') : sys_get_temp_dir();
         //        die($tmp_dir);
 
 
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }
-
-        View::share('sidebarMenus', [
-            [
-                'name' => 'Dashboard',
-                'icon' => 'list-dashes',
-                'route' => '/dashboard',
-            ],
-            [
-                'name' => 'Pengantaran',
-                'icon' => 'truck',
-                'route' => '/pengantaran',
-            ],
-            [
-                'name' => 'Inventory',
-                'icon' => 'warehouse',
-                'route' => '/inventory',
-            ],
-            [
-                'name' => 'Stok',
-                'icon' => 'stack',
-                'route' => '/stok',
-            ],
-            [
-                'name' => 'Laporan',
-                'icon' => 'files',
-                'route' => '/laporan',
-            ],
-            [
-                'name' => 'Manajemen User',
-                'icon' => 'user-gear',
-                'route' => '/user-management',
-            ],
-            [
-                'name' => 'Manajemen Outlet',
-                'icon' => 'storefront',
-                'route' => '/outlet-management',
-            ],
-            [
-                'name' => 'Attendance',
-                'icon' => 'user-focus',
-                'route' => '/attendance',
-            ],
-            [
-                'name' => 'Absensi',
-                'icon' => 'identification-badge',
-                'route' => '/absensi',
-            ],
-            [
-                'name' => 'Log Aktivitas',
-                'icon' => 'note-pencil',
-                'route' => '/log-aktivitas',
-            ],
-            [
-                'name' => 'Keluar',
-                'icon' => 'sign-out',
-                'route' => '/logout',
-            ],
-        ]);
-
 
 
         Gate::define('checkrole', function (User $user, string $roles) {

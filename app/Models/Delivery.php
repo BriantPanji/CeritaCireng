@@ -43,7 +43,7 @@ class Delivery extends Model
 
     public function hasMistake()
     {
-        return $this->hasOne(DeliveryMistake::class);
+        return $this->hasOne(DeliveryMistake::class, "id_delivery");
     }
 
     public function hasDeliveryItem()

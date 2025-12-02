@@ -30,18 +30,17 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
-<body class="text-dark" x-data
-    @modal-opened.window="document.body.style.overflow = 'hidden'"
+<body class="text-dark" x-data @modal-opened.window="document.body.style.overflow = 'hidden'"
     @modal-closed.window="document.body.style.overflow = 'auto'">
-    
+
     <x-layouts.app.navbar />
-    
-    <main class="bg-neutral-25 lg:ml-64 xl:ml-80">
-        <div class="px-4 xs:px-8 sm:px-20 pt-14 lg:pt-20">
+
+    <main class="bg-neutral-25 min-h-screen lg:ml-56">
+        <div class="pt-14 lg:pt-20 px-4 xs:px-8 sm:px-20 pb-8">
             {{ $slot }}
         </div>
     </main>
-    
+
     @livewireScripts
 </body>
 

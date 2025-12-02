@@ -1,12 +1,20 @@
-<div class="px-3 pt-3">
+<div class="p-3">
     {{-- SEARCH --}}
-    <div class="flex items-center gap-2">
-        <div
-            class="flex items-center bg-white shadow-reguler px-3 py-2 flex-1 border rounded-lg hover:border-primary cursor-pointer">
+    <div class="mt-12 lg:mt-24 flex items-center gap-2">
+        <div class="flex items-center bg-white shadow-reguler px-3 py-3 rounded-xl flex-1 cursor-pointer">
             <i class="ph ph-magnifying-glass"> </i>
             <input type="text" wire:model.live="search" class="ml-2 w-full text-sm focus:outline-none"
                 placeholder="Cari pengantaran">
         </div>
+        <a href="{{ route('delivery.add') }}"
+            class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 whitespace-nowrap">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                    clip-rule="evenodd" />
+            </svg>
+            Tambah Pengantaran
+        </a>
     </div>
 
     {{-- FILTER --}}
@@ -69,8 +77,13 @@
                             WIB
                         </td>
                         <td class="px-4 py-3 text-1">
+                            @if($delivery->delivered_at)
                             {{ \Carbon\Carbon::parse($delivery->delivered_at, 'Asia/Jakarta')->format('d F Y, H:i') }}
-                            WIB</td>
+                            WIB
+                            @else
+                            -
+                            @endif
+                        </td>
                         <td class="px-4 py-3 rounded-lg text-1">
                             <p x-data :class="{
                                         'border border-secondary text-secondary': '{{ $delivery->status }}'
@@ -110,7 +123,7 @@
                                         x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
                                         x-transition:enter-start="opacity-0 translate-y-8"
                                         x-transition:enter-end="opacity-100 translate-y-0"
-                                        class="flex flex-col gap-4 overflow-x-hidden overflow-y-scroll h-[400px] rounded-radius border border-outline bg-white w-[90%] xl:max-w-[600px]">
+                                        class="flex flex-col gap-4 overflow-x-hidden overflow-y-scroll h-[600px] rounded-radius border border-outline bg-white w-[90%] xl:max-w-[700px]">
                                         <!-- Dialog Header -->
                                         <div class="flex items-center justify-between border-b border-outline p-4">
                                             <h3 id="defaultModalTitle" class="font-semibold tracking-wide text-l2">
@@ -181,9 +194,12 @@
                                                     class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
                                                     Waktu Pengiriman</p>
                                                 <p class="w-[60%] text-left">
+                                                    @if($delivery->delivered_at)
                                                     {{ \Carbon\Carbon::parse($delivery->delivered_at,
-                                                    'Asia/Jakarta')->format('d F Y, H:i') }}
-                                                    WIB
+                                                    'Asia/Jakarta')->format('d F Y, H:i') }} WIB
+                                                    @else
+                                                    -
+                                                    @endif
                                                 </p>
                                             </div>
                                             <div class="flex justify-between relative">
@@ -215,20 +231,58 @@
                                                     diterima</p>
                                                 @endif
                                             </div>
-                                            <div class="flex justify-between relative">
+
+                                            {{-- Delivery Items Section --}}
+                                            <div class="mt-6">
+                                                <p class="font-semibold text-base mb-3 border-b pb-2">Daftar Barang yang
+                                                    Diantar</p>
+
+                                                @if($delivery->items && $delivery->items->count() > 0)
+                                                <div class="overflow-x-auto">
+                                                    <table class="w-full text-xs lg:text-1">
+                                                        <thead class="bg-gray-50">
+                                                            <tr>
+                                                                <th class="px-3 py-2 text-left font-semibold border-b">
+                                                                    No</th>
+                                                                <th class="px-3 py-2 text-left font-semibold border-b">
+                                                                    Nama Barang</th>
+                                                                <th
+                                                                    class="px-3 py-2 text-center font-semibold border-b">
+                                                                    Satuan</th>
+                                                                <th
+                                                                    class="px-3 py-2 text-center font-semibold border-b">
+                                                                    Jumlah</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach($delivery->items as $index => $deliveryItem)
+                                                            <tr class="border-b last:border-b-0 hover:bg-gray-50">
+                                                                <td class="px-3 py-2">{{ $index + 1 }}</td>
+                                                                <td class="px-3 py-2">{{ $deliveryItem->item->name }}
+                                                                </td>
+                                                                <td class="px-3 py-2 text-center">{{
+                                                                    $deliveryItem->item->unit }}</td>
+                                                                <td class="px-3 py-2 text-center font-semibold">{{
+                                                                    $deliveryItem->quantity }}</td>
+                                                            </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                @else
+                                                <p class="text-gray-500 text-center py-4">Tidak ada barang yang diantar
+                                                </p>
+                                                @endif
+                                            </div>
+
+                                            {{-- Notes Section --}}
+                                            <div class="flex justify-between relative mt-4">
                                                 <p
                                                     class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
                                                     Notes</p>
                                                 <p class="w-[60%] text-left">
                                                     {{ $delivery->hasDeliveryConfirmation?->notes ?? '-' }}
                                                 </p>
-                                            </div>
-                                            <div class="flex  flex-col justify-between relative">
-                                                <p
-                                                    class="before:content-[':'] font-semibold before:block before:left-35 md:before:left-50 before:absolute">
-                                                    Bukti Photo</p>
-                                                <img src={{ asset('images/Conan.jpg') }} alt="Bukti Foto"
-                                                    class="w-[300px] mx-auto mt-8">
                                             </div>
                                         </div>
 

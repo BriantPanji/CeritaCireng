@@ -68,6 +68,11 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
+    public function hasOutlet()
+    {
+        return $this->belongsToMany(Outlet::class, 'staff_outlets', 'id_user', 'outlet_id');
+    }
+
     public function attendance()
     {
         return $this->hasMany(Attendance::class, 'id_user');
