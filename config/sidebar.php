@@ -27,8 +27,14 @@ return [
     [
         'name' => 'Laporan',
         'icon' => 'files',
-        'route' => '/laporan',
+        'route' => '/daily-reports',
         'roles' => ['dev', 'admin', 'inventaris'],
+    ],
+    [
+        'name' => 'Buat Laporan Harian',
+        'icon' => 'note-pencil',
+        'route' => '/daily-reports/create',
+        'roles' => ['dev', 'admin', 'staff'],
     ],
     [
         'name' => 'Manajemen User',

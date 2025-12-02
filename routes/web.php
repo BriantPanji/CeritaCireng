@@ -86,4 +86,19 @@ Route::get('/stok', \App\Livewire\StockTable::class)
     ->name('stok.index')
     ->middleware('auth');
 
+// Daily Outlet Reports
+use App\Livewire\DailyReportTable;
+use App\Http\Controllers\DailyReportController;
+use App\Livewire\DailyReportCreate;
+
+Route::get('/daily-reports/create', DailyReportCreate::class)->name('daily-reports.create')->middleware(['auth', 'checkrole:dev,admin,staff']);
+// View and export reports - only admin and dev
+Route::middleware(['auth', 'checkrole:dev,admin'])->group(function () {
+    Route::get('/daily-reports', DailyReportTable::class)->name('daily-reports.index');
+    Route::get('/daily-reports/export/excel', [DailyReportController::class, 'export'])->name('daily-reports.export');
+    Route::get('/daily-reports/{id}', [DailyReportController::class, 'show'])->name('daily-reports.show');
+});
+
+// Create report - staff with outlet OR admin/dev (can choose outlet)
+
 require __DIR__ . '/auth.php';
