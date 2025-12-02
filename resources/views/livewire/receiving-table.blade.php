@@ -3,7 +3,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
         {{-- Pending Deliveries --}}
-        <div class="bg-white rounded-xl shadow p-4 flex flex-row gap-4 items-center md:flex-col md">
+        <div class="bg-white rounded-xl shadow p-4 flex flex-row gap-4 items-center md:flex-col md:items-start">
 
     {{-- Ikon --}}
     <div class="w-16 h-16 bg-yellow-500 p-3 rounded-full flex-shrink-0">
