@@ -9,14 +9,20 @@ return [
     [
         'name' => 'Pengantaran',
         'icon' => 'truck',
-        'route' => '/pengantaran',
+        'route' => '/delivery',
         'roles' => ['dev', 'admin', 'inventaris', 'kurir', 'staff'],
     ],
     [
         'name' => 'Inventory',
         'icon' => 'warehouse',
         'route' => '/inventory',
-        'roles' => ['dev', 'admin'],
+        'roles' => ['dev', 'admin', 'inventaris'],
+    ],
+    [
+        'name' => 'Stok',
+        'icon' => 'stack',
+        'route' => '/stok',
+        'roles' => ['dev', 'admin', 'inventaris'],
     ],
     [
         'name' => 'Laporan',
@@ -31,15 +37,27 @@ return [
         'roles' => ['dev', 'admin'],
     ],
     [
+        'name' => 'Manajemen Outlet',
+        'icon' => 'storefront',
+        'route' => '/outlet-management',
+        'roles' => ['dev', 'admin'],
+    ],
+    [
+        'name' => 'Attendance',
+        'icon' => 'user-focus',
+        'route' => '/attendance',
+        'roles' => ['dev', 'admin', 'staff'],
+    ],
+    [
         'name' => 'Absensi',
         'icon' => 'identification-badge',
         'route' => '/absensi',
         'roles' => ['dev', 'admin', 'inventaris', 'kurir', 'staff'],
     ],
     [
-        'name' => 'Manajemen Outlet',
-        'icon' => 'storefront',
-        'route' => '/outlet',
+        'name' => 'Log Aktivitas',
+        'icon' => 'note-pencil',
+        'route' => '/log-aktivitas',
         'roles' => ['dev', 'admin'],
     ],
     [

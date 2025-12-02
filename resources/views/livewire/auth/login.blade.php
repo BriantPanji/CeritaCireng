@@ -50,7 +50,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'username' => __('auth.failed'),
+                'username' => 'Username atau password yang Anda masukkan salah. Silakan coba lagi.',
             ]);
         }
 
@@ -71,10 +71,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'username' => __('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
+            'username' => 'Terlalu banyak percobaan login. Silakan coba lagi dalam ' . ceil($seconds / 60) . ' menit.',
         ]);
     }
 
@@ -87,54 +84,83 @@ new #[Layout('components.layouts.auth')] class extends Component {
     }
 }; ?>
 
-<div class="flex flex-col items-center justify-center min-h-screen p-4">
+<div class="flex flex-col items-center justify-center min-h-screen p-4 bg-neutral-50">
     {{-- Login Card --}}
     <div class="w-full max-w-md">
-        {{-- Header --}}
-        <div class="bg-primary rounded-t-lg px-6 py-4 text-center">
-            <h1 class="text-l2 font-bold text-dark">Cerita Cireng</h1>
+        {{-- Card Container --}}
+        <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+            {{-- Header Section with Logo --}}
+            <div class="bg-primary px-8 py-8 text-center">
+                <div class="flex justify-center mb-4">
+                    <img src="{{ asset('favicon.svg') }}" class="w-16 h-16 animate-pulse" alt="Cerita Cireng Logo">
+                </div>
+                <h1 class="text-h3 font-bold text-dark">Cerita Cireng</h1>
+                <p class="text-1 text-dark/80 mt-1">Sistem Manajemen Terpadu</p>
+            </div>
+
+            {{-- Login Form --}}
+            <div class="px-8 py-8">
+
+                <form wire:submit="login" class="flex flex-col gap-5">
+                    @error('username')
+                    <div
+                        class="mt-2 bg-secondary/10 border-l-4 border-secondary rounded-r-lg p-3 flex items-start gap-2">
+                        <i class="ph ph-warning-circle text-secondary text-xl flex-shrink-0 mt-0.5"></i>
+                        <p class="text-secondary text-1 font-medium">{{ $message }}</p>
+                    </div>
+                    @enderror
+                    {{-- Username Input --}}
+                    <div>
+                        <label for="username" class="block text-reguler font-medium text-dark mb-2">
+                            <i class="ph ph-user mr-1"></i> Username
+                        </label>
+                        <input wire:model="username" type="text" id="username"
+                            class="w-full px-4 py-3 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-reguler @error('username') border-secondary @enderror"
+                            placeholder="Masukkan username Anda" required autofocus />
+
+                    </div>
+
+                    {{-- Password Input --}}
+                    <div>
+                        <label for="password" class="block text-reguler font-medium text-dark mb-2">
+                            <i class="ph ph-lock mr-1"></i> Password
+                        </label>
+                        <input wire:model="password" type="password" id="password"
+                            class="w-full px-4 py-3 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-reguler @error('password') border-secondary @enderror"
+                            placeholder="Masukkan password Anda" required />
+                        @error('password')
+                        <div
+                            class="mt-2 bg-secondary/10 border-l-4 border-secondary rounded-r-lg p-3 flex items-start gap-2">
+                            <i class="ph ph-warning-circle text-secondary text-xl flex-shrink-0 mt-0.5"></i>
+                            <p class="text-secondary text-1 font-medium">{{ $message }}</p>
+                        </div>
+                        @enderror
+                    </div>
+
+                    {{-- Remember Me --}}
+                    <div class="flex items-center">
+                        <input wire:model="remember" type="checkbox" id="remember"
+                            class="w-4 h-4 text-primary border-neutral-300 rounded focus:ring-2 focus:ring-primary/20 cursor-pointer" />
+                        <label for="remember" class="ml-2 text-1 text-neutral-400 cursor-pointer select-none">
+                            Ingat saya di perangkat ini
+                        </label>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-primary text-dark py-3.5 rounded-lg cursor-pointer font-bold text-reguler hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 mt-2 flex items-center justify-center gap-2">
+                        <i class="ph ph-sign-in text-xl"></i>
+                        <span>Masuk Sekarang</span>
+                    </button>
+                </form>
+
+            </div>
         </div>
 
-        {{-- Login Form --}}
-        <div class="bg-white shadow-reguler rounded-b-lg px-6 py-8">
-            <h2 class="text-l1 font-semibold text-dark mb-6 text-center">Login</h2>
-
-            <form wire:submit="login" class="flex flex-col gap-4">
-                {{-- Username Input --}}
-                <div>
-                    <label for="username" class="block text-reguler font-medium text-dark mb-2">Username</label>
-                    <input wire:model="username" type="text" id="username"
-                        class="w-full px-4 py-3 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary transition-colors text-reguler"
-                        placeholder="Masukkan username" required autofocus />
-                    @error('username')
-                        <p class="text-secondary text-1 mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Password Input --}}
-                <div>
-                    <label for="password" class="block text-reguler font-medium text-dark mb-2">Password</label>
-                    <input wire:model="password" type="password" id="password"
-                        class="w-full px-4 py-3 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary transition-colors text-reguler"
-                        placeholder="Masukkan password" required />
-                    @error('password')
-                        <p class="text-secondary text-1 mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Remember Me --}}
-                <div class="flex items-center">
-                    <input wire:model="remember" type="checkbox" id="remember"
-                        class="w-4 h-4 text-primary border-neutral-200 rounded focus:ring-primary" />
-                    <label for="remember" class="ml-2 text-1 text-neutral-400">Ingat saya</label>
-                </div>
-
-                {{-- Submit Button --}}
-                <button type="submit"
-                    class="w-full bg-primary text-white py-3 rounded-lg font-semibold text-reguler hover:bg-primary-200 transition-colors mt-2">
-                    Login
-                </button>
-            </form>
+        {{-- Bottom Note --}}
+        <div class="text-center mt-6">
+            <p class="text-1 text-neutral-400">
+                © 2025 - 2026 Cerita Cireng. All rights reserved.
+            </p>
         </div>
     </div>
 </div>
