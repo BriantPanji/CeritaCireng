@@ -44,6 +44,13 @@
             </div>
             <div class="nav-list mt-[12px] relative">
                 @foreach ($sidebarMenus as $menu)
+                @if ($menu['route'] === '/logout')
+                <button type="button" onclick="confirmLogout()"
+                    class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/15 duration-300 relative w-full text-left">
+                    <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
+                    <p class="text-1 w-full text-right font-medium ml-[12px]">{{ $menu['name'] }}</p>
+                </button>
+                @else
                 <a href="{{ $menu['route'] }}"
                     class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/15 duration-300 relative {{ request()->is(ltrim($menu['route'], '/')) ? 'bg-neutral-50/10' : '' }}">
                     @if (request()->is(ltrim($menu['route'], '/')))
@@ -52,6 +59,7 @@
                     <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
                     <p class="text-1 w-full text-right font-medium ml-[12px]">{{ $menu['name'] }}</p>
                 </a>
+                @endif
                 @endforeach
             </div>
         </div>
@@ -69,6 +77,13 @@
             </div>
             <div class="nav-list mt-4">
                 @foreach ($sidebarMenus as $menu)
+                @if ($menu['route'] === '/logout')
+                <button type="button" onclick="confirmLogout()"
+                    class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/25 duration-300 relative w-full text-left">
+                    <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
+                    <p class="text-1 w-full text-left font-medium ml-[12px]">{{ $menu['name'] }}</p>
+                </button>
+                @else
                 <a href="{{ $menu['route'] }}"
                     class="flex px-[12px] py-[8px] items-center h-[56px] hover:bg-neutral-50/25 duration-300 relative {{ request()->is(ltrim($menu['route'], '/')) ? 'bg-neutral-50/25' : '' }}">
                     @if (request()->is(ltrim($menu['route'], '/')))
@@ -77,9 +92,33 @@
                     <i class="ph ph-{{ $menu['icon'] }} text-center text-2xl w-[45px]"></i>
                     <p class="text-1 w-full text-left font-medium ml-[12px]">{{ $menu['name'] }}</p>
                 </a>
+                @endif
                 @endforeach
             </div>
         </div>
     </nav>
 
 </div>
+
+<form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+    @csrf
+</form>
+
+<script>
+    function confirmLogout() {
+        Swal.fire({
+            title: 'Apakah anda yakin?',
+            text: "Anda akan keluar dari sesi ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#FFB504',
+            cancelButtonColor: '#FF3704',
+            confirmButtonText: 'Ya, Keluar!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('logout-form').submit();
+            }
+        })
+    }
+</script>
