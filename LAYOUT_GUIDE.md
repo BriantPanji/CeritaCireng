@@ -3,6 +3,7 @@
 ## Overview
 
 Proyek ini menyediakan dua layout utama untuk membangun aplikasi:
+
 1. **App Layout** - Layout untuk halaman aplikasi dengan header dan sidebar
 2. **Auth Layout** - Layout untuk halaman autentikasi (login)
 
@@ -20,7 +21,7 @@ use Livewire\Volt\Component;
 
 new #[Layout('components.layouts.app')] class extends Component {
     public string $message = 'Hello World';
-    
+
     public function updateMessage(): void
     {
         $this->message = 'Updated!';
@@ -52,9 +53,10 @@ new #[Layout('components.layouts.app'), Title('Dashboard - Cerita Cireng')] clas
 ```
 
 **Catatan:**
-- Attribute `#[Title()]` akan mengatur judul yang muncul di browser tab
-- Anda bisa menggunakan multiple attributes dengan memisahkan menggunakan koma
-- Title akan otomatis ditampilkan di tag `<title>` pada layout
+
+-   Attribute `#[Title()]` akan mengatur judul yang muncul di browser tab
+-   Anda bisa menggunakan multiple attributes dengan memisahkan menggunakan koma
+-   Title akan otomatis ditampilkan di tag `<title>` pada layout
 
 ### 2. Menggunakan Layout dengan Livewire Component (Class-based)
 
@@ -74,14 +76,14 @@ use Livewire\Component;
 class Dashboard extends Component
 {
     protected $layout = 'components.layouts.app';
-    
+
     public int $totalUsers = 0;
-    
+
     public function mount()
     {
         $this->totalUsers = User::count();
     }
-    
+
     public function render()
     {
         return view('livewire.dashboard');
@@ -150,11 +152,12 @@ class Settings extends Component
 ```
 
 **Catatan untuk Livewire Class Components:**
-- File view component terpisah dari class (di `resources/views/livewire/`)
-- Gunakan property `$layout` untuk set layout default
-- Method `->layout()` di `render()` lebih fleksibel
-- Method `->title()` untuk set page title
-- Bisa pass data ke layout dengan array di parameter kedua `->layout()`
+
+-   File view component terpisah dari class (di `resources/views/livewire/`)
+-   Gunakan property `$layout` untuk set layout default
+-   Method `->layout()` di `render()` lebih fleksibel
+-   Method `->title()` untuk set page title
+-   Bisa pass data ke layout dengan array di parameter kedua `->layout()`
 
 ### 3. Menggunakan Layout dengan Blade Views
 
@@ -173,15 +176,18 @@ Untuk menggunakan layout dalam Blade view biasa, gunakan syntax komponen Blade `
 ### App Layout (`components.layouts.app`)
 
 Layout ini digunakan untuk halaman-halaman utama aplikasi. Fitur:
-- Header dengan menu hamburger
-- Sidebar navigasi
-- Notifikasi bell
-- Responsive design
+
+-   Header dengan menu hamburger
+-   Sidebar navigasi
+-   Notifikasi bell
+-   Responsive design
 
 **Parameter:**
-- `title` (string, optional) - Judul halaman yang akan muncul di tab browser. Default: "Cerita Cireng"
+
+-   `title` (string, optional) - Judul halaman yang akan muncul di tab browser. Default: "Cerita Cireng"
 
 **Contoh:**
+
 ```blade
 <x-layouts.app title="Dashboard">
     <!-- Konten dashboard -->
@@ -193,12 +199,14 @@ Layout ini digunakan untuk halaman-halaman utama aplikasi. Fitur:
 Layout ini digunakan untuk halaman autentikasi seperti login, register, dll.
 
 **Fitur:**
-- Design minimal
-- Background neutral
-- Tidak ada header/sidebar
-- Fokus pada form autentikasi
+
+-   Design minimal
+-   Background neutral
+-   Tidak ada header/sidebar
+-   Fokus pada form autentikasi
 
 **Contoh:**
+
 ```php
 // Dalam Volt component
 new #[Layout('components.layouts.auth')] class extends Component {
@@ -222,7 +230,7 @@ use App\Models\User;
 
 new #[Layout('components.layouts.app'), Title('Dashboard - Cerita Cireng')] class extends Component {
     public int $totalUsers = 0;
-    
+
     public function mount(): void
     {
         $this->totalUsers = User::count();
@@ -327,9 +335,10 @@ Pass attribute `title` ke component layout:
 ```
 
 **Tips:**
-- Gunakan format yang konsisten, misalnya: "Nama Halaman - Cerita Cireng"
-- Title akan muncul di tab browser dan bookmarks
-- Jika tidak diset, akan menggunakan default "Cerita Cireng"
+
+-   Gunakan format yang konsisten, misalnya: "Nama Halaman - Cerita Cireng"
+-   Title akan muncul di tab browser dan bookmarks
+-   Jika tidak diset, akan menggunakan default "Cerita Cireng"
 
 ## Contoh Implementasi
 
@@ -347,7 +356,7 @@ use App\Models\User;
 
 new #[Layout('components.layouts.app'), Title('Dashboard - Cerita Cireng')] class extends Component {
     public int $totalUsers = 0;
-    
+
     public function mount(): void
     {
         $this->totalUsers = User::count();
@@ -390,18 +399,18 @@ class ProductList extends Component
 {
     public $search = '';
     public $products = [];
-    
+
     public function mount()
     {
         $this->loadProducts();
     }
-    
+
     public function loadProducts()
     {
         $this->products = Product::where('name', 'like', '%' . $this->search . '%')
             ->get();
     }
-    
+
     public function render()
     {
         return view('livewire.product-list')
@@ -416,14 +425,14 @@ class ProductList extends Component
 ```blade
 <div class="p-4">
     <h1 class="text-h2 font-bold mb-4">Daftar Produk</h1>
-    
-    <input 
-        type="text" 
-        wire:model.live="search" 
+
+    <input
+        type="text"
+        wire:model.live="search"
         placeholder="Cari produk..."
         class="border px-4 py-2 rounded"
     />
-    
+
     <div class="mt-4">
         @foreach($products as $product)
             <div class="border p-3 mb-2">
@@ -457,7 +466,7 @@ use Livewire\Volt\Component;
 new #[Layout('components.layouts.auth'), Title('Login - Cerita Cireng')] class extends Component {
     public string $username = '';
     public string $password = '';
-    
+
     public function login(): void
     {
         // Login logic
@@ -475,17 +484,23 @@ new #[Layout('components.layouts.auth'), Title('Login - Cerita Cireng')] class e
 ## Troubleshooting
 
 ### Error: "Undefined variable $slot"
+
 **Solusi:** Pastikan Anda telah membuat component class untuk layout. Component class harus ada di:
-- `app/View/Components/Layouts/App.php`
-- `app/View/Components/Layouts/Auth.php`
+
+-   `app/View/Components/Layouts/App.php`
+-   `app/View/Components/Layouts/Auth.php`
 
 ### Error: "Undefined variable $title"
-**Solusi:** 
+
+**Solusi:**
+
 1. Pastikan component class `App.php` memiliki property `$title` di constructor
 2. Atau berikan nilai default saat menggunakan: `<x-layouts.app title="Judul">`
 
 ### Layout tidak terbaca
+
 **Solusi:**
+
 1. Clear cache Laravel: `php artisan view:clear`
 2. Clear config cache: `php artisan config:clear`
 3. Pastikan Volt service provider terdaftar di `config/app.php`
@@ -512,18 +527,121 @@ View::share('sidebarMenus', [
 ## Integrasi dengan Livewire
 
 Layout ini sudah terintegrasi dengan Livewire 3. Anda dapat menggunakan semua fitur Livewire seperti:
-- `wire:model`
-- `wire:click`
-- `wire:submit`
-- Real-time updates
-- Loading states
+
+-   `wire:model`
+-   `wire:click`
+-   `wire:submit`
+-   Real-time updates
+-   Loading states
 
 ## CSS Framework
 
 Proyek ini menggunakan Tailwind CSS dengan kustomisasi warna:
-- `primary` - Warna utama aplikasi
-- `secondary` - Warna sekunder
-- `dark` - Warna teks gelap
-- `neutral-*` - Warna netral
+
+-   `primary` - Warna utama aplikasi
+-   `secondary` - Warna sekunder
+-   `dark` - Warna teks gelap
+-   `neutral-*` - Warna netral
 
 Lihat `tailwind.config.js` untuk konfigurasi lengkap.
+
+---
+
+## Best Practice: Container dan Spacing
+
+### Struktur Container yang Benar
+
+Layout app sudah dikonfigurasi dengan spacing yang tepat untuk mencegah konten terpotong oleh header:
+
+**Mobile (< lg):**
+
+-   Header: 56px (fixed di top pada mobile)
+-   Content padding-top: `pt-14` (56px) - sesuai dengan tinggi header
+-   Horizontal padding: `px-4 xs:px-8 sm:px-20`
+-   Bottom padding: `pb-6` untuk spacing di bagian bawah
+
+**Desktop (>= lg):**
+
+-   Header: 65px (fixed di top)
+-   Content padding-top: `pt-20` (80px) - lebih dari tinggi header untuk spacing tambahan
+-   Horizontal padding: `px-4 xs:px-8 sm:px-20`
+-   Bottom padding: `pb-6` untuk spacing di bagian bawah
+
+### Aturan Penulisan Konten Halaman
+
+> [!IMPORTANT] > **JANGAN** menambahkan margin-top atau padding-top tambahan di halaman Anda! Layout sudah menangani spacing dari header.
+
+**DO ✅:**
+
+```blade
+{{-- Halaman inventory --}}
+<div>
+    <h1 class="text-h2 font-bold">Inventory</h1>
+    <div class="mt-4">
+        {{-- konten --}}
+    </div>
+</div>
+```
+
+**DON'T ❌:**
+
+```blade
+{{-- JANGAN seperti ini --}}
+<div class="mt-12 pt-8">  {{-- ❌ Tidak perlu tambahan margin/padding top --}}
+    <h1>Inventory</h1>
+</div>
+```
+
+### Konsistensi Spacing Antar Elemen
+
+Gunakan spacing yang konsisten untuk jarak antar elemen dalam halaman:
+
+-   **Section spacing**: `mt-4`, `mt-6`, `mt-8` untuk jarak antar section
+-   **Element spacing**: `gap-2`, `gap-3`, `gap-4` untuk flex/grid containers
+-   **Card spacing**: `p-3`, `p-4`, `p-6` untuk padding dalam card/box
+
+```blade
+{{-- Contoh struktur halaman yang baik --}}
+<div>
+    {{-- Header section --}}
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-h2 font-bold">Dashboard</h1>
+        <button class="btn">Action</button>
+    </div>
+
+    {{-- Content sections dengan spacing konsisten --}}
+    <section class="mt-6">
+        <h2 class="text-l1 font-semibold mb-4">Section 1</h2>
+        {{-- content --}}
+    </section>
+
+    <section class="mt-8">
+        <h2 class="text-l1 font-semibold mb-4">Section 2</h2>
+        {{-- content --}}
+    </section>
+</div>
+```
+
+### Responsive Considerations
+
+Layout menggunakan breakpoint yang konsisten:
+
+-   `xs:` - Extra small (480px)
+-   `sm:` - Small (640px)
+-   `md:` - Medium (768px)
+-   `lg:` - Large (1024px) - **Breakpoint utama untuk desktop layout**
+-   `xl:` - Extra large (1280px)
+
+Perhatikan bahwa sidebar dan header berubah behavior di breakpoint `lg`, jadi selalu test responsive behavior di breakpoint ini.
+
+### Testing Layout
+
+Saat membuat halaman baru, selalu test di:
+
+1. **Mobile view** (< 1024px) - Pastikan tidak ada konten yang terpotong header mobile
+2. **Desktop view** (>= 1024px) - Pastikan tidak ada konten yang terpotong header desktop
+3. **Scroll behavior** - Header harus tetap di atas saat scroll (fixed)
+4. **Sidebar interaction** - Sidebar tidak mengganggu content area
+
+> [!TIP]
+> Gunakan browser DevTools untuk toggle responsive mode dan test di berbagai ukuran layar. Perhatikan khususnya area di bawah header untuk memastikan tidak ada konten yang terpotong.

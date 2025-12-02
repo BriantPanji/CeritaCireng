@@ -3,6 +3,9 @@
 use App\Livewire\PengantaranTable;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PengantaranController;
+use App\Http\Controllers\UserManagementController;
+use App\Livewire\UserManagement;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\AttendanceController;
 
@@ -23,9 +26,20 @@ Route::get('/inventory', function () {
 
 Volt::route('/user-management', 'user-management')
     ->name('users.management');
+
+Route::get('/user-details/{id}', \App\Livewire\UserDetails::class)
+    ->name('user.details');
+
 // Pengantaran Route
-Route::get('/pengantaran', PengantaranTable::class);
+Route::get('/delivery', PengantaranTable::class)->name('delivery.index');
+Route::get('/delivery/add', function () {
+    return view('delivery-add');
+})->name('delivery.add')->middleware('auth');
+
 //Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.management');
+
+Volt::route('/outlet-management', 'outlet-management')
+    ->name('outlets.management');
 
 
 use App\Livewire\ReceivingTable;
@@ -33,6 +47,7 @@ use App\Livewire\ReceivingTable;
 Route::get('/penerimaan-barang', ReceivingTable::class)
     ->name('receiving.index')
     ->middleware('auth');
+
 Route::middleware(['auth'])->group(function () {
     Volt::route('/attendance', 'attendance');
 });
@@ -48,5 +63,9 @@ Route::middleware(['auth'])->group(function () {
 
 Volt::route('/inventory', 'inventory')
     ->name('inventory');
+
+Route::get('/stok', \App\Livewire\StockTable::class)
+    ->name('stok.index')
+    ->middleware('auth');
 
 require __DIR__ . '/auth.php';

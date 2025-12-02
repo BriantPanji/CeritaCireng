@@ -30,6 +30,8 @@ class DatabaseSeeder extends Seeder
 
         // Seed outlets
         $this->call(OutletSeeder::class);
+        $this->call(DaySeeder::class);
+        $this->call(OutletClosedDaySeeder::class);
 
         // Create super admin user
         User::create([

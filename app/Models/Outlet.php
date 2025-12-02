@@ -16,7 +16,7 @@ class Outlet extends Model
 
     protected $table = 'outlets';
 
-    public function hasStaff()
+    public function users()
     {
         return $this->hasMany(User::class, 'outlet_id', 'id');
     }
@@ -29,5 +29,15 @@ class Outlet extends Model
     public function delivery()
     {
         return $this->hasMany(Delivery::class, "id_outlet");
+    }
+
+    public function closedDays()
+    {
+        return $this->belongsToMany(Day::class, 'outlet_closed_days');
+    }
+
+    public function isClosedOn($dayNumber)
+    {
+        return $this->closedDays()->where('day_number', $dayNumber)->exists();
     }
 }
