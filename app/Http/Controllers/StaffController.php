@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Item;
-use App\Models\ReturnModel;
+use App\Models\Delivery;
 use App\Models\ReturnItem;
-use App\Models\ReturnConfirmation;
+use App\Models\ReturnModel;
 use Illuminate\Http\Request;
+use App\Models\ReturnConfirmation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,8 +26,7 @@ class StaffController extends Controller
 
         // Stat Cards
         $barangTersedia = Item::count();
-        $barangTerjual = 0; 
-        $barangRusak = 0;
+        $barangTerjual = 0;
 
         // Data pengembalian terbaru
         $penerimaanTerbaru = ReturnModel::with(['returnItem', 'staff'])
@@ -33,12 +34,16 @@ class StaffController extends Controller
             ->limit(5)
             ->get();
 
+        $deliveries = Delivery::where('id_outlet', Auth::user()->outlet_id)
+            ->whereDate('assigned_at', Carbon::today())
+            ->get();
+
         return view('staff.dashboard', compact(
+            'deliveries',
             'staff',
             'outlet',
             'barangTersedia',
             'barangTerjual',
-            'barangRusak',
             'penerimaanTerbaru'
         ));
     }

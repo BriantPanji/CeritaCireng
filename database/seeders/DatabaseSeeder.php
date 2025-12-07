@@ -101,9 +101,9 @@ class DatabaseSeeder extends Seeder
 
         // Seed deliveries
         $users = User::all();
-        $inventarisUsers = $users->where('role_id', 2); // Inventaris role
-        $kurirUsers = $users->where('role_id', 3); // Kurir role
-        $staffUsers = $users->where('role_id', 4); // Staff role
+        $inventarisUsers = $users->where('role_id', 3); // Inventaris role
+        $kurirUsers = $users->where('role_id', 4); // Kurir role
+        $staffUsers = $users->where('role_id', 5); // Staff role
 
         $deliveries = collect();
         if ($inventarisUsers->count() > 0 && $kurirUsers->count() > 0) {

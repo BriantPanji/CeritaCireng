@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Outlet;
 use App\Models\Delivery;
@@ -30,7 +31,7 @@ class DashboardController extends Controller
             if (!$user->outlet) {
                 continue;
             }
-            
+
             // Skip kalau user punya outlet statusnya nonaktif
             if ($user->outlet->status === 'NONAKTIF') {
                 continue;
@@ -63,10 +64,10 @@ class DashboardController extends Controller
         switch ($userRole) {
             case 'kurir':
                 return $this->kurirDashboard();
-            
+
             case 'staff':
                 return redirect()->route('staff.dashboard');
-            
+
             case 'admin':
             case 'dev':
             default:
@@ -80,7 +81,7 @@ class DashboardController extends Controller
     private function adminDashboard()
     {
         $today = now()->toDateString();
-        
+
         // Mengambil outlet dari user yang sedang login
         $user = Auth::user();
         $outlets = Outlet::all();
@@ -145,7 +146,7 @@ class DashboardController extends Controller
     public function startDelivery($id)
     {
         $delivery = Delivery::findOrFail($id);
-        
+
         // Pastikan yang akses adalah kurir yang ditugaskan
         if ($delivery->id_kurir !== Auth::id()) {
             abort(403, 'Unauthorized action.');
@@ -153,7 +154,8 @@ class DashboardController extends Controller
 
         if ($delivery->status === 'DITUGASKAN') {
             $delivery->update([
-                'status' => 'DIKIRIM'
+                'status' => 'DIKIRIM',
+                'delivered_at' => Carbon::now()->toDateTimeString(),
             ]);
         }
 
