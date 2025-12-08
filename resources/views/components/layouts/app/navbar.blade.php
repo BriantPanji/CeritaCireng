@@ -36,7 +36,7 @@
                 @foreach ($sidebarMenus as $menu)
                 @if ($menu['route'] === '/logout')
                 <button type="button" onclick="confirmLogout()"
-                    class="flex px-3 py-2 items-center h-12 hover:bg-neutral-50/15 duration-300 relative w-full text-left rounded-lg">
+                    class="flex px-3 py-2 items-center h-12 hover:bg-neutral-50/15 duration-300 relative w-full text-left rounded-lg cursor-pointer">
                     <i class="ph ph-{{ $menu['icon'] }} text-2xl w-10 text-center"></i>
                     <p class="text-1 font-medium ml-2">{{ $menu['name'] }}</p>
                 </button>

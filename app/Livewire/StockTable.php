@@ -7,6 +7,7 @@ use App\Models\Inventory;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Auth;
 
 class StockTable extends Component
 {
@@ -193,6 +194,13 @@ class StockTable extends Component
             $this->dispatch('show-error', message: 'Gagal mengurangi stok: ' . $e->getMessage());
         }
     }
+
+    // Computed property for table colspan based on user role
+    public function getColspanAttribute()
+    {
+        return auth()->check() && in_array(auth()->user()->role->name, ['inventaris', 'admin', 'dev']) ? 8 : 7;
+    }
+
 
     public function render()
     {

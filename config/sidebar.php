@@ -28,7 +28,7 @@ return [
         'name' => 'Laporan',
         'icon' => 'files',
         'route' => '/daily-reports',
-        'roles' => ['dev', 'admin', 'inventaris'],
+        'roles' => ['dev', 'admin', 'staff', 'inventaris'],
     ],
     [
         'name' => 'Laporan Harian',
