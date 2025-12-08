@@ -2,12 +2,12 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use Livewire\WithPagination;
-use App\Models\Delivery;
-use App\Models\User;
-use Livewire\Attributes\On;
 use Carbon\Carbon;
+use App\Models\User;
+use Livewire\Component;
+use App\Models\Delivery;
+use Livewire\Attributes\On;
+use Livewire\WithPagination;
 
 class PengantaranTable extends Component
 {
@@ -47,10 +47,50 @@ class PengantaranTable extends Component
         }
     }
 
+
+    public function confirmReceived($deliveryId)
+    {
+        $this->dispatch('confirmReceived', deliveryId: $deliveryId);
+    }
+
+    #[On('terima')]
+    public function terima($deliveryId)
+    {
+        $delivery = Delivery::find($deliveryId);
+
+        if (auth()->user()->role->name === 'kurir') {
+            session()->flash('error', 'Kurir tidak boleh melakukan konfirmasi.');
+            return;
+        }
+
+        \DB::table('delivery_confirmations')->insert([
+            'id_delivery' => $deliveryId,
+            'id_staff' => auth()->id(),
+            'received_at' => now(),
+        ]);
+
+        $delivery->update([
+            'status' => 'SELESAI'
+        ]);
+
+        // kirim event ke browser untuk SweetAlert sukses
+        $this->dispatch('deliveryReceived');
+    }
+
+
+
     public function getDeliveriesProperty()
     {
+        $user = auth()->user();
+
         $query = Delivery::with(['items.item']);
 
+        // 🔥 Filter staff berdasarkan outlet
+        if (in_array($user->role_id, [5])) {
+            $query->where('id_outlet', $user->outlet_id);
+        }
+
+        // 🔥 Filter waktu
         switch ($this->waktu) {
             case 'today':
                 $query->whereDate('assigned_at', Carbon::today());
@@ -67,45 +107,35 @@ class PengantaranTable extends Component
             case 'year':
                 $query->where('assigned_at', '>=', Carbon::now()->subYear()->startOfDay());
                 break;
-
-            case 'all':
-                // Tidak ada filter (Tampilkan semua)
-                break;
-
-            default:
-                // Default: Tampilkan semua jika filter tidak valid/kosong
-                // Ini lebih aman daripada membatasi ke hari ini saja
-                break;
         }
 
-        // Filter Kurir
-        if (auth()->user()->role->name === 'kurir') {
-            // Jika user adalah kurir, paksa filter ke id user tersebut
-            $query->where('id_kurir', auth()->id());
+        // 🔥 Filter kurir (khusus kurir)
+        if ($user->role_id == 4) { // Role 4 = kurir
+            $query->where('id_kurir', $user->id);
         } elseif (!empty($this->kurir)) {
-            // Jika bukan kurir (admin/inventaris), gunakan filter dropdown
             $query->where('id_kurir', $this->kurir);
         }
 
-        // Filter Status
+        // 🔥 Filter status
         if (!empty($this->status)) {
             $query->where('status', $this->status);
         }
 
-        // Search (Nama Kurir atau Nama Outlet)
+        // 🔥 Search
         if (!empty($this->search)) {
-            $query->where(function($q) {
+            $query->where(function ($q) {
                 $q->whereHas('kurir', function ($subQ) {
                     $subQ->where('display_name', 'like', '%' . $this->search . '%');
-                })
-                ->orWhereHas('outlet', function ($subQ) {
+                })->orWhereHas('outlet', function ($subQ) {
                     $subQ->where('name', 'like', '%' . $this->search . '%');
                 });
             });
         }
 
+        // 🔥 Semua hasil tetap paginate 4
         return $query->orderBy("assigned_at", 'desc')->paginate(4);
     }
+
 
     public function getPagesProperty()
     {
@@ -139,9 +169,9 @@ class PengantaranTable extends Component
     {
         return view('livewire.pengantaran-table', [
             'deliveries' => $this->deliveries,
-            'couriers' => User::where('role_id', 4)->get(),
-            'statuses' => Delivery::select('status')->distinct()->get(),
-            'pages' => $this->pages
+            'couriers'   => User::where('role_id', 4)->get(),
+            'statuses'   => Delivery::select('status')->distinct()->get(),
+            'pages'      => $this->pages
         ]);
     }
 }

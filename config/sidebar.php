@@ -31,7 +31,7 @@ return [
         'roles' => ['dev', 'admin', 'inventaris'],
     ],
     [
-        'name' => 'Buat Laporan Harian',
+        'name' => 'Laporan Harian',
         'icon' => 'note-pencil',
         'route' => '/daily-reports/create',
         'roles' => ['dev', 'admin', 'staff'],
@@ -52,7 +52,7 @@ return [
         'name' => 'Attendance',
         'icon' => 'user-focus',
         'route' => '/attendance',
-        'roles' => ['dev', 'admin', 'staff'],
+        'roles' => ['dev', 'admin'],
     ],
     [
         'name' => 'Absensi',

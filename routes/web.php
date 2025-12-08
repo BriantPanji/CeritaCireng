@@ -18,7 +18,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 // Attendance/Absensi - Unified route
 Route::middleware(['auth'])->group(function () {
     Route::get('/absensi', [AttendanceController::class, 'index'])->name('absensi.index');
-    
+
     // Route untuk attendance tetap ada, redirect ke absensi
     Route::get('/attendance', function () {
         return redirect()->route('absensi.index');
@@ -63,12 +63,12 @@ Route::middleware(['auth', 'checkrole:staff'])->group(function () {
     Route::get('/staff/dashboard', [StaffController::class, 'dashboard'])->name('staff.dashboard');
 
     // Konfirmasi barang masuk
-    Route::get('/staff/receiving/{id}', [StaffController::class, 'receivingForm'])->name('staff.receiving.form');
-    Route::post('/staff/receiving/{id}', [StaffController::class, 'submitReceiving'])->name('staff.receiving.submit');
+    Route::get('/staff/receiving', [StaffController::class, 'receivingForm'])->name('staff.receiving.form');
+    Route::post('/staff/receiving', [StaffController::class, 'submitReceiving'])->name('staff.receiving.submit');
 
     // Laporan kesalahan
-    Route::get('/staff/error-report/{id}', [StaffController::class, 'errorForm'])->name('staff.error.form');
-    Route::post('/staff/error-report/{id}', [StaffController::class, 'submitError'])->name('staff.error.submit');
+    Route::get('/staff/error-report', [StaffController::class, 'errorForm'])->name('staff.error.form');
+    Route::post('/staff/error-report', [StaffController::class, 'submitError'])->name('staff.error.submit');
 });
 
 
