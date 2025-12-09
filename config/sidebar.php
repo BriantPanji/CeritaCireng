@@ -48,12 +48,12 @@ return [
         'route' => '/outlet-management',
         'roles' => ['dev', 'admin'],
     ],
-    [
-        'name' => 'Attendance',
-        'icon' => 'user-focus',
-        'route' => '/attendance',
-        'roles' => ['dev', 'admin'],
-    ],
+    // [
+    //     'name' => 'Attendance',
+    //     'icon' => 'user-focus',
+    //     'route' => '/attendance',
+    //     'roles' => ['dev', 'admin'],
+    // ],
     [
         'name' => 'Absensi',
         'icon' => 'identification-badge',
