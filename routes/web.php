@@ -96,8 +96,8 @@ use App\Http\Controllers\DailyReportController;
 use App\Livewire\DailyReportCreate;
 
 Route::get('/daily-reports/create', DailyReportCreate::class)->name('daily-reports.create')->middleware(['auth', 'checkrole:dev,admin,staff']);
-// View and export reports - only admin and dev
-Route::middleware(['auth', 'checkrole:dev,admin,inventaris'])->group(function () {
+// View and export reports - admin, dev, inventaris, and staff (filtered by outlet)
+Route::middleware(['auth', 'checkrole:dev,admin,inventaris,staff'])->group(function () {
     Route::get('/daily-reports', DailyReportTable::class)->name('daily-reports.index');
     Route::get('/daily-reports/export/excel', [DailyReportController::class, 'export'])->name('daily-reports.export');
     Route::get('/daily-reports/{id}', [DailyReportController::class, 'show'])->name('daily-reports.show');
