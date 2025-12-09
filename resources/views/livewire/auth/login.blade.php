@@ -49,6 +49,9 @@ new #[Layout('components.layouts.auth')] class extends Component {
         if (!$user || !Auth::getProvider()->validateCredentials($user, ['password' => $this->password])) {
             RateLimiter::hit($this->throttleKey());
 
+            // Reset password field on failed login
+            $this->password = '';
+
             throw ValidationException::withMessages([
                 'username' => 'Username atau password yang Anda masukkan salah. Silakan coba lagi.',
             ]);

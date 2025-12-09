@@ -15,40 +15,6 @@ use Illuminate\Support\Facades\Auth;
 class StaffController extends Controller
 {
     /**
-     * Dashboard Staff
-     */
-    public function dashboard()
-    {
-        $staff = Auth::user(); // aman, tidak akan error
-
-        // Misal staff punya relasi outlet (optional)
-        $outlet = $staff->outlet ?? null;
-
-        // Stat Cards
-        $barangTersedia = Item::count();
-        $barangTerjual = 0;
-
-        // Data pengembalian terbaru
-        $penerimaanTerbaru = ReturnModel::with(['returnItem', 'staff'])
-            ->orderBy('returned_at', 'desc')
-            ->limit(5)
-            ->get();
-
-        $deliveries = Delivery::where('id_outlet', Auth::user()->outlet_id)
-            ->whereDate('assigned_at', Carbon::today())
-            ->get();
-
-        return view('staff.dashboard', compact(
-            'deliveries',
-            'staff',
-            'outlet',
-            'barangTersedia',
-            'barangTerjual',
-            'penerimaanTerbaru'
-        ));
-    }
-
-    /**
      * Form Konfirmasi Barang Masuk
      */
     public function receivingForm($id)

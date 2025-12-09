@@ -12,19 +12,23 @@
                 <div class="p-6 border-b border-gray-200 bg-gray-50">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Filter Laporan</h3>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <!-- Outlet Filter -->
+                        {{-- Outlet Filter - Only for Admin/Dev/Inventaris --}}
+                        @if(!$isStaff)
                         <div>
-                            <label for="filterOutlet" class="block text-sm font-medium text-gray-700 mb-2">
-                                Outlet
-                            </label>
+                            <div class="flex items-center justify-between mb-2">
+                                <label for="filterOutlet" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Outlet
+                                </label>
+                            </div>
                             <select wire:model.live="filterOutlet" id="filterOutlet"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
                                 <option value="">Semua Outlet</option>
                                 @foreach ($outlets as $outlet)
                                 <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
                                 @endforeach
                             </select>
                         </div>
+                        @endif
 
                         <!-- Status Filter -->
                         <div>

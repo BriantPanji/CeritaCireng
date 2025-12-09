@@ -63,6 +63,36 @@
                         <p class="text-sm text-gray-900">{{ $report->notes }}</p>
                     </div>
                     @endif
+
+                    {{-- Staff List --}}
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <h3 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                </path>
+                            </svg>
+                            Staff Outlet {{ $report->outlet_name }}
+                        </h3>
+                        @if($report->outlet && $report->outlet->users && $report->outlet->users->count() > 0)
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($report->outlet->users as $staffMember)
+                            <span
+                                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white border border-blue-300 text-gray-700">
+                                <svg class="w-3 h-3 mr-1.5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                {{ $staffMember->display_name }}
+                                <span class="ml-2 text-xs text-gray-500">({{ $staffMember->role->name ?? 'N/A'
+                                    }})</span>
+                            </span>
+                            @endforeach
+                        </div>
+                        @else
+                        <p class="text-sm text-gray-600">Tidak ada staff yang terdaftar di outlet ini.</p>
+                        @endif
+                    </div>
                 </div>
             </div>
 

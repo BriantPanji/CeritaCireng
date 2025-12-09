@@ -57,11 +57,15 @@ Route::get('/penerimaan-barang', ReceivingTable::class)
     ->middleware('auth');
 
 
+
 use App\Http\Controllers\StaffController;
 
-Route::middleware(['auth', 'checkrole:staff'])->group(function () {
-    Route::get('/staff/dashboard', [StaffController::class, 'dashboard'])->name('staff.dashboard');
+// Backward compatibility: redirect old staff dashboard to unified dashboard
+Route::get('/staff/dashboard', function () {
+    return redirect()->route('dashboard');
+})->middleware('auth')->name('staff.dashboard');
 
+Route::middleware(['auth', 'checkrole:staff'])->group(function () {
     // Konfirmasi barang masuk
     Route::get('/staff/receiving', [StaffController::class, 'receivingForm'])->name('staff.receiving.form');
     Route::post('/staff/receiving', [StaffController::class, 'submitReceiving'])->name('staff.receiving.submit');
@@ -92,8 +96,8 @@ use App\Http\Controllers\DailyReportController;
 use App\Livewire\DailyReportCreate;
 
 Route::get('/daily-reports/create', DailyReportCreate::class)->name('daily-reports.create')->middleware(['auth', 'checkrole:dev,admin,staff']);
-// View and export reports - only admin and dev
-Route::middleware(['auth', 'checkrole:dev,admin'])->group(function () {
+// View and export reports - admin, dev, inventaris, and staff (filtered by outlet)
+Route::middleware(['auth', 'checkrole:dev,admin,inventaris,staff'])->group(function () {
     Route::get('/daily-reports', DailyReportTable::class)->name('daily-reports.index');
     Route::get('/daily-reports/export/excel', [DailyReportController::class, 'export'])->name('daily-reports.export');
     Route::get('/daily-reports/{id}', [DailyReportController::class, 'show'])->name('daily-reports.show');

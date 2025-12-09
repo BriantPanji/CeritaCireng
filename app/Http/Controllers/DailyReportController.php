@@ -11,8 +11,16 @@ class DailyReportController extends Controller
 {
     public function show($id)
     {
-        $report = DailyOutletReport::with(['outlet', 'staff', 'items.item'])
+        $report = DailyOutletReport::with(['outlet.users', 'staff', 'items.item'])
             ->findOrFail($id);
+
+        // Authorization: staff can only view reports from their own outlet
+        $user = auth()->user();
+        if ($user->role->name === 'staff') {
+            if (!$user->outlet_id || $report->id_outlet !== $user->outlet_id) {
+                abort(403, 'Anda tidak memiliki akses ke laporan outlet ini.');
+            }
+        }
 
         return view('daily-reports.show', compact('report'));
     }

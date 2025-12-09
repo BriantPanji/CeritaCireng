@@ -28,7 +28,7 @@ return [
         'name' => 'Laporan',
         'icon' => 'files',
         'route' => '/daily-reports',
-        'roles' => ['dev', 'admin', 'inventaris'],
+        'roles' => ['dev', 'admin', 'staff', 'inventaris'],
     ],
     [
         'name' => 'Laporan Harian',
@@ -48,12 +48,12 @@ return [
         'route' => '/outlet-management',
         'roles' => ['dev', 'admin'],
     ],
-    [
-        'name' => 'Attendance',
-        'icon' => 'user-focus',
-        'route' => '/attendance',
-        'roles' => ['dev', 'admin'],
-    ],
+    // [
+    //     'name' => 'Attendance',
+    //     'icon' => 'user-focus',
+    //     'route' => '/attendance',
+    //     'roles' => ['dev', 'admin'],
+    // ],
     [
         'name' => 'Absensi',
         'icon' => 'identification-badge',
