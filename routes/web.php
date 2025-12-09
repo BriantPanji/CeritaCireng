@@ -57,11 +57,15 @@ Route::get('/penerimaan-barang', ReceivingTable::class)
     ->middleware('auth');
 
 
+
 use App\Http\Controllers\StaffController;
 
-Route::middleware(['auth', 'checkrole:staff'])->group(function () {
-    Route::get('/staff/dashboard', [StaffController::class, 'dashboard'])->name('staff.dashboard');
+// Backward compatibility: redirect old staff dashboard to unified dashboard
+Route::get('/staff/dashboard', function () {
+    return redirect()->route('dashboard');
+})->middleware('auth')->name('staff.dashboard');
 
+Route::middleware(['auth', 'checkrole:staff'])->group(function () {
     // Konfirmasi barang masuk
     Route::get('/staff/receiving', [StaffController::class, 'receivingForm'])->name('staff.receiving.form');
     Route::post('/staff/receiving', [StaffController::class, 'submitReceiving'])->name('staff.receiving.submit');

@@ -8,6 +8,8 @@ use App\Models\Outlet;
 use App\Models\Delivery;
 use App\Models\Inventory;
 use App\Models\Attendance;
+use App\Models\Item;
+use App\Models\ReturnModel;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -66,7 +68,7 @@ class DashboardController extends Controller
                 return $this->kurirDashboard();
 
             case 'staff':
-                return redirect()->route('staff.dashboard');
+                return $this->staffDashboard();
 
             case 'admin':
             case 'dev':
@@ -160,6 +162,38 @@ class DashboardController extends Controller
         }
 
         return redirect()->back()->with('success', 'Status pengiriman berhasil diperbarui!');
+    }
+
+    /**
+     * Dashboard untuk Staff
+     */
+    private function staffDashboard()
+    {
+        $staff = Auth::user();
+        $outlet = $staff->outlet ?? null;
+
+        // Stat Cards
+        $barangTersedia = Item::count();
+        $barangTerjual = 0;
+
+        // Data pengembalian terbaru
+        $penerimaanTerbaru = ReturnModel::with(['returnItem', 'staff'])
+            ->orderBy('returned_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        $deliveries = Delivery::where('id_outlet', $staff->outlet_id)
+            ->whereDate('assigned_at', Carbon::today())
+            ->get();
+
+        return view('staff.dashboard', compact(
+            'deliveries',
+            'staff',
+            'outlet',
+            'barangTersedia',
+            'barangTerjual',
+            'penerimaanTerbaru'
+        ));
     }
 
     /**

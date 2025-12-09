@@ -1,7 +1,7 @@
 <x-layouts.app title="Dashboard Staff">
     <div class="p-4">
         <div
-            class="{{ auth()->user()->isTodayAttendance() ? 'bg-secondary' : 'hidden' }} p-3 rounded-lg mb-4 text-white flex items-center justify-between">
+            class="{{ !auth()->user()->isTodayAttendance() || auth()->user()->isTodayAttendance() === 'ABSEN' ? 'bg-secondary' : 'hidden' }} p-3 rounded-lg mb-4 text-white flex items-center justify-between">
             <div>
                 <strong>Absensi Hari Ini:</strong> Belum Absen
             </div>
