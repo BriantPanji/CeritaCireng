@@ -8,9 +8,6 @@
                 <img src="{{ asset('favicon.svg') }}" class="w-9 lg:w-10" alt="Logo">
                 <h1 class="text-l2 font-bold">Cerita Cireng</h1>
             </div>
-
-            <!-- Right: Bell Icon -->
-            <i class="ph ph-bell text-3xl"></i>
         </div>
     </div>
 
@@ -34,22 +31,22 @@
             {{-- Navigation Menu --}}
             <div class="nav-list mt-4 space-y-1">
                 @foreach ($sidebarMenus as $menu)
-                @if ($menu['route'] === '/logout')
-                <button type="button" onclick="confirmLogout()"
-                    class="flex px-3 py-2 items-center h-12 hover:bg-neutral-50/15 duration-300 relative w-full text-left rounded-lg cursor-pointer">
-                    <i class="ph ph-{{ $menu['icon'] }} text-2xl w-10 text-center"></i>
-                    <p class="text-1 font-medium ml-2">{{ $menu['name'] }}</p>
-                </button>
-                @else
-                <a href="{{ $menu['route'] }}"
-                    class="flex px-3 py-2 items-center h-12 hover:bg-neutral-50/15 duration-300 relative rounded-lg {{ request()->is(ltrim($menu['route'], '/')) ? 'bg-neutral-50/15' : '' }}">
-                    @if (request()->is(ltrim($menu['route'], '/')))
-                    <div class="h-full absolute left-0 bg-neutral-50/90 w-[3px] top-0 rounded-r"></div>
+                    @if ($menu['route'] === '/logout')
+                        <button type="button" onclick="confirmLogout()"
+                            class="flex px-3 py-2 items-center h-12 hover:bg-neutral-50/15 duration-300 relative w-full text-left rounded-lg cursor-pointer">
+                            <i class="ph ph-{{ $menu['icon'] }} text-2xl w-10 text-center"></i>
+                            <p class="text-1 font-medium ml-2">{{ $menu['name'] }}</p>
+                        </button>
+                    @else
+                        <a href="{{ $menu['route'] }}"
+                            class="flex px-3 py-2 items-center h-12 hover:bg-neutral-50/15 duration-300 relative rounded-lg {{ request()->is(ltrim($menu['route'], '/')) ? 'bg-neutral-50/15' : '' }}">
+                            @if (request()->is(ltrim($menu['route'], '/')))
+                                <div class="h-full absolute left-0 bg-neutral-50/90 w-[3px] top-0 rounded-r"></div>
+                            @endif
+                            <i class="ph ph-{{ $menu['icon'] }} text-2xl w-10 text-center"></i>
+                            <p class="text-1 font-medium ml-2">{{ $menu['name'] }}</p>
+                        </a>
                     @endif
-                    <i class="ph ph-{{ $menu['icon'] }} text-2xl w-10 text-center"></i>
-                    <p class="text-1 font-medium ml-2">{{ $menu['name'] }}</p>
-                </a>
-                @endif
                 @endforeach
             </div>
         </div>

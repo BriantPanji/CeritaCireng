@@ -91,10 +91,14 @@
                             <td class="px-4 py-3 rounded-lg text-1">
                                 <p x-data
                                     :class="{
-                                        'border border-secondary text-secondary': '{{ $delivery->status }}' === 'DIBATALKAN',
-                                        'border border-primary-200 text-primary-200': '{{ $delivery->status }}' === 'DITUGASKAN',
-                                        'border border-green-500 text-green-500': '{{ $delivery->status }}' === 'SELESAI',
-                                        'border border-neutral-200 text-neutral-200': '{{ $delivery->status }}' === 'DIKIRIM',
+                                        'border border-secondary text-secondary': '{{ $delivery->status }}'
+                                        === 'DIBATALKAN',
+                                        'border border-primary-200 text-primary-200': '{{ $delivery->status }}'
+                                        === 'DITUGASKAN',
+                                        'border border-green-500 text-green-500': '{{ $delivery->status }}'
+                                        === 'SELESAI',
+                                        'border border-neutral-200 text-neutral-200': '{{ $delivery->status }}'
+                                        === 'DIKIRIM',
                                     }"
                                     class="p-2 px-3 rounded-xl text-center text-xs lg:text-1">
                                     {{ $delivery->status }}
@@ -148,10 +152,8 @@
                                             x-transition:enter-end="opacity-100 translate-y-0"
                                             class="flex flex-col gap-4 overflow-x-hidden overflow-y-scroll h-[500px] mt-24 rounded-radius border border-outline bg-white w-[90%] xl:max-w-[700px]">
                                             <!-- Dialog Header -->
-                                            <div
-                                                class="flex items-center justify-between border-b border-outline p-4">
-                                                <h3 id="defaultModalTitle"
-                                                    class="font-semibold tracking-wide text-l2">
+                                            <div class="flex items-center justify-between border-b border-outline p-4">
+                                                <h3 id="defaultModalTitle" class="font-semibold tracking-wide text-l2">
                                                     Detail Pengantaran</h3>
                                                 <button x-on:click="modalIsOpen = false" aria-label="close modal">
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
@@ -200,10 +202,14 @@
                                                         Status</p>
                                                     <p x-data
                                                         :class="{
-                                                            'text-secondary': '{{ $delivery->status }}' === 'DIBATALKAN',
-                                                            'text-primary-200': '{{ $delivery->status }}' === 'DITUGASKAN',
-                                                            'text-green-500': '{{ $delivery->status }}' === 'SELESAI',
-                                                            'text-primary/90': '{{ $delivery->status }}' === 'DIKIRIM',
+                                                            'text-secondary': '{{ $delivery->status }}'
+                                                            === 'DIBATALKAN',
+                                                            'text-primary-200': '{{ $delivery->status }}'
+                                                            === 'DITUGASKAN',
+                                                            'text-green-500': '{{ $delivery->status }}'
+                                                            === 'SELESAI',
+                                                            'text-primary/90': '{{ $delivery->status }}'
+                                                            === 'DIKIRIM',
                                                         }"
                                                         class="w-[60%] text-left">
                                                         {{ $delivery->status }}
@@ -287,21 +293,23 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     @foreach ($delivery->items as $index => $deliveryItem)
-                                                                        <tr
-                                                                            class="border-b last:border-b-0 hover:bg-gray-50">
-                                                                            <td class="px-3 py-2">
-                                                                                {{ $index + 1 }}
-                                                                            </td>
-                                                                            <td class="px-3 py-2">
-                                                                                {{ $deliveryItem->item->name }}
-                                                                            </td>
-                                                                            <td class="px-3 py-2 text-center">
-                                                                                {{ $deliveryItem->item->unit }}
-                                                                            </td>
-                                                                            <td
-                                                                                class="px-3 py-2 text-center font-semibold">
-                                                                                {{ $deliveryItem->quantity }}</td>
-                                                                        </tr>
+                                                                        @if ($deliveryItem->item)
+                                                                            <tr
+                                                                                class="border-b last:border-b-0 hover:bg-gray-50">
+                                                                                <td class="px-3 py-2">
+                                                                                    {{ $index + 1 }}
+                                                                                </td>
+                                                                                <td class="px-3 py-2">
+                                                                                    {{ $deliveryItem->item->name }}
+                                                                                </td>
+                                                                                <td class="px-3 py-2 text-center">
+                                                                                    {{ $deliveryItem->item->unit }}
+                                                                                </td>
+                                                                                <td
+                                                                                    class="px-3 py-2 text-center font-semibold">
+                                                                                    {{ $deliveryItem->quantity }}</td>
+                                                                            </tr>
+                                                                        @endif
                                                                     @endforeach
                                                                 </tbody>
                                                             </table>
