@@ -39,11 +39,11 @@ class RoleSeeder extends Seeder
                 'display_name' => 'Staff',
                 'db_connection' => 'mysql_staff'
             ],
-            [
-                'name' => 'guest',
-                'display_name' => 'Tamu',
-                'db_connection' => 'mysql_guest'
-            ]
+            // [
+            //     'name' => 'guest',
+            //     'display_name' => 'Tamu',
+            //     'db_connection' => 'mysql_guest'
+            // ]
         ];
 
         foreach ($listRoles as $roleData) {

@@ -34,26 +34,31 @@ class DatabaseSeeder extends Seeder
         $this->call(OutletClosedDaySeeder::class);
 
         // Create super admin user
-        User::create([
-            'display_name' => 'Super Admin',
-            'username' => 'superadmin',
-            'phone' => '081234567890',
-            'password' => bcrypt('pass#123'),
-            'role_id' => 1,
-            'outlet_id' => 1,
-            'status' => 'AKTIF',
-        ]);
+        // User::create([
+        //     'display_name' => 'Super Admin',
+        //     'username' => 'superadmin',
+        //     'phone' => '081234567890',
+        //     'password' => bcrypt('pass#123'),
+        //     'role_id' => 1,
+        //     'outlet_id' => null, // Super admin tidak memiliki outlet
+        //     'status' => 'AKTIF',
+        // ]);
 
         // Create additional sample users for each role
-        $roles = \App\Models\Role::all();
+        // $roles = \App\Models\Role::all();
         $outlets = \App\Models\Outlet::all();
 
-        foreach ($roles as $role) {
-            User::factory()->count(2)->create([
-                'role_id' => $role->id,
-                'outlet_id' => $outlets->random()->id,
-            ]);
-        }
+        // foreach ($roles as $role) {
+        //     // Hanya staff (role_id=5) yang memiliki outlet
+        //     $outletId = $role->id === 5 ? $outlets->random()->id : null;
+
+        //     User::factory()->count(2)->create([
+        //         'role_id' => $role->id,
+        //         'outlet_id' => $outletId,
+        //     ]);
+        // }
+
+        $this->call(UserSeeder::class);
 
         // Seed items
         Item::factory()->count(20)->create();
