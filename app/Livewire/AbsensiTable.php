@@ -6,7 +6,10 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Attendance;
 use Carbon\Carbon;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app'), Title('Data Absensi')]
 class AbsensiTable extends Component
 {
     use WithPagination;
@@ -153,34 +156,33 @@ class AbsensiTable extends Component
     }
 
     public function openEditModal($id)
-{
-    $att = Attendance::find($id);
+    {
+        $att = Attendance::find($id);
 
-    if (!$att) return;
+        if (!$att) return;
 
-    $this->editId = $att->id;
-    $this->edit_date = $att->attendance_date;
-    $this->edit_time = $att->attendance_time;
-    $this->edit_status = $att->status;
+        $this->editId = $att->id;
+        $this->edit_date = $att->attendance_date;
+        $this->edit_time = $att->attendance_time;
+        $this->edit_status = $att->status;
 
-    $this->dispatch('open-edit-modal');
-}
+        $this->dispatch('open-edit-modal');
+    }
 
-public function saveEdit()
-{
-    $this->validate([
-        'edit_date' => 'required|date',
-        'edit_time' => 'required',
-        'edit_status' => 'required|in:HADIR,IZIN,SAKIT,ABSEN',
-    ]);
+    public function saveEdit()
+    {
+        $this->validate([
+            'edit_date' => 'required|date',
+            'edit_time' => 'required',
+            'edit_status' => 'required|in:HADIR,IZIN,SAKIT,ABSEN',
+        ]);
 
-    Attendance::where('id', $this->editId)->update([
-        'attendance_date' => $this->edit_date,
-        'attendance_time' => $this->edit_time,
-        'status' => $this->edit_status,
-    ]);
+        Attendance::where('id', $this->editId)->update([
+            'attendance_date' => $this->edit_date,
+            'attendance_time' => $this->edit_time,
+            'status' => $this->edit_status,
+        ]);
 
-    $this->dispatch('close-edit-modal');
-}
-
+        $this->dispatch('close-edit-modal');
+    }
 }

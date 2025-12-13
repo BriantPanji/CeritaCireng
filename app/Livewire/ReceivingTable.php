@@ -7,7 +7,10 @@ use Livewire\WithPagination;
 use App\Models\Delivery;
 use App\Models\Outlet;
 use Carbon\Carbon;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app'), Title('Penerimaan Barang')]
 class ReceivingTable extends Component
 {
     use WithPagination;
@@ -25,7 +28,7 @@ class ReceivingTable extends Component
 
     public $outlets;
 
-    
+
 
     protected $listeners = [
         'refreshComponent' => '$refresh'
@@ -69,28 +72,28 @@ class ReceivingTable extends Component
     }
 
     protected function getDateRange()
-{
-    $end = now(); // sekarang
-    switch($this->filter_range) {
-        case 'today':
-            $start = now()->startOfDay();
-            break;
-        case 'week':
-            $start = now()->subDays(7)->startOfDay();
-            break;
-        case 'month':
-            $start = now()->subMonth()->startOfDay();
-            break;
-        case 'year':
-            $start = now()->subYear()->startOfDay();
-            break;
-        case 'all':
-        default:
-            $start = null;
-    }
+    {
+        $end = now(); // sekarang
+        switch ($this->filter_range) {
+            case 'today':
+                $start = now()->startOfDay();
+                break;
+            case 'week':
+                $start = now()->subDays(7)->startOfDay();
+                break;
+            case 'month':
+                $start = now()->subMonth()->startOfDay();
+                break;
+            case 'year':
+                $start = now()->subYear()->startOfDay();
+                break;
+            case 'all':
+            default:
+                $start = null;
+        }
 
-    return $start ? [$start, $end] : null;
-}
+        return $start ? [$start, $end] : null;
+    }
 
 
     public function render()
@@ -104,27 +107,27 @@ class ReceivingTable extends Component
             default => null
         };
 
-     $range = $this->getDateRange();
+        $range = $this->getDateRange();
 
-$pendingDeliveries = Delivery::with('kurir', 'items', 'outlet')
-    ->when($range, function($q) use ($range) {
-        [$start, $end] = $range;
-        $q->whereBetween('assigned_at', [$start, $end]);
-    })
-    ->when($this->filter_status, fn($q) => $q->where('status', $this->filter_status))
-    ->when($this->filter_outlet, fn($q) => $q->where('id_outlet', $this->filter_outlet))
-    ->whereIn('status', ['DITUGASKAN', 'DIKIRIM'])
-    ->paginate(10, ['*'], 'page', $this->page);
+        $pendingDeliveries = Delivery::with('kurir', 'items', 'outlet')
+            ->when($range, function ($q) use ($range) {
+                [$start, $end] = $range;
+                $q->whereBetween('assigned_at', [$start, $end]);
+            })
+            ->when($this->filter_status, fn($q) => $q->where('status', $this->filter_status))
+            ->when($this->filter_outlet, fn($q) => $q->where('id_outlet', $this->filter_outlet))
+            ->whereIn('status', ['DITUGASKAN', 'DIKIRIM'])
+            ->paginate(10, ['*'], 'page', $this->page);
 
-$historyDeliveries = Delivery::with('kurir', 'items', 'outlet')
-    ->when($range, function($q) use ($range) {
-        [$start, $end] = $range;
-        $q->whereBetween('delivered_at', [$start, $end]);
-    })
-    ->when($this->filter_status, fn($q) => $q->where('status', $this->filter_status))
-    ->when($this->filter_outlet, fn($q) => $q->where('id_outlet', $this->filter_outlet))
-    ->whereIn('status', ['SELESAI', 'DIBATALKAN'])
-    ->paginate(10, ['*'], 'historyPage', $this->historyPage);
+        $historyDeliveries = Delivery::with('kurir', 'items', 'outlet')
+            ->when($range, function ($q) use ($range) {
+                [$start, $end] = $range;
+                $q->whereBetween('delivered_at', [$start, $end]);
+            })
+            ->when($this->filter_status, fn($q) => $q->where('status', $this->filter_status))
+            ->when($this->filter_outlet, fn($q) => $q->where('id_outlet', $this->filter_outlet))
+            ->whereIn('status', ['SELESAI', 'DIBATALKAN'])
+            ->paginate(10, ['*'], 'historyPage', $this->historyPage);
 
 
         // Summary

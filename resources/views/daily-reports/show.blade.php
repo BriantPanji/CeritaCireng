@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app title="Detail Laporan Harian">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Detail Laporan Harian') }}
