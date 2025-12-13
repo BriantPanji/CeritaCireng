@@ -19,11 +19,11 @@ class DashboardController extends Controller
         $today = now()->toDateString();
         $dayNumber = now()->dayOfWeekIso; // 1=Senin, 7=Minggu
 
-        // Ambil semua user yang aktif dengan role inventaris, kurir, atau staff
+        // Ambil semua user yang aktif dengan role kurir atau staff (exclude inventaris)
         $users = User::with(['outlet', 'role'])
             ->where('status', 'AKTIF')
             ->whereHas('role', function ($query) {
-                $query->whereIn('name', ['inventaris', 'kurir', 'staff']);
+                $query->whereIn('name', ['kurir', 'staff']); // Only kurir & staff
             })
             ->get();
 
@@ -82,8 +82,6 @@ class DashboardController extends Controller
      */
     private function adminDashboard()
     {
-        $today = now()->toDateString();
-
         // Mengambil outlet dari user yang sedang login
         $user = Auth::user();
         $outlets = Outlet::all();
@@ -91,54 +89,14 @@ class DashboardController extends Controller
         // Outlet
         $totalOutlet = Outlet::count();
 
-        // Mengambil data pengantaran
-        $selesai = Delivery::whereDate('assigned_at', $today)
-            ->where('status', 'SELESAI')
-            ->count();
-
-        $diantar = Delivery::whereDate('assigned_at', $today)
-            ->where('status', 'DIKIRIM')
-            ->count();
-
-        $ditugaskan = Delivery::whereDate('assigned_at', $today)
-            ->whereIn('status', ['DITUGASKAN'])
-            ->count();
-
-        $gagal = Delivery::whereDate('assigned_at', $today)
-            ->whereIn('status', ['DIBATALKAN'])
-            ->count();
-
-        // --- DATA ABSENSI ---
-        $hadir = Attendance::whereDate('attendance_date', $today)
-            ->where('status', 'HADIR')
-            ->count();
-
-        $izin = Attendance::whereDate('attendance_date', $today)
-            ->where('status', 'IZIN')
-            ->count();
-
-        $sakit = Attendance::whereDate('attendance_date', $today)
-            ->where('status', 'SAKIT')
-            ->count();
-
-        $absen = Attendance::whereDate('attendance_date', $today)
-            ->where('status', 'ABSEN')
-            ->count();
+        // NOTE: Chart data (pengantaran & absensi) now handled by Livewire components
+        // No need to pass to view anymore
 
         // Mengirim data ke view
         return view('dashboard', [
             'outlets' => $outlets,
             'totalOutlet' => $totalOutlet,
             'inventories' => Inventory::orderBy('stock', 'asc')->get(),
-            'selesai' => $selesai,
-            'diantar' => $diantar,
-            'ditugaskan' => $ditugaskan,
-            'gagal' => $gagal,
-            // data absensi
-            'hadir' => $hadir,
-            'izin' => $izin,
-            'sakit' => $sakit,
-            'absen' => $absen,
         ]);
     }
 

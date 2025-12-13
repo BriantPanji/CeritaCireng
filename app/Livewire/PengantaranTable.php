@@ -34,19 +34,19 @@ class PengantaranTable extends Component
         }
     }
 
-    public function confirmBatal($deliveryId)
-    {
-        $this->dispatch('confirmBatal', deliveryId: $deliveryId);
-    }
-
-    #[On('batalkan')]
-    public function batal($deliveryId)
+    public function updateStatus($deliveryId, $newStatus)
     {
         $delivery = Delivery::find($deliveryId);
         if ($delivery) {
-            $delivery->status = "DIBATALKAN";
+            $delivery->status = $newStatus;
+            
+            // Auto-set delivered_at if status changed to DIKIRIM
+            if ($newStatus === 'DIKIRIM' && !$delivery->delivered_at) {
+                $delivery->delivered_at = now();
+            }
+            
             $delivery->save();
-            $this->dispatch('deliveryBatal', deliveryId: $delivery->id);
+            $this->dispatch('statusUpdated');
         }
     }
 

@@ -6,16 +6,17 @@
             <div class="mt-8 lg:w-full grid grid-cols-12 gap-4">
                 <a href="/pengantaran" class="col-span-12 md:col-span-4 text-center  shadow-reguler rounded-lg p-4">
                     <h1 class="font-medium">Status pengantaran hari ini</h1>
-                    <canvas id="pengantaranChart"></canvas>
+                    <livewire:dashboard-pengantaran-chart />
                 </a>
                 <a href="/absensi"
                     class="col-span-12 mt-4 md:mt-0 md:col-span-4 text-center  shadow-reguler rounded-lg p-4">
                     <h1 class="font-medium">Status absensi hari ini</h1>
-                    <canvas id="absensiChart"></canvas>
+                    <livewire:dashboard-absensi-chart />
                 </a>
             </div>
         </div>
         {{-- End of Grafik --}}
+
         {{-- Outlet --}}
         <div class="w-full pt-8 ">
             <h1 class="border-b-2 border-b-primary w-fit font-medium text-l2 lg:text-l1">Outlet</h1>
@@ -44,6 +45,7 @@
                                 aria-labelledby="defaultModalTitle">
                                 <!-- Modal Dialog -->
                                 <div x-show="modalIsOpen"
+                                    @click.stop
                                     x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
                                     x-transition:enter-start="opacity-0 translate-y-8"
                                     x-transition:enter-end="opacity-100 translate-y-0"
@@ -492,52 +494,5 @@
         </div>
         {{-- End of inventaris --}}
 
-
     </div>
 </x-layouts.app>
-
-<script>
-    // --- Data Pengantaran ---
-    const selesai = @json($selesai);
-    const diantar = @json($diantar);
-    const ditugaskan = @json($ditugaskan);
-    const gagal = @json($gagal);
-
-    const ctxPengantaran = document.getElementById('pengantaranChart').getContext('2d');
-    const pengantaranChart = new Chart(ctxPengantaran, {
-        type: 'doughnut',
-        data: {
-            labels: ['Selesai', 'Diantar', 'Ditugaskan', 'Dibatalkan/Terkendala'],
-            datasets: [{
-                data: [selesai, diantar, ditugaskan, gagal],
-                backgroundColor: ['#00c951', '#A09C97', '#CD9100', '#FF3704'],
-            }]
-        },
-        options: {
-            responsive: true,
-            cutout: '60%',
-        }
-    });
-
-    // --- Data Absensi ---
-    const hadir = @json($hadir);
-    const izin = @json($izin);
-    const sakit = @json($sakit);
-    const absen = @json($absen);
-
-    const ctxAbsensi = document.getElementById('absensiChart').getContext('2d');
-    const absensiChart = new Chart(ctxAbsensi, {
-        type: 'doughnut',
-        data: {
-            labels: ['Hadir', 'Izin', 'Sakit', 'Absen'],
-            datasets: [{
-                data: [hadir, izin, sakit, absen],
-                backgroundColor: ['#00c951', '#CD9100', '#FF3704', '#A09C97'],
-            }]
-        },
-        options: {
-            responsive: true,
-            cutout: '60%',
-        }
-    });
-</script>

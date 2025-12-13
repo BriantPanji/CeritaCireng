@@ -21,7 +21,7 @@
                 lg:translate-x-0
                 transition-transform"
         x-bind:class="showSideBar ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
-        <div class="pt-16 lg:pt-20 px-4 pb-4">
+        <div class="pt-16 lg:pt-20 px-4 pb-4 min-h-full">
             {{-- Profile Section --}}
             <div class="px-3 py-4 border-dark border-b-2">
                 <h1 class="text-reguler font-medium">Halo, {{ Auth::user()->display_name }}</h1>

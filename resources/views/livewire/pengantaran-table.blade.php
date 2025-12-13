@@ -104,17 +104,12 @@
                         </td>
 
                         <td class="px-4">
-                            {{-- Admin/Dev: Batalkan button --}}
-                            @role('admin', 'dev')
-                            @if ($delivery->status == 'DITUGASKAN' || $delivery->status == 'DIKIRIM')
-                            <button wire:click="confirmBatal({{ $delivery->id }})"
-                                class="bg-secondary hover:bg-secondary/90 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-pointer lg:text-1">
-                                Batalkan</button>
-                            @else
-                            <button
-                                class="bg-neutral-200 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-not-allowed lg:text-1">
-                                Batalkan</button>
-                            @endif
+                            {{-- Admin/Dev/Inventaris: Edit Status button --}}
+                            @role('admin', 'dev', 'inventaris')
+                            <button x-data
+                                @click="$dispatch('open-edit-modal', { id: {{ $delivery->id }}, status: '{{ $delivery->status }}' })"
+                                class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-pointer lg:text-1">
+                                Edit</button>
                             @endrole
 
                             {{-- Staff: Konfirmasi button --}}
@@ -143,7 +138,7 @@
                                     x-transition.opacity role="dialog" aria-modal="true"
                                     aria-labelledby="defaultModalTitle">
                                     <!-- Modal Dialog -->
-                                    <div x-show="modalIsOpen"
+                                    <div x-show="modalIsOpen" @click.stop
                                         x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
                                         x-transition:enter-start="opacity-0 translate-y-8"
                                         x-transition:enter-end="opacity-100 translate-y-0"
@@ -403,99 +398,96 @@
     </div>
     @endif
 
-    {{-- Scripts for Admin/Dev --}}
-    @role('admin', 'dev')
+    {{-- Edit Status Modal --}}
+    <div x-data="{ 
+        modalOpen: false, 
+        deliveryId: null, 
+        currentStatus: '', 
+        init() {
+            this.$watch('modalOpen', value => {
+                if (value) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        }
+    }" @open-edit-modal.window="modalOpen = true; deliveryId = $event.detail.id; currentStatus = $event.detail.status"
+        x-cloak>
+        <div x-show="modalOpen" x-transition.opacity
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            @click.self="modalOpen = false">
+            <div x-show="modalOpen" x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+
+                <h3 class="text-xl font-bold mb-4">Edit Status Pengantaran</h3>
+
+                <form @submit.prevent="
+                    $wire.updateStatus(deliveryId, currentStatus);
+                    modalOpen = false;
+                ">
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2">Status</label>
+                        <select x-model="currentStatus"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                            <option value="DITUGASKAN">DITUGASKAN</option>
+                            <option value="DIKIRIM">DIKIRIM</option>
+                            <option value="SELESAI">SELESAI</option>
+                            <option value="DIBATALKAN">DIBATALKAN</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" @click="modalOpen = false"
+                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-xl font-medium">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-medium">
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Scripts for Admin/Dev/Inventaris --}}
+    @role('admin', 'dev', 'inventaris')
     <script>
         document.addEventListener('livewire:init', function() {
-
-                // Konfirmasi sebelum batalkan
-                Livewire.on('confirmBatal', (event) => {
-                    const deliveryId = event.deliveryId;
-
-                    Swal.fire({
-                        title: 'Yakin ingin membatalkan?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#FFB504',
-                        confirmButtonText: 'Ya, batalkan!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Livewire.dispatch('batalkan', {
-                                deliveryId: deliveryId
-                            });
-                        }
-                    });
-                });
-
-                // Notifikasi setelah dibatalkan
-                Livewire.on('deliveryBatal', (event) => {
-                    Swal.fire(
-                        'Dibatalkan!',
-                        'Pengantaran berhasil dibatalkan.',
-                        'success'
-                    );
-                });
-
-                Livewire.on('confirmReceived', (event) => {
-                    
-                    // Ambil ID delivery yang dikirim dari Livewire
-                    const deliveryId = event.deliveryId;
-
-                    Swal.fire({
-                        title: 'Konfirmasi penerimaan?',
-                        text: "Pastikan barang benar-benar telah diterima.",
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonColor: '#16a34a', // hijau
-                        cancelButtonColor: '#FFB504',
-                        confirmButtonText: 'Ya, konfirmasi!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-
-                            // Dispatch event ke Livewire untuk memproses penerimaan
-                            Livewire.dispatch('terima', {
-                                deliveryId: deliveryId
-                            });
-                        }
-                    });
-                });
-
-                // === NOTIFIKASI SETELAH BERHASIL DITERIMA ===
-                Livewire.on('deliveryReceived', (event) => {
+                // Notifikasi setelah status diupdate
+                Livewire.on('statusUpdated', (event) => {
                     Swal.fire(
                         'Berhasil!',
-                        'Pengantaran telah dikonfirmasi.',
+                        'Status pengantaran berhasil diubah.',
                         'success'
                     );
                 });
-
             });
     </script>
     @endrole
+
+    {{-- Scripts for Staff --}}
     @role('staff')
-        <script>
-            document.addEventListener('livewire:init', function() {
+    <script>
+        document.addEventListener('livewire:init', function() {
+                // Konfirmasi penerimaan
                 Livewire.on('confirmReceived', (event) => {
-                    
-                    // Ambil ID delivery yang dikirim dari Livewire
                     const deliveryId = event.deliveryId;
 
                     Swal.fire({
-                        title: 'Konfirmasi penerimaan?',
-                        text: "Pastikan barang benar-benar telah diterima.",
+                        title: 'Konfirmasi Penerimaan?',
+                        text: "Pastikan barang sudah diterima dengan baik!",
                         icon: 'question',
                         showCancelButton: true,
-                        confirmButtonColor: '#16a34a', // hijau
-                        cancelButtonColor: '#FFB504',
-                        confirmButtonText: 'Ya, konfirmasi!',
+                        confirmButtonColor: '#10B981',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, Konfirmasi!',
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.isConfirmed) {
-
-                            // Dispatch event ke Livewire untuk memproses penerimaan
                             Livewire.dispatch('terima', {
                                 deliveryId: deliveryId
                             });
@@ -503,15 +495,15 @@
                     });
                 });
 
-                // === NOTIFIKASI SETELAH BERHASIL DITERIMA ===
-                Livewire.on('deliveryReceived', (event) => {
+                // Notifikasi setelah diterima
+                Livewire.on('deliveryReceived', () => {
                     Swal.fire(
                         'Berhasil!',
-                        'Pengantaran telah dikonfirmasi.',
+                        'Penerimaan barang berhasil dikonfirmasi.',
                         'success'
                     );
                 });
             });
-        </script>
+    </script>
     @endrole
 </div>

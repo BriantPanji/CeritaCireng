@@ -18,6 +18,7 @@ class AbsensiTable extends Component
     public $filter_range = 'all';
     public $filter_status = '';
     public $filter_role = '';
+    public $showEditModal = false; // For Alpine.js binding
     public $editId;
     public $edit_date;
     public $edit_time;
@@ -166,6 +167,7 @@ class AbsensiTable extends Component
         $this->edit_time = $att->attendance_time;
         $this->edit_status = $att->status;
 
+        $this->showEditModal = true; // Open modal via property binding
         $this->dispatch('open-edit-modal');
     }
 
@@ -183,6 +185,7 @@ class AbsensiTable extends Component
             'status' => $this->edit_status,
         ]);
 
+        $this->showEditModal = false; // Close modal via property binding
         $this->dispatch('close-edit-modal');
     }
 }
