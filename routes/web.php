@@ -51,6 +51,9 @@ Route::middleware(['auth'])->group(function () {
     // ------------------------------------------------------------------------
     Route::middleware(['checkrole:dev,admin,inventaris,kurir,staff'])->group(function () {
         Route::get('/delivery', PengantaranTable::class)->name('delivery.index');
+        Route::get('/pengantaran', function () {
+            return redirect(status: 301)->route('delivery.index');
+        });
         Route::get('/delivery/add', function () {
             return view('delivery-add');
         })->name('delivery.add');

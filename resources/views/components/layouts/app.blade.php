@@ -36,7 +36,7 @@
     <x-layouts.app.navbar />
 
     <main class="bg-neutral-25 min-h-screen lg:ml-56">
-        <div class="pt-14 lg:pt-20 px-4 xs:px-8 sm:px-20 pb-8">
+        <div class="pt-20 md:pt-20 lg:pt-20 px-4 xs:px-8 sm:px-20 pb-8">
             {{ $slot }}
         </div>
     </main>

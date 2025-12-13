@@ -1,8 +1,8 @@
 <div>
     {{-- Header Section --}}
     <div class="mb-6">
-        <h1 class="text-h2 font-bold text-gray-900">Tambah Penugasan Pengiriman</h1>
-        <p class="text-sm text-gray-500 mt-1">Buat penugasan baru untuk kurir mengantar barang ke outlet</p>
+        <h1 class="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">Tambah Penugasan Pengiriman</h1>
+        <p class="text-xs md:text-sm text-gray-500 mt-1">Buat penugasan baru untuk kurir mengantar barang ke outlet</p>
     </div>
 
     {{-- Error Message --}}
@@ -40,7 +40,7 @@
                     <label for="id_outlet" class="block text-sm font-semibold text-gray-700 mb-2">
                         Outlet Tujuan <span class="text-red-500">*</span>
                     </label>
-                    <select id="id_outlet" wire:model="id_outlet"
+                    <select id="id_outlet" wire:model.live="id_outlet"
                         class="w-full bg-white border rounded-xl px-4 py-3 shadow-sm text-sm focus:ring outline-none focus:ring-yellow-500 focus:border-yellow-500 @error('id_outlet') border-red-500 @enderror">
                         <option value="">-- Pilih Outlet --</option>
                         @foreach($outlets as $outlet)
@@ -50,6 +50,11 @@
                     @error('id_outlet')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
+                    @if($id_outlet)
+                    <p class="text-xs text-gray-500 mt-1">
+                        <span class="text-green-600">✓</span> Item default outlet akan otomatis dimuat
+                    </p>
+                    @endif
                 </div>
 
                 {{-- Divider --}}
@@ -83,8 +88,7 @@
                                         <option value="">-- Pilih / Cari Barang --</option>
                                         @foreach($items as $item)
                                         <option value="{{ $item->id }}">
-                                            {{ $item->name }} ({{ $item->unit }}) - Stok: {{ $item->stock ?
-                                            $item->stock->stock : 0 }}
+                                            {{ $item->name }} ({{ $item->unit }})
                                         </option>
                                         @endforeach
                                     </select>
@@ -94,18 +98,32 @@
                                 </div>
 
                                 {{-- Quantity Input --}}
-                                <div class="w-full md:w-32">
+                                @php
+                                $selectedItemId = $deliveryItem['id_item'] ?? null;
+                                $maxStock = $selectedItemId && isset($itemStocks[$selectedItemId]) ?
+                                $itemStocks[$selectedItemId] : 9999;
+                                $currentQty = (int)($deliveryItem['quantity'] ?? 0);
+                                $exceedsStock = $selectedItemId && $currentQty > $maxStock;
+                                @endphp
+                                <div class="w-full md:w-40">
                                     <label for="quantity_{{ $index }}"
                                         class="block text-xs font-medium text-gray-700 mb-1">
                                         Jumlah <span class="text-red-500">*</span>
+                                        @if($selectedItemId && $maxStock < 9999) <span class="text-gray-400">(max: {{
+                                            $maxStock }})</span>
+                                            @endif
                                     </label>
                                     <input type="number" id="quantity_{{ $index }}"
-                                        wire:model="deliveryItems.{{ $index }}.quantity" min="1"
-                                        class="w-full bg-white border rounded-lg px-3 py-2 text-sm focus:ring outline-none focus:ring-yellow-500 focus:border-yellow-500 @error('deliveryItems.'.$index.'.quantity') border-red-500 @enderror"
+                                        wire:model.live="deliveryItems.{{ $index }}.quantity" min="1"
+                                        max="{{ $maxStock }}"
+                                        class="w-full bg-white border rounded-lg px-3 py-2 text-sm focus:ring outline-none focus:ring-yellow-500 focus:border-yellow-500 @error('deliveryItems.'.$index.'.quantity') border-red-500 @enderror {{ $exceedsStock ? 'border-red-500 bg-red-50' : '' }}"
                                         placeholder="0" />
                                     @error('deliveryItems.'.$index.'.quantity')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
+                                    @if($exceedsStock)
+                                    <p class="text-red-500 text-xs mt-1">Melebihi stok tersedia ({{ $maxStock }})</p>
+                                    @endif
                                 </div>
 
                                 {{-- Remove Button --}}
