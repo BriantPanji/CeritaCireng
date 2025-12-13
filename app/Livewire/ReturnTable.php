@@ -26,6 +26,12 @@ class ReturnTable extends Component
     public $selectedItems = [];
     public $notes = '';
 
+    // For edit return modal
+    public $showEditModal = false;
+    public $editReturnId = null;
+    public $editItems = [];
+    public $editNotes = '';
+
     protected $queryString = [
         'search' => ['except' => ''],
         'status' => ['except' => ''],
@@ -49,6 +55,37 @@ class ReturnTable extends Component
     {
         $this->showCreateModal = false;
         $this->reset(['selectedItems', 'notes']);
+    }
+
+    public function openEditModal($returnId)
+    {
+        $return = ReturnModel::with(['returnItem' => function($q) {
+            $q->withPivot('quantity');
+        }])->find($returnId);
+
+        if (!$return) return;
+
+        $this->editReturnId = $returnId;
+        $this->editNotes = $return->notes ?? '';
+        
+        // Load existing items
+        $this->editItems = [];
+        foreach ($return->returnItem as $item) {
+            $this->editItems[] = [
+                'id' => $item->id,
+                'id_item' => $item->id,
+                'name' => $item->name,
+                'quantity' => $item->pivot->quantity
+            ];
+        }
+
+        $this->showEditModal = true;
+    }
+
+    public function closeEditModal()
+    {
+        $this->showEditModal = false;
+        $this->reset(['editReturnId', 'editItems', 'editNotes']);
     }
 
     public function addItem()
@@ -94,6 +131,34 @@ class ReturnTable extends Component
 
         $this->dispatch('returnCreated');
         $this->closeCreateModal();
+    }
+
+    public function updateReturn()
+    {
+        $this->validate([
+            'editItems.*.quantity' => 'required|integer|min:1',
+            'editNotes' => 'nullable|string|max:1000'
+        ]);
+
+        DB::transaction(function () {
+            $return = ReturnModel::find($this->editReturnId);
+            if (!$return) return;
+
+            // Update notes
+            $return->update([
+                'notes' => $this->editNotes
+            ]);
+
+            // Update return items quantities
+            foreach ($this->editItems as $editItem) {
+                ReturnItem::where('id_return', $this->editReturnId)
+                    ->where('id_item', $editItem['id_item'])
+                    ->update(['quantity' => $editItem['quantity']]);
+            }
+        });
+
+        $this->dispatch('returnUpdated');
+        $this->closeEditModal();
     }
 
     #[On('confirmReturn')]

@@ -68,8 +68,8 @@ return [
     ],
     [
         'name' => 'Log Aktivitas',
-        'icon' => 'note-pencil',
-        'route' => '/log-aktivitas',
+        'icon' => 'clipboard-text',
+        'route' => '/activity-logs',
         'roles' => ['dev', 'admin'],
     ],
     [

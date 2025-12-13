@@ -42,6 +42,9 @@
                         <th class="px-4 py-3 font-semibold text-left">Waktu Pengembalian</th>
                         <th class="px-4 py-3 font-semibold text-left">Waktu Dikonfirmasi</th>
                         <th class="px-4 py-3 font-semibold text-center">Status</th>
+                        @if($isAdmin)
+                            <th class="px-4 py-3 font-semibold text-center">Edit</th>
+                        @endif
                         <th class="px-4 py-3 font-semibold text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -74,17 +77,35 @@
                                 @endif
                             </td>
 
-                            <td class="px-4">
+                            @if($isAdmin)
+                                <td class="px-4 py-3 text-center">
+                                    @if($return->returnConfirmations->count() == 0)
+                                        <button wire:click="openEditModal({{ $return->id }})"
+                                            class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-pointer lg:text-1 transition">
+                                            <i class="ph ph-pencil-simple"></i> Edit
+                                        </button>
+                                    @else
+                                        <button disabled
+                                            class="bg-gray-200 text-gray-400 px-3 py-2 rounded-xl shadow-none text-xs cursor-not-allowed lg:text-1">
+                                            <i class="ph ph-pencil-simple-slash"></i> Edit
+                                        </button>
+                                    @endif
+                                </td>
+                            @endif
+
+                            <td class="px-4 text-center whitespace-nowrap">
                                 {{-- Admin: Confirm button --}}
                                 @if($isAdmin)
                                     @if($return->returnConfirmations->count() == 0)
                                         <button onclick="confirmReturnItem({{ $return->id }})"
-                                            class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-pointer lg:text-1">
-                                            Konfirmasi</button>
+                                            class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-pointer lg:text-1 inline-block">
+                                            Konfirmasi
+                                        </button>
                                     @else
                                         <button disabled
-                                            class="bg-neutral-200 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-not-allowed lg:text-1">
-                                            Konfirmasi</button>
+                                            class="bg-neutral-200 text-white px-3 py-2 rounded-xl shadow-button text-xs cursor-not-allowed lg:text-1 inline-block">
+                                            Konfirmasi
+                                        </button>
                                     @endif
                                 @endif
 
@@ -391,6 +412,95 @@
     </div>
     @endif
 
+    {{-- Edit Return Modal --}}
+    @if($isAdmin)
+    <div x-data="{ modalOpen: @entangle('showEditModal') }" x-cloak>
+        <div x-show="modalOpen" 
+             x-transition.opacity
+             class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm"
+             @click.self="$wire.closeEditModal()">
+            <div x-show="modalOpen"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
+                
+                {{-- Modal Header --}}
+                <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 p-4 sm:p-6 text-white">
+                    <h3 class="text-lg sm:text-2xl font-bold">Edit Pengembalian Barang</h3>
+                    <p class="text-xs sm:text-sm opacity-90 mt-1">Edit jumlah barang atau catatan pengembalian</p>
+                </div>
+
+                {{-- Modal Body --}}
+                <div class="overflow-y-auto flex-1">
+                    <form wire:submit.prevent="updateReturn" id="editReturnForm">
+                        <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
+                            {{-- Items Section --}}
+                            <div class="border-t border-gray-200 pt-4">
+                                <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Daftar Barang</h3>
+
+                                {{-- Items List --}}
+                                <div class="space-y-3 sm:space-y-4">
+                                    @foreach($editItems as $index => $item)
+                                    <div class="bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-200">
+                                        <div class="flex flex-col gap-3">
+                                            {{-- Item Name (Read Only) --}}
+                                            <div class="w-full">
+                                                <label class="block text-xs font-medium text-gray-700 mb-1">
+                                                    Barang
+                                                </label>
+                                                <input type="text" value="{{ $item['name'] }}" disabled
+                                                    class="w-full bg-gray-100 border rounded-lg px-3 py-2 text-sm text-gray-500 cursor-not-allowed" />
+                                            </div>
+
+                                            {{-- Quantity Input --}}
+                                            <div>
+                                                <label for="edit_quantity_{{ $index }}"
+                                                    class="block text-xs font-medium text-gray-700 mb-1">
+                                                    Jumlah <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="number" id="edit_quantity_{{ $index }}"
+                                                    wire:model="editItems.{{ $index }}.quantity" min="1"
+                                                    class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring outline-none focus:ring-yellow-500 focus:border-yellow-500" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            {{-- Notes --}}
+                            <div>
+                                <label for="edit_notes" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Catatan (Opsional)
+                                </label>
+                                <textarea id="edit_notes" wire:model="editNotes"
+                                          class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm"
+                                          rows="3" placeholder="Tambahkan catatan pengembalian..."></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                {{-- Modal Footer --}}
+                <div class="bg-gray-50 px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3">
+                    <button type="button" 
+                            @click="$wire.closeEditModal()"
+                            class="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 sm:px-6 py-2.5 rounded-xl font-medium transition text-sm">
+                        Batal
+                    </button>
+                    <button type="button"
+                            onclick="document.getElementById('editReturnForm').dispatchEvent(new Event('submit', {cancelable: true}))"
+                            class="w-full sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-white px-4 sm:px-6 py-2.5 rounded-xl font-medium transition flex items-center justify-center gap-2 text-sm">
+                        <span>Simpan Perubahan</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+
     {{-- Scripts --}}
     <script>
         function confirmReturnItem(returnId) {
@@ -420,6 +530,10 @@
 
             Livewire.on('returnConfirmed', () => {
                 Swal.fire('Berhasil!', 'Pengembalian berhasil dikonfirmasi.', 'success');
+            });
+
+            Livewire.on('returnUpdated', () => {
+                Swal.fire('Berhasil!', 'Data pengembalian berhasil diperbarui.', 'success');
             });
         });
     </script>
