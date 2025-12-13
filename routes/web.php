@@ -76,6 +76,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/penerimaan-barang', ReceivingTable::class)->name('receiving.index');
     });
 
+
+    // ------------------------------------------------------------------------
+    // Activity Log Routes - dev, admin only
+    // ------------------------------------------------------------------------
+    Route::middleware(['checkrole:dev,admin'])->group(function () {
+        Route::get('/activity-logs', \App\Livewire\ActivityLogTable::class)->name('activity-logs.index');
+    });
+
     // ------------------------------------------------------------------------
     // Daily Reports - dev, admin, inventaris, staff
     // ------------------------------------------------------------------------
