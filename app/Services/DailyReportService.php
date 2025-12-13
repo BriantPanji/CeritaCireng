@@ -111,9 +111,12 @@ class DailyReportService
     ): DailyOutletReportItem {
         $reportItem = DailyOutletReportItem::findOrFail($reportItemId);
 
-        // Update manual fields
+        // Update all manual fields
         $reportItem->update([
+            'initial_stock' => $data['initial_stock'] ?? $reportItem->initial_stock,
             'qty_sold' => $data['qty_sold'] ?? $reportItem->qty_sold,
+            'qty_damaged' => $data['qty_damaged'] ?? $reportItem->qty_damaged,
+            'stock_remained' => $data['stock_remained'] ?? $reportItem->stock_remained,
         ]);
 
         // Auto calculate expense
@@ -133,5 +136,73 @@ class DailyReportService
         $report->update(['is_validated' => true]);
 
         return $report;
+    }
+
+    /**
+     * Edit report by creating a new version (versioning system)
+     * - Creates new report with updated data
+     * - Marks old report as invalid
+     * 
+     * @param int $oldReportId ID laporan yang akan diedit
+     * @param int $editorStaffId ID staff yang melakukan edit
+     * @param array $updatedItems Array of updated item data [item_id => [...]]
+     * @param string|null $notes Catatan baru (opsional)
+     */
+    public function editReportWithVersioning(
+        int $oldReportId,
+        int $editorStaffId,
+        array $updatedItems,
+        ?string $notes = null
+    ): DailyOutletReport {
+        return DB::transaction(function () use ($oldReportId, $editorStaffId, $updatedItems, $notes) {
+            // 1. Get old report with items
+            $oldReport = DailyOutletReport::with('items')->findOrFail($oldReportId);
+
+            // 2. Verify old report is still valid (can only edit valid reports)
+            if (!$oldReport->is_validated) {
+                throw new \Exception('Laporan yang sudah tidak valid tidak bisa diedit.');
+            }
+
+            // 3. Mark old report as invalid
+            $oldReport->update(['is_validated' => false]);
+
+            // 4. Get editor staff info
+            $editorStaff = User::findOrFail($editorStaffId);
+
+            // 5. Create new report (copy from old with new metadata)
+            $newReport = DailyOutletReport::create([
+                'id_outlet' => $oldReport->id_outlet,
+                'id_staff' => $editorStaffId,
+                'report_date' => $oldReport->report_date,
+                'report_time' => now(),
+                'is_validated' => true,
+                'notes' => $notes ?? $oldReport->notes,
+                'created_by_name' => $editorStaff->display_name ?? $editorStaff->name ?? 'Unknown',
+                'outlet_name' => $oldReport->outlet_name,
+            ]);
+
+            // 6. Copy items with updates
+            foreach ($oldReport->items as $oldItem) {
+                $itemId = $oldItem->id_item;
+                $updates = $updatedItems[$itemId] ?? [];
+
+                DailyOutletReportItem::create([
+                    'id_outlet_report' => $newReport->id,
+                    'id_item' => $oldItem->id_item,
+                    'item_name' => $oldItem->item_name,
+                    'item_cost' => $oldItem->item_cost,
+                    'item_unit' => $oldItem->item_unit,
+                    'initial_stock' => $updates['initial_stock'] ?? $oldItem->initial_stock,
+                    'stock_delivered' => $oldItem->stock_delivered, // Keep auto value from system
+                    'stock_returned' => $oldItem->stock_returned,   // Keep auto value from system
+                    'qty_damaged' => $updates['qty_damaged'] ?? $oldItem->qty_damaged,
+                    'stock_remained' => $updates['stock_remained'] ?? $oldItem->stock_remained,
+                    'qty_sold' => $updates['qty_sold'] ?? $oldItem->qty_sold,
+                    'total_expense' => $oldItem->total_expense,
+                ]);
+            }
+
+            return $newReport->load('items');
+        });
     }
 }

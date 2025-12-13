@@ -13,6 +13,7 @@ use App\Http\Controllers\StaffController;
 use App\Livewire\DailyReportTable;
 use App\Http\Controllers\DailyReportController;
 use App\Livewire\DailyReportCreate;
+use App\Livewire\DailyReportEdit;
 
 // ============================================================================
 // PUBLIC ROUTES (No Auth Required)
@@ -85,6 +86,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/daily-reports/{id}', [DailyReportController::class, 'show'])->name('daily-reports.show');
     });
 
+    Route::get('/daily-reports/{id}/edit', DailyReportEdit::class)
+        ->name('daily-reports.edit')
+        ->middleware(['checkrole:dev,admin,staff']);
+
     // ------------------------------------------------------------------------
     // User Management - dev, admin only
     // ------------------------------------------------------------------------
@@ -112,7 +117,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/staff/error-report', [StaffController::class, 'errorForm'])->name('staff.error.form');
         Route::post('/staff/error-report', [StaffController::class, 'submitError'])->name('staff.error.submit');
     });
-
 });
 
 // ============================================================================

@@ -71,4 +71,26 @@ class DailyOutletReport extends Model
     {
         return $query->whereDate('report_date', $date);
     }
+
+    /**
+     * Get the latest valid report for an outlet on a specific date
+     */
+    public static function getLatestValid(int $outletId, string $date): ?self
+    {
+        return static::where('id_outlet', $outletId)
+            ->whereDate('report_date', $date)
+            ->where('is_validated', true)
+            ->first();
+    }
+
+    /**
+     * Get all versions (history) of reports for the same outlet and date
+     */
+    public function getVersionHistory()
+    {
+        return static::where('id_outlet', $this->id_outlet)
+            ->whereDate('report_date', $this->report_date)
+            ->orderBy('id', 'desc')
+            ->get();
+    }
 }
