@@ -395,3 +395,128 @@ DELIMITER ;
 -   **Consistency:** Memastikan hanya report yang valid yang bisa di-lock.
 -   **Isolation:** FOR UPDATE mencegah race condition saat multiple users mencoba validasi bersamaan.
 -   **Durability:** Status validasi tersimpan permanen.
+
+---
+
+## Contoh Penggunaan (Usage Examples)
+
+### 1. Menggunakan `ccp_process_delivery`
+
+```sql
+-- Memproses delivery dengan ID 5 dan set waktu pengiriman
+CALL ccp_process_delivery(5, '2024-12-13 10:30:00');
+
+-- Atau menggunakan waktu sekarang
+CALL ccp_process_delivery(5, NOW());
+```
+
+---
+
+### 2. Menggunakan `ccp_process_return`
+
+```sql
+-- Memproses return dengan ID 3 yang dibuat oleh staff dengan ID 12
+CALL ccp_process_return(3, 12);
+```
+
+---
+
+### 3. Menggunakan `ccp_create_daily_report`
+
+```sql
+-- Membuat laporan harian untuk outlet ID 2, staff ID 8, tanggal hari ini
+SET @report_id = 0;
+
+CALL ccp_create_daily_report(
+    2,                      -- p_id_outlet
+    8,                      -- p_id_staff
+    CURDATE(),              -- p_report_date
+    'Laporan berjalan normal, tidak ada masalah.',  -- p_notes
+    @report_id              -- OUT p_report_id
+);
+
+-- Cek ID report yang baru dibuat
+SELECT @report_id AS new_report_id;
+
+-- Lihat hasil laporan
+SELECT * FROM daily_outlet_reports WHERE id = @report_id;
+SELECT * FROM daily_outlet_report_items WHERE id_outlet_report = @report_id;
+```
+
+---
+
+### 4. Menggunakan `ccp_cancel_delivery`
+
+```sql
+-- Membatalkan delivery dengan ID 10 dengan alasan tertentu
+CALL ccp_cancel_delivery(10, 'Outlet tutup mendadak');
+
+-- Membatalkan tanpa alasan
+CALL ccp_cancel_delivery(10, NULL);
+```
+
+---
+
+### 5. Menggunakan `ccp_restock_inventory`
+
+```sql
+-- Restock multiple items sekaligus dengan JSON array
+CALL ccp_restock_inventory('[
+    {"id_item": 1, "quantity": 100},
+    {"id_item": 2, "quantity": 50},
+    {"id_item": 5, "quantity": 200}
+]');
+
+-- Restock single item
+CALL ccp_restock_inventory('[{"id_item": 1, "quantity": 100}]');
+```
+
+---
+
+### 6. Menggunakan `ccp_validate_and_lock_report`
+
+```sql
+-- Validasi dan lock report dengan ID 15
+SET @is_valid = FALSE;
+
+CALL ccp_validate_and_lock_report(15, @is_valid);
+
+-- Cek hasil validasi
+SELECT @is_valid AS validation_result;
+
+-- Atau gunakan dalam conditional logic
+CALL ccp_validate_and_lock_report(15, @is_valid);
+SELECT
+    CASE @is_valid
+        WHEN TRUE THEN 'Report berhasil divalidasi dan dikunci'
+        ELSE 'Report sudah tidak valid karena data berubah'
+    END AS status_message;
+```
+
+---
+
+## Contoh Skenario Lengkap
+
+### Skenario: Proses Pengiriman Harian
+
+```sql
+-- 1. Cek stok sebelum delivery
+SELECT * FROM ccv_inventory_summary WHERE current_stock > 0;
+
+-- 2. Buat delivery baru (asumsi sudah ada record di tabel deliveries)
+-- ... INSERT INTO deliveries ...
+
+-- 3. Proses delivery
+CALL ccp_process_delivery(1, NOW());
+
+-- 4. Jika ada masalah, batalkan
+-- CALL ccp_cancel_delivery(1, 'Kurir tidak tersedia');
+
+-- 5. Di akhir hari, buat laporan
+SET @report_id = 0;
+CALL ccp_create_daily_report(1, 5, CURDATE(), 'Laporan harian outlet A', @report_id);
+
+-- 6. Validasi laporan
+SET @is_valid = FALSE;
+CALL ccp_validate_and_lock_report(@report_id, @is_valid);
+```

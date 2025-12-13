@@ -340,3 +340,195 @@ DELIMITER ;
 -   **Consistency:** Join dengan items table memastikan harga yang konsisten.
 -   **Isolation:** Membaca data dalam consistent state.
 -   **Durability:** Deterministic function untuk hasil yang predictable.
+
+---
+
+## Contoh Penggunaan (Usage Examples)
+
+### 1. Menggunakan `ccf_get_available_stock`
+
+```sql
+-- Cek stok item dengan ID 5
+SELECT ccf_get_available_stock(5) AS current_stock;
+
+-- Gunakan dalam query SELECT
+SELECT
+    i.id,
+    i.name,
+    ccf_get_available_stock(i.id) AS stock
+FROM items i;
+
+-- Gunakan dalam WHERE clause
+SELECT * FROM items i
+WHERE ccf_get_available_stock(i.id) > 0;
+```
+
+---
+
+### 2. Menggunakan `ccf_calculate_delivery_total_items`
+
+```sql
+-- Hitung total item dalam delivery ID 10
+SELECT ccf_calculate_delivery_total_items(10) AS total_items;
+
+-- Tampilkan semua delivery dengan total item-nya
+SELECT
+    d.id,
+    d.status,
+    d.assigned_at,
+    ccf_calculate_delivery_total_items(d.id) AS total_items
+FROM deliveries d
+WHERE d.status = 'DITUGASKAN';
+```
+
+---
+
+### 3. Menggunakan `ccf_check_sufficient_stock`
+
+```sql
+-- Cek apakah item ID 3 punya stok cukup untuk 50 unit
+SELECT ccf_check_sufficient_stock(3, 50) AS is_sufficient;
+
+-- Gunakan dalam conditional
+SELECT
+    i.id,
+    i.name,
+    CASE ccf_check_sufficient_stock(i.id, 100)
+        WHEN TRUE THEN 'Stok cukup'
+        ELSE 'Stok tidak cukup'
+    END AS status_100_unit
+FROM items i;
+
+-- Filter item yang stoknya cukup untuk quantity tertentu
+SELECT * FROM items i
+WHERE ccf_check_sufficient_stock(i.id, 50) = TRUE;
+```
+
+---
+
+### 4. Menggunakan `ccf_get_outlet_daily_delivered`
+
+```sql
+-- Cek berapa cireng yang dikirim ke outlet 2 hari ini
+SELECT ccf_get_outlet_daily_delivered(2, 1, CURDATE()) AS delivered_today;
+
+-- Bandingkan pengiriman per outlet
+SELECT
+    o.id,
+    o.name,
+    ccf_get_outlet_daily_delivered(o.id, 1, CURDATE()) AS cireng_delivered,
+    ccf_get_outlet_daily_delivered(o.id, 2, CURDATE()) AS bumbu_delivered
+FROM outlets o;
+```
+
+---
+
+### 5. Menggunakan `ccf_get_outlet_daily_returned`
+
+```sql
+-- Cek berapa cireng yang dikembalikan dari outlet 2 hari ini
+SELECT ccf_get_outlet_daily_returned(2, 1, CURDATE()) AS returned_today;
+
+-- Hitung net usage per outlet
+SELECT
+    o.id,
+    o.name,
+    ccf_get_outlet_daily_delivered(o.id, 1, CURDATE()) AS delivered,
+    ccf_get_outlet_daily_returned(o.id, 1, CURDATE()) AS returned,
+    (ccf_get_outlet_daily_delivered(o.id, 1, CURDATE()) -
+     ccf_get_outlet_daily_returned(o.id, 1, CURDATE())) AS net_usage
+FROM outlets o;
+```
+
+---
+
+### 6. Menggunakan `ccf_calculate_item_usage`
+
+```sql
+-- Hitung penggunaan item ID 1 dalam 30 hari terakhir
+SELECT ccf_calculate_item_usage(
+    1,
+    DATE_SUB(CURDATE(), INTERVAL 30 DAY),
+    CURDATE()
+) AS net_usage_30d;
+
+-- Hitung penggunaan per item dalam periode tertentu
+SELECT
+    i.id,
+    i.name,
+    ccf_calculate_item_usage(i.id, '2024-12-01', '2024-12-13') AS usage_desember
+FROM items i
+ORDER BY usage_desember DESC;
+```
+
+---
+
+### 7. Menggunakan `ccf_validate_delivery_stock`
+
+```sql
+-- Validasi apakah stok cukup untuk delivery ID 5
+SELECT ccf_validate_delivery_stock(5) AS is_valid;
+
+-- Gunakan sebelum memproses delivery
+SET @delivery_id = 5;
+SELECT
+    CASE ccf_validate_delivery_stock(@delivery_id)
+        WHEN TRUE THEN 'Siap dikirim'
+        ELSE 'Stok tidak mencukupi'
+    END AS delivery_status;
+
+-- Filter delivery yang siap diproses
+SELECT d.* FROM deliveries d
+WHERE d.status = 'DITUGASKAN'
+  AND ccf_validate_delivery_stock(d.id) = TRUE;
+```
+
+---
+
+### 8. Menggunakan `ccf_get_item_cost_total`
+
+```sql
+-- Hitung total biaya delivery ID 5
+SELECT ccf_get_item_cost_total(5) AS total_cost;
+
+-- Tampilkan semua delivery dengan total biayanya
+SELECT
+    d.id,
+    d.status,
+    o.name AS outlet,
+    ccf_calculate_delivery_total_items(d.id) AS total_items,
+    ccf_get_item_cost_total(d.id) AS total_cost
+FROM deliveries d
+INNER JOIN outlets o ON o.id = d.id_outlet
+ORDER BY d.assigned_at DESC;
+```
+
+---
+
+## Contoh Kombinasi Functions
+
+```sql
+-- Dashboard stok dan validasi pengiriman
+SELECT
+    i.id,
+    i.name,
+    ccf_get_available_stock(i.id) AS current_stock,
+    ccf_check_sufficient_stock(i.id, 100) AS can_deliver_100,
+    ccf_calculate_item_usage(i.id, DATE_SUB(CURDATE(), INTERVAL 7 DAY), CURDATE()) AS usage_7d
+FROM items i
+WHERE i.deleted_at IS NULL
+ORDER BY current_stock ASC;
+
+-- Report pengiriman outlet hari ini
+SELECT
+    o.name AS outlet,
+    i.name AS item,
+    ccf_get_outlet_daily_delivered(o.id, i.id, CURDATE()) AS delivered,
+    ccf_get_outlet_daily_returned(o.id, i.id, CURDATE()) AS returned,
+    (ccf_get_outlet_daily_delivered(o.id, i.id, CURDATE()) -
+     ccf_get_outlet_daily_returned(o.id, i.id, CURDATE())) AS sold
+FROM outlets o
+CROSS JOIN items i
+WHERE i.deleted_at IS NULL
+HAVING delivered > 0 OR returned > 0;
+```

@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app title="Detail Laporan Harian">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Detail Laporan Harian') }}
@@ -16,6 +16,17 @@
                     </p>
                 </div>
                 <div class="flex gap-2">
+                    @if ($report->is_validated)
+                    <a href="{{ route('daily-reports.edit', $report->id) }}"
+                        class="inline-flex items-center px-4 py-2 bg-primary border border-transparent rounded-md font-semibold text-xs text-dark uppercase tracking-widest hover:bg-primary-200 active:bg-primary-300 focus:outline-none focus:border-primary-300 focus:ring ring-primary/30 transition ease-in-out duration-150">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                            </path>
+                        </svg>
+                        Edit
+                    </a>
+                    @endif
                     <a href="{{ route('daily-reports.index') }}"
                         class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:ring ring-gray-300 transition ease-in-out duration-150">
                         Kembali
@@ -177,6 +188,96 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Version History Section --}}
+            @php
+            $versions = $report->getVersionHistory();
+            @endphp
+            @if($versions->count() > 1)
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg mb-6">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Histori Versi Laporan
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Laporan ini memiliki {{ $versions->count() }} versi. Versi terbaru yang valid ada di atas.
+                    </p>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        ID
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Dibuat Oleh
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Waktu Dibuat
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Aksi
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach($versions as $version)
+                                <tr class="{{ $version->id === $report->id ? 'bg-primary-50' : '' }}">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        #{{ $version->id }}
+                                        @if($version->id === $report->id)
+                                        <span class="ml-2 text-xs text-primary-200">(saat ini)</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ $version->created_by_name }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ $version->created_at->format('d M Y H:i') }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if($version->is_validated)
+                                        <span
+                                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Valid
+                                        </span>
+                                        @else
+                                        <span
+                                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Tidak Valid
+                                        </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        @if($version->id !== $report->id)
+                                        <a href="{{ route('daily-reports.show', $version->id) }}"
+                                            class="text-indigo-600 hover:text-indigo-900">
+                                            Lihat
+                                        </a>
+                                        @else
+                                        <span class="text-gray-400">-</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </x-layouts.app>

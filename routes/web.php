@@ -13,6 +13,7 @@ use App\Http\Controllers\StaffController;
 use App\Livewire\DailyReportTable;
 use App\Http\Controllers\DailyReportController;
 use App\Livewire\DailyReportCreate;
+use App\Livewire\DailyReportEdit;
 
 // ============================================================================
 // PUBLIC ROUTES (No Auth Required)
@@ -51,6 +52,9 @@ Route::middleware(['auth'])->group(function () {
     // ------------------------------------------------------------------------
     Route::middleware(['checkrole:dev,admin,inventaris,kurir,staff'])->group(function () {
         Route::get('/delivery', PengantaranTable::class)->name('delivery.index');
+        Route::get('/pengantaran', function () {
+            return redirect(status: 301)->route('delivery.index');
+        });
         Route::get('/delivery/add', function () {
             return view('delivery-add');
         })->name('delivery.add');
@@ -89,6 +93,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/daily-reports/{id}', [DailyReportController::class, 'show'])->name('daily-reports.show');
     });
 
+    Route::get('/daily-reports/{id}/edit', DailyReportEdit::class)
+        ->name('daily-reports.edit')
+        ->middleware(['checkrole:dev,admin,staff']);
+
     // ------------------------------------------------------------------------
     // User Management - dev, admin only
     // ------------------------------------------------------------------------
@@ -116,7 +124,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/staff/error-report', [StaffController::class, 'errorForm'])->name('staff.error.form');
         Route::post('/staff/error-report', [StaffController::class, 'submitError'])->name('staff.error.submit');
     });
-
 });
 
 // ============================================================================

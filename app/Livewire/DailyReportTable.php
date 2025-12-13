@@ -7,7 +7,10 @@ use Livewire\WithPagination;
 use App\Models\DailyOutletReport;
 use App\Models\Outlet;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app'), Title('Laporan Harian')]
 class DailyReportTable extends Component
 {
     use WithPagination;

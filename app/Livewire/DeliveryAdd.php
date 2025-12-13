@@ -10,6 +10,7 @@ use App\Models\Outlet;
 use App\Models\Item;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DeliveryAdd extends Component
 {
@@ -19,6 +20,8 @@ class DeliveryAdd extends Component
     // For dynamic item rows
     public $deliveryItems = [];
 
+    // Stock data for validation
+    public $itemStocks = [];
 
     public $showSuccessModal = false;
     public $createdDeliveryId = null;
@@ -48,6 +51,54 @@ class DeliveryAdd extends Component
         $this->deliveryItems = [
             ['id_item' => '', 'quantity' => 1]
         ];
+        $this->loadItemStocks();
+    }
+
+    /**
+     * Load all item stocks for validation
+     */
+    public function loadItemStocks()
+    {
+        $items = Item::with('stock')->get();
+        $this->itemStocks = [];
+        foreach ($items as $item) {
+            $this->itemStocks[$item->id] = $item->stock ? $item->stock->stock : 0;
+        }
+    }
+
+    /**
+     * When outlet is selected, load default items from outlet_item_settings
+     */
+    public function updatedIdOutlet($value)
+    {
+        if (empty($value)) {
+            $this->deliveryItems = [
+                ['id_item' => '', 'quantity' => 1]
+            ];
+            return;
+        }
+
+        // Get default items for this outlet from outlet_item_settings
+        $outletSettings = DB::table('outlet_item_settings')
+            ->where('id_outlet', $value)
+            ->get();
+
+        if ($outletSettings->isEmpty()) {
+            // No settings found, keep one empty row
+            $this->deliveryItems = [
+                ['id_item' => '', 'quantity' => 1]
+            ];
+            return;
+        }
+
+        // Populate deliveryItems with outlet settings
+        $this->deliveryItems = [];
+        foreach ($outletSettings as $setting) {
+            $this->deliveryItems[] = [
+                'id_item' => (string) $setting->id_item,
+                'quantity' => $setting->quantity ?? 1,
+            ];
+        }
     }
 
     public function addItemRow()
@@ -63,6 +114,44 @@ class DeliveryAdd extends Component
         }
     }
 
+    /**
+     * Validate that quantities don't exceed available stock
+     */
+    public function validateStockQuantities(): array
+    {
+        $errors = [];
+
+        // Group items by id_item and sum their quantities
+        $groupedItems = [];
+        foreach ($this->deliveryItems as $index => $item) {
+            if (empty($item['id_item'])) continue;
+
+            $itemId = $item['id_item'];
+            $quantity = (int) $item['quantity'];
+
+            if (!isset($groupedItems[$itemId])) {
+                $groupedItems[$itemId] = [
+                    'total' => 0,
+                    'indexes' => []
+                ];
+            }
+            $groupedItems[$itemId]['total'] += $quantity;
+            $groupedItems[$itemId]['indexes'][] = $index;
+        }
+
+        // Check each grouped item against stock
+        foreach ($groupedItems as $itemId => $data) {
+            $availableStock = $this->itemStocks[$itemId] ?? 0;
+            if ($data['total'] > $availableStock) {
+                $item = Item::find($itemId);
+                $itemName = $item ? $item->name : "Item #{$itemId}";
+                $errors[] = "Total jumlah \"{$itemName}\" ({$data['total']}) melebihi stok yang tersedia ({$availableStock}).";
+            }
+        }
+
+        return $errors;
+    }
+
     public function save()
     {
         $this->validate();
@@ -70,6 +159,13 @@ class DeliveryAdd extends Component
         // Check if there's at least one item
         if (empty($this->deliveryItems)) {
             session()->flash('error', 'Minimal harus ada satu item dalam pengiriman.');
+            return;
+        }
+
+        // Validate stock quantities
+        $stockErrors = $this->validateStockQuantities();
+        if (!empty($stockErrors)) {
+            session()->flash('error', implode(' ', $stockErrors));
             return;
         }
 

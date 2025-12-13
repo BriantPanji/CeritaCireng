@@ -20,6 +20,8 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
     public bool $remember = false;
 
+    public bool $showPassword = false;
+
     /**
      * Handle an incoming authentication request.
      */
@@ -108,14 +110,13 @@ new #[Layout('components.layouts.auth')] class extends Component {
                     @error('username')
                     <div
                         class="mt-2 bg-secondary/10 border-l-4 border-secondary rounded-r-lg p-3 flex items-start gap-2">
-                        <i class="ph ph-warning-circle text-secondary text-xl flex-shrink-0 mt-0.5"></i>
                         <p class="text-secondary text-1 font-medium">{{ $message }}</p>
                     </div>
                     @enderror
                     {{-- Username Input --}}
                     <div>
                         <label for="username" class="block text-reguler font-medium text-dark mb-2">
-                            <i class="ph ph-user mr-1"></i> Username
+                            Username
                         </label>
                         <input wire:model="username" type="text" id="username"
                             class="w-full px-4 py-3 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-reguler @error('username') border-secondary @enderror"
@@ -126,15 +127,21 @@ new #[Layout('components.layouts.auth')] class extends Component {
                     {{-- Password Input --}}
                     <div>
                         <label for="password" class="block text-reguler font-medium text-dark mb-2">
-                            <i class="ph ph-lock mr-1"></i> Password
+                            Password
                         </label>
-                        <input wire:model="password" type="password" id="password"
-                            class="w-full px-4 py-3 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-reguler @error('password') border-secondary @enderror"
-                            placeholder="Masukkan password Anda" required />
+                        <div class="relative">
+                            <input wire:model="password" type="{{ $showPassword ? 'text' : 'password' }}" id="password"
+                                class="w-full px-4 py-3 pr-12 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-reguler @error('password') border-secondary @enderror"
+                                placeholder="Masukkan password Anda" required />
+                            <button type="button" wire:click="$toggle('showPassword')"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-dark transition-colors p-1 cursor-pointer"
+                                title="{{ $showPassword ? 'Sembunyikan password' : 'Tampilkan password' }}">
+                                <i class="ph {{ $showPassword ? 'ph-eye-slash' : 'ph-eye' }} text-xl"></i>
+                            </button>
+                        </div>
                         @error('password')
                         <div
                             class="mt-2 bg-secondary/10 border-l-4 border-secondary rounded-r-lg p-3 flex items-start gap-2">
-                            <i class="ph ph-warning-circle text-secondary text-xl flex-shrink-0 mt-0.5"></i>
                             <p class="text-secondary text-1 font-medium">{{ $message }}</p>
                         </div>
                         @enderror
@@ -151,7 +158,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
                     <button type="submit"
                         class="w-full bg-primary text-dark py-3.5 rounded-lg cursor-pointer font-bold text-reguler hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 mt-2 flex items-center justify-center gap-2">
-                        <i class="ph ph-sign-in text-xl"></i>
                         <span>Masuk Sekarang</span>
                     </button>
                 </form>

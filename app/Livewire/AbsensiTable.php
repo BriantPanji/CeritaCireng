@@ -6,7 +6,10 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Attendance;
 use Carbon\Carbon;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app'), Title('Data Absensi')]
 class AbsensiTable extends Component
 {
     use WithPagination;
@@ -165,6 +168,7 @@ class AbsensiTable extends Component
         $this->edit_status = $att->status;
 
         $this->showEditModal = true; // Open modal via property binding
+        $this->dispatch('open-edit-modal');
     }
 
     public function saveEdit()
@@ -182,6 +186,6 @@ class AbsensiTable extends Component
         ]);
 
         $this->showEditModal = false; // Close modal via property binding
+        $this->dispatch('close-edit-modal');
     }
-
 }

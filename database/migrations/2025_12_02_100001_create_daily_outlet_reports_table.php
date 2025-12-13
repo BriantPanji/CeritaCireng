@@ -28,12 +28,14 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // Constraint: 1 laporan per outlet per hari
-            $table->unique(['id_outlet', 'report_date'], 'unique_outlet_daily_report');
+            // Note: Unique constraint removed to allow versioning (old invalid + new valid versions)
+            // Validation for "only 1 valid report per outlet per day" is handled in application code
+            // and via trigger to ensure data integrity
 
             // Index untuk performa
             $table->index(['id_outlet', 'report_date']);
             $table->index('is_validated');
+            $table->index(['id_outlet', 'report_date', 'is_validated']);
         });
     }
 

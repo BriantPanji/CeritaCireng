@@ -8,7 +8,10 @@ use Livewire\Component;
 use App\Models\Delivery;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app'), Title('Daftar Pengantaran')]
 class PengantaranTable extends Component
 {
     use WithPagination;
