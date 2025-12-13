@@ -146,126 +146,7 @@ DELIMITER ;
 
 ---
 
-## 5. cct_invalidate_report_on_delivery_delete
-
-### Query
-
-```sql
-DELIMITER $$
-
-CREATE TRIGGER cct_invalidate_report_on_delivery_delete
-AFTER DELETE ON delivery_items
-FOR EACH ROW
-BEGIN
-    UPDATE daily_outlet_reports dor
-    INNER JOIN deliveries d ON d.id = OLD.id_delivery
-    INNER JOIN daily_outlet_report_items dori ON dor.id = dori.id_outlet_report
-    SET dor.is_validated = FALSE
-    WHERE dori.id_item = OLD.id_item
-      AND dor.id_outlet = d.id_outlet
-      AND DATE(dor.report_date) = DATE(d.assigned_at);
-END$$
-
-DELIMITER ;
-```
-
-### Penjelasan
-
-**Apa:** Trigger untuk invalidate laporan saat delivery items dihapus.
-
-**Kenapa (ACID):**
-
--   **Consistency:** Report data integrity maintained dengan invalidation saat source data berubah.
--   **Atomicity:** Delete dan invalidation dalam satu transaction.
--   **Isolation:** Concurrent deletes tidak menyebabkan partial invalidation.
--   **Durability:** Invalidation status permanent untuk historical accuracy.
-
----
-
-## 6. cct_invalidate_report_on_return_change
-
-### Query
-
-```sql
-DELIMITER $$
-
-CREATE TRIGGER cct_invalidate_report_on_return_change
-AFTER UPDATE ON return_items
-FOR EACH ROW
-BEGIN
-    IF OLD.quantity != NEW.quantity THEN
-        UPDATE daily_outlet_reports dor
-        INNER JOIN returns r ON r.id = OLD.id_return
-        INNER JOIN users u ON u.id = r.id_staff
-        INNER JOIN daily_outlet_report_items dori ON dor.id = dori.id_outlet_report
-        SET dor.is_validated = FALSE
-        WHERE dori.id_item = NEW.id_item
-          AND dor.id_outlet = u.id_outlet
-          AND DATE(dor.report_date) = DATE(r.returned_at);
-    END IF;
-END$$
-
-DELIMITER ;
-```
-
-### Penjelasan
-
-**Apa:** Trigger untuk invalidate laporan saat return items quantity berubah.
-
-**Kenapa (ACID):**
-
--   **Consistency:** Report accuracy maintained dengan automatic invalidation.
--   **Atomicity:** Update return_items dan report invalidation atomic.
--   **Isolation:** Transaction isolation mencegah race conditions.
--   **Durability:** Validation state changes are permanent.
-
----
-
-## 7. cct_audit_delivery_status_change
-
-### Query
-
-```sql
-DELIMITER $$
-
-CREATE TRIGGER cct_audit_delivery_status_change
-AFTER UPDATE ON deliveries
-FOR EACH ROW
-BEGIN
-    IF OLD.status != NEW.status THEN
-        INSERT INTO delivery_status_audit (
-            id_delivery,
-            old_status,
-            new_status,
-            changed_at,
-            changed_by
-        ) VALUES (
-            NEW.id,
-            OLD.status,
-            NEW.status,
-            NOW(),
-            COALESCE(@current_user_id, 0)
-        );
-    END IF;
-END$$
-
-DELIMITER ;
-```
-
-### Penjelasan
-
-**Apa:** Trigger untuk audit trail setiap perubahan status delivery.
-
-**Kenapa (ACID):**
-
--   **Atomicity:** Status change dan audit log insert dalam satu transaction.
--   **Consistency:** Audit trail selalu complete, tidak ada perubahan status yang tidak ter-record.
--   **Isolation:** Concurrent status changes masing-masing ter-audit.
--   **Durability:** Audit log permanent untuk compliance dan debugging.
-
----
-
-## 8. cct_validate_delivery_items_stock
+## 5. cct_validate_delivery_items_stock
 
 ### Query
 
@@ -306,7 +187,7 @@ DELIMITER ;
 
 ---
 
-## 9. cct_update_delivery_timestamp
+## 6. cct_update_delivery_timestamp
 
 ### Query
 
@@ -344,7 +225,7 @@ DELIMITER ;
 
 ---
 
-## 10. cct_prevent_completed_delivery_modification
+## 7. cct_prevent_completed_delivery_modification
 
 ### Query
 
@@ -377,45 +258,7 @@ DELIMITER ;
 
 ---
 
-## 11. cct_cascade_delivery_cancellation
-
-### Query
-
-```sql
-DELIMITER $$
-
-CREATE TRIGGER cct_cascade_delivery_cancellation
-AFTER UPDATE ON deliveries
-FOR EACH ROW
-BEGIN
-    IF OLD.status != 'DIBATALKAN' AND NEW.status = 'DIBATALKAN' THEN
-        -- If delivery was already sent, restore inventory
-        IF OLD.status = 'DIKIRIM' THEN
-            UPDATE inventory i
-            INNER JOIN delivery_items di ON i.id_item = di.id_item
-            SET i.stock = i.stock + di.quantity
-            WHERE di.id_delivery = NEW.id;
-        END IF;
-    END IF;
-END$$
-
-DELIMITER ;
-```
-
-### Penjelasan
-
-**Apa:** Trigger untuk handle efek samping pembatalan delivery (restore inventory jika sudah dikirim).
-
-**Kenapa (ACID):**
-
--   **Atomicity:** Cancellation dan inventory restoration dalam satu transaction.
--   **Consistency:** Inventory state selalu konsisten dengan delivery status.
--   **Isolation:** Concurrent cancellations tidak menyebabkan incorrect stock.
--   **Durability:** Stock correction permanent.
-
----
-
-## 12. cct_auto_create_inventory_entry
+## 8. cct_auto_create_inventory_entry
 
 ### Query
 
@@ -447,7 +290,7 @@ DELIMITER ;
 
 ---
 
-## 13. cct_prevent_item_delete_with_stock
+## 9. cct_prevent_item_delete_with_stock
 
 ### Query
 
@@ -486,53 +329,7 @@ DELIMITER ;
 
 ---
 
-## 14. cct_log_inventory_changes
-
-### Query
-
-```sql
-DELIMITER $$
-
-CREATE TRIGGER cct_log_inventory_changes
-AFTER UPDATE ON inventory
-FOR EACH ROW
-BEGIN
-    IF OLD.stock != NEW.stock THEN
-        INSERT INTO inventory_change_log (
-            id_item,
-            old_stock,
-            new_stock,
-            change_amount,
-            changed_at,
-            change_reason
-        ) VALUES (
-            NEW.id_item,
-            OLD.stock,
-            NEW.stock,
-            NEW.stock - OLD.stock,
-            NOW(),
-            COALESCE(@change_reason, 'UNKNOWN')
-        );
-    END IF;
-END$$
-
-DELIMITER ;
-```
-
-### Penjelasan
-
-**Apa:** Trigger untuk logging semua perubahan inventory untuk audit trail.
-
-**Kenapa (ACID):**
-
--   **Atomicity:** Stock change dan log entry dalam satu transaction.
--   **Consistency:** Complete audit trail untuk semua inventory movements.
--   **Isolation:** Concurrent changes masing-masing ter-log.
--   **Durability:** Audit log permanent untuk compliance dan troubleshooting.
-
----
-
-## 15. cct_validate_return_quantity
+## 10. cct_validate_return_quantity
 
 ### Query
 
