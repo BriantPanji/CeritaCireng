@@ -20,7 +20,7 @@ class ReturnTable extends Component
     public $search = '';
     public $status = '';
     public $waktu = 'all';
-    
+
     // For create return modal
     public $showCreateModal = false;
     public $selectedItems = [];
@@ -47,7 +47,9 @@ class ReturnTable extends Component
     public function openCreateModal()
     {
         $this->showCreateModal = true;
-        $this->selectedItems = [];
+        $this->selectedItems = [
+            ['id_item' => '', 'quantity' => 1]
+        ];
         $this->notes = '';
     }
 
@@ -59,7 +61,7 @@ class ReturnTable extends Component
 
     public function openEditModal($returnId)
     {
-        $return = ReturnModel::with(['returnItem' => function($q) {
+        $return = ReturnModel::with(['returnItem' => function ($q) {
             $q->withPivot('quantity');
         }])->find($returnId);
 
@@ -67,7 +69,7 @@ class ReturnTable extends Component
 
         $this->editReturnId = $returnId;
         $this->editNotes = $return->notes ?? '';
-        
+
         // Load existing items
         $this->editItems = [];
         foreach ($return->returnItem as $item) {
@@ -164,10 +166,10 @@ class ReturnTable extends Component
     #[On('confirmReturn')]
     public function confirmReturn($returnId)
     {
-        $return = ReturnModel::with(['returnItem' => function($q) {
+        $return = ReturnModel::with(['returnItem' => function ($q) {
             $q->withPivot('quantity');
         }])->find($returnId);
-        
+
         if (!$return) return;
 
         // Create confirmation
@@ -191,7 +193,7 @@ class ReturnTable extends Component
     {
         $user = Auth::user();
         $query = ReturnModel::with(['staff', 'returnConfirmations'])
-            ->with(['returnItem' => function($q) {
+            ->with(['returnItem' => function ($q) {
                 $q->withPivot('quantity');
             }]);
 
@@ -232,7 +234,7 @@ class ReturnTable extends Component
     public function render()
     {
         $userRole = Auth::user()->role->name;
-        
+
         return view('livewire.return-table', [
             'returns' => $this->returns,
             'items' => Item::all(),
