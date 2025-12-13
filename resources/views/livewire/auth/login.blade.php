@@ -20,6 +20,8 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
     public bool $remember = false;
 
+    public bool $showPassword = false;
+
     /**
      * Handle an incoming authentication request.
      */
@@ -128,9 +130,16 @@ new #[Layout('components.layouts.auth')] class extends Component {
                         <label for="password" class="block text-reguler font-medium text-dark mb-2">
                             <i class="ph ph-lock mr-1"></i> Password
                         </label>
-                        <input wire:model="password" type="password" id="password"
-                            class="w-full px-4 py-3 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-reguler @error('password') border-secondary @enderror"
-                            placeholder="Masukkan password Anda" required />
+                        <div class="relative">
+                            <input wire:model="password" type="{{ $showPassword ? 'text' : 'password' }}" id="password"
+                                class="w-full px-4 py-3 pr-12 border-2 border-neutral-100 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-reguler @error('password') border-secondary @enderror"
+                                placeholder="Masukkan password Anda" required />
+                            <button type="button" wire:click="$toggle('showPassword')"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-dark transition-colors p-1 cursor-pointer"
+                                title="{{ $showPassword ? 'Sembunyikan password' : 'Tampilkan password' }}">
+                                <i class="ph {{ $showPassword ? 'ph-eye-slash' : 'ph-eye' }} text-xl"></i>
+                            </button>
+                        </div>
                         @error('password')
                         <div
                             class="mt-2 bg-secondary/10 border-l-4 border-secondary rounded-r-lg p-3 flex items-start gap-2">
