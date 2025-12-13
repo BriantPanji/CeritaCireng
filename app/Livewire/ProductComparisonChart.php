@@ -18,7 +18,10 @@ class ProductComparisonChart extends Component
         $this->timeFilter = $filter;
     }
 
-    public function getChartDataProperty()
+    /**
+     * Calculate chart data - always fetches fresh data from database
+     */
+    private function calculateChartData()
     {
         // Calculate date range based on filter
         $startDate = match ($this->timeFilter) {
@@ -73,8 +76,9 @@ class ProductComparisonChart extends Component
 
     public function render()
     {
+        // Calculate fresh data on every render - no caching
         return view('livewire.product-comparison-chart', [
-            'chartData' => $this->chartData,
+            'chartData' => $this->calculateChartData(),
         ]);
     }
 }

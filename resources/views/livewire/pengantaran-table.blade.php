@@ -141,6 +141,7 @@
                                         aria-labelledby="defaultModalTitle">
                                         <!-- Modal Dialog -->
                                         <div x-show="modalIsOpen"
+                                            @click.stop
                                             x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
                                             x-transition:enter-start="opacity-0 translate-y-8"
                                             x-transition:enter-end="opacity-100 translate-y-0"

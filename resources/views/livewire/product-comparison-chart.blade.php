@@ -19,11 +19,10 @@
     </div>
 
     {{-- CHART CONTAINER --}}
-    <div class="bg-white rounded-2xl shadow-md p-6">
-        <canvas id="productComparisonChart" 
+    <div class="bg-white rounded-2xl shadow-md p-6" wire:key="chart-container-{{ $timeFilter }}">
+        <canvas id="productComparisonChart-{{ $timeFilter }}" 
             x-data="{
-                chart: null,
-                chartData: @js($chartData)
+                chart: null
             }"
             x-init="
                 const ctx = $el.getContext('2d');
@@ -41,11 +40,11 @@
                 chart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: chartData.labels,
+                        labels: @js($chartData['labels']),
                         datasets: [
                             {
                                 label: 'Barang Diterima',
-                                data: chartData.received,
+                                data: @js($chartData['received']),
                                 borderColor: 'rgb(239, 68, 68)',
                                 backgroundColor: receivedGradient,
                                 borderWidth: 3,
@@ -59,7 +58,7 @@
                             },
                             {
                                 label: 'Barang Terjual',
-                                data: chartData.sold,
+                                data: @js($chartData['sold']),
                                 borderColor: 'rgb(59, 130, 246)',
                                 backgroundColor: soldGradient,
                                 borderWidth: 3,
@@ -138,15 +137,7 @@
                         }
                     }
                 });
-
-                // Update chart when Livewire data changes
-                Livewire.on('chartDataUpdated', (data) => {
-                    chart.data.datasets[0].data = data.received;
-                    chart.data.datasets[1].data = data.sold;
-                    chart.update('active');
-                });
             "
-            wire:key="chart-{{ $timeFilter }}"
             class="w-full"
             style="max-height: 400px;">
         </canvas>
