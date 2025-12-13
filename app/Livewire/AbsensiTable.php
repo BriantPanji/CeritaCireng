@@ -15,6 +15,7 @@ class AbsensiTable extends Component
     public $filter_range = 'all';
     public $filter_status = '';
     public $filter_role = '';
+    public $showEditModal = false; // For Alpine.js binding
     public $editId;
     public $edit_date;
     public $edit_time;
@@ -153,34 +154,34 @@ class AbsensiTable extends Component
     }
 
     public function openEditModal($id)
-{
-    $att = Attendance::find($id);
+    {
+        $att = Attendance::find($id);
 
-    if (!$att) return;
+        if (!$att) return;
 
-    $this->editId = $att->id;
-    $this->edit_date = $att->attendance_date;
-    $this->edit_time = $att->attendance_time;
-    $this->edit_status = $att->status;
+        $this->editId = $att->id;
+        $this->edit_date = $att->attendance_date;
+        $this->edit_time = $att->attendance_time;
+        $this->edit_status = $att->status;
 
-    $this->dispatch('open-edit-modal');
-}
+        $this->showEditModal = true; // Open modal via property binding
+    }
 
-public function saveEdit()
-{
-    $this->validate([
-        'edit_date' => 'required|date',
-        'edit_time' => 'required',
-        'edit_status' => 'required|in:HADIR,IZIN,SAKIT,ABSEN',
-    ]);
+    public function saveEdit()
+    {
+        $this->validate([
+            'edit_date' => 'required|date',
+            'edit_time' => 'required',
+            'edit_status' => 'required|in:HADIR,IZIN,SAKIT,ABSEN',
+        ]);
 
-    Attendance::where('id', $this->editId)->update([
-        'attendance_date' => $this->edit_date,
-        'attendance_time' => $this->edit_time,
-        'status' => $this->edit_status,
-    ]);
+        Attendance::where('id', $this->editId)->update([
+            'attendance_date' => $this->edit_date,
+            'attendance_time' => $this->edit_time,
+            'status' => $this->edit_status,
+        ]);
 
-    $this->dispatch('close-edit-modal');
-}
+        $this->showEditModal = false; // Close modal via property binding
+    }
 
 }

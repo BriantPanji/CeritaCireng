@@ -97,9 +97,12 @@
                                         x-on:keydown.esc.window="modalIsOpen = false"
                                         x-on:click.self="modalIsOpen = false"
                                         class="fixed inset-0 z-30 flex items-center justify-center p-4 pb-8 lg:p-8 bg-neutral-500/30 backdrop-blur-xs"
-                                        x-transition.opacity role="dialog" aria-modal="true">
+                                        x-transition.opacity role="dialog" aria-modal="true"
+                                        aria-labelledby="defaultModalTitle">
+                                        <!-- Modal Dialog -->
                                         <div x-show="modalIsOpen"
-                                            x-transition:enter="transition ease-out duration-200 delay-100"
+                                            @click.stop
+                                            x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
                                             x-transition:enter-start="opacity-0 translate-y-8"
                                             x-transition:enter-end="opacity-100 translate-y-0"
                                             class="flex flex-col gap-4 overflow-x-hidden overflow-y-scroll h-[500px] mt-24 rounded-radius border border-outline bg-white w-[90%] xl:max-w-[700px]">

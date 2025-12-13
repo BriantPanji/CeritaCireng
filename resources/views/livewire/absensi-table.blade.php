@@ -183,11 +183,20 @@
 
 
     {{-- ==================== MODAL EDIT ==================== --}}
-    <div x-data="{ open: false }" x-on:open-edit-modal.window="open = true" x-on:close-edit-modal.window="open = false">
+    <div x-data="{ open: @entangle('showEditModal') }">
 
-        <div x-show="open" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div x-show="open" 
+             x-cloak
+             @click.self="open = false"
+             class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+             x-transition.opacity>
 
-            <div x-show="open" class="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6" @click.away="open = false">
+            <div x-show="open" 
+                 @click.stop
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 class="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6">
 
                 <h2 class="text-lg font-semibold mb-4 text-center">Edit Kehadiran</h2>
 
