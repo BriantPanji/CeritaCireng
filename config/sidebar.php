@@ -13,6 +13,12 @@ return [
         'roles' => ['dev', 'admin', 'inventaris', 'kurir', 'staff'],
     ],
     [
+        'name' => 'Pengembalian',
+        'icon' => 'hand-arrow-up',
+        'route' => '/returns',
+        'roles' => ['dev', 'admin', 'inventaris', 'staff'],
+    ],
+    [
         'name' => 'Inventory',
         'icon' => 'warehouse',
         'route' => '/inventory',

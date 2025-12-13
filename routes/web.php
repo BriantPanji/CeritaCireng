@@ -58,6 +58,13 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ------------------------------------------------------------------------
+    // Return Items Routes - dev, admin, inventaris, staff
+    // ------------------------------------------------------------------------
+    Route::middleware(['checkrole:dev,admin,inventaris,staff'])->group(function () {
+        Route::get('/returns', \App\Livewire\ReturnTable::class)->name('returns.index');
+    });
+
+    // ------------------------------------------------------------------------
     // Inventory & Stock Routes - dev, admin, inventaris only
     // ------------------------------------------------------------------------
     Route::middleware(['checkrole:dev,admin,inventaris'])->group(function () {
