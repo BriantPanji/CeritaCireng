@@ -12,12 +12,12 @@ class AttendanceController extends Controller
         $user = Auth::user();
         $userRole = $user->role->name ?? null;
 
-        // Role inventaris, kurir, staff -> Lihat absensi sendiri aja
-        if (in_array($userRole, ['inventaris', 'kurir', 'staff'])) {
+        // Role kurir, staff -> Lihat absensi sendiri aja
+        if (in_array($userRole, ['kurir', 'staff'])) {
             return $this->myAttendance();
         }
 
-        // Role admin, dev, atau lainnya -> Lihat semua absensi
+        // Role admin, dev, inventaris, atau lainnya -> Lihat semua absensi (kelola)
         return $this->allAttendance();
     }
 

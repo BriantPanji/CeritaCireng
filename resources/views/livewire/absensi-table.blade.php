@@ -35,11 +35,8 @@
         <select wire:model.live="filter_role"
             class="bg-white border border-neutral-200 px-3 py-1 rounded-xl shadow-sm text-sm cursor-pointer">
             <option value="">Semua Role</option>
-            <option value="Administrator">Administrator</option>
-            <option value="Gudang">Gudang</option>
             <option value="Staff">Staff</option>
             <option value="Pengantar">Pengantar</option>
-            <option value="Tamu">Tamu</option>
         </select>
     </div>
 
